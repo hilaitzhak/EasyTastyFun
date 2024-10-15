@@ -1,4 +1,4 @@
-
+import { AppServer } from "./service";
 
 const main = async () => {
     const server = new AppServer();

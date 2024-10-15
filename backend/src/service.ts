@@ -1,26 +1,21 @@
-// import { AppConfig } from "./config";
 import cors from 'cors';
 import express, { Express } from "express";
 import { AppRouter } from "./routes/app-router";
-// import { URLRequest, URLResponse } from "./interfaces/global.interface";
+import { AppConfig } from './config';
 
 export class AppServer {
     public app: Express;
-    // private config: AppConfig;
+    private config: AppConfig;
     
     constructor() {
+        this.config = new AppConfig();
     }
 
     public async init() {
-        // this.setConfig();
         this.setApp();
         this.setMiddlewares();
         this.setRouter();
     }
-
-    // private setConfig() {
-    //     this.config = new AppConfig();
-    // }
 
     private setApp() {
         this.app = express();
@@ -29,10 +24,6 @@ export class AppServer {
     private setMiddlewares() {
         this.app.use(cors());
         this.app.use(express.json());
-        // this.app.use((req: URLRequest, res: URLResponse, next) => {
-        //     req.base_redirect_url = this.config.base_redirect_url;
-        //     next();
-        // });
     }
 
     private setRouter() {
@@ -45,5 +36,4 @@ export class AppServer {
             console.log(`Server is up on port ${this.config.port}!`);
         });
     }
-
 }
