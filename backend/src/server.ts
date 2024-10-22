@@ -1,7 +1,8 @@
 import cors from 'cors';
 import express, { Express } from "express";
-import { AppRouter } from "./routes/app-router";
-import { AppConfig } from './config';
+import { AppRouter } from "./routes/recipe.router";
+import { AppConfig } from './config/config';
+import { connectDB } from './config/db.config';
 
 export class AppServer {
     public app: Express;
@@ -13,6 +14,7 @@ export class AppServer {
 
     public async init() {
         this.setApp();
+        await connectDB(); 
         this.setMiddlewares();
         this.setRouter();
     }
@@ -24,6 +26,11 @@ export class AppServer {
     private setMiddlewares() {
         this.app.use(cors());
         this.app.use(express.json());
+        // this.app.use((req, res, next) => {
+        //     console.log(`Incoming request: ${req.method} ${req.url}`);
+        //     console.log('Request Body:', req.body);
+        //     next();
+        // });
     }
 
     private setRouter() {
