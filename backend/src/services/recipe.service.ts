@@ -1,34 +1,74 @@
-import { IRecipe, Recipe } from "../models/recipe.model";
+import { IRecipe } from '../interfaces/recipe.interface';
+import Recipe from '../models/recipe.model';
 
 
 export class RecipeService {
-    public async createRecipe(recipeData: any) {
-        const newRecipe = new Recipe(recipeData);
-        return await newRecipe.save();
+
+    async createRecipe(recipeData: IRecipe) {
+      try {
+        const recipe = new Recipe(recipeData);
+        return await recipe.save();
+      } catch (error) {
+        throw new Error('Error creating recipe');
+      }
     }
 
-    public async getAllRecipes() {
-        return await Recipe.find();
+    async getAllRecipes() {
+      try {
+        return await Recipe.find().sort({ createdAt: -1 });
+      } catch (error) {
+        throw new Error('Error fetching recipes');
+      }
     }
 
-    public async getLatestRecipes() {
-        const twoDaysAgo = new Date();
-        twoDaysAgo.setDate(twoDaysAgo.getDate() - 2); // Get date 2 days ago
-
-        return await Recipe.find({
+    async getRecentRecipes() {
+        try {
+            const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+            return await Recipe.find({
             createdAt: { $gte: twoDaysAgo }
-        });
+            }).sort({ createdAt: -1 });
+        } catch (error) {
+            throw new Error('Error fetching recent recipes');
+        }
     }
 
-    public async getRecipeById(id: string) {
-        return await Recipe.findById(id);
+    async getRecipeById(id: string) {
+        try {
+            const recipe = await Recipe.findById(id);
+            if (!recipe) {
+            throw new Error('Recipe not found');
+            }
+            return recipe;
+        } catch (error) {
+            throw new Error('Error fetching recipe');
+        }
     }
 
-    public async updateRecipe(id: string, data: any) {
-        return await Recipe.findByIdAndUpdate(id, data, { new: true });
+    async updateRecipe(id: string, recipeData: IRecipe) {
+        try {
+          const recipe = await Recipe.findByIdAndUpdate(
+            id,
+            { $set: recipeData },
+            { new: true }
+          );
+          if (!recipe) {
+            throw new Error('Recipe not found');
+          }
+          return recipe;
+        } catch (error) {
+          throw new Error('Error updating recipe');
+        }
     }
 
-    public async deleteRecipe(id: string) {
-        return await Recipe.findByIdAndDelete(id);
+    async deleteRecipe(id: string) {
+        try {
+          const recipe = await Recipe.findByIdAndDelete(id);
+          if (!recipe) {
+            throw new Error('Recipe not found');
+          }
+          return recipe;
+        } catch (error) {
+          throw new Error('Error deleting recipe');
+        }
     }
 }

@@ -1,34 +1,23 @@
-import React, { useState } from 'react';
-import { Layout } from 'antd';
-import RecipeForm from './components/RecipeForm/RecipeForm';
-import RecipeList from './components/RecipeList/RecipeList';
-import HomePage from './components/HomePage/HomePage';
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import HomePage from './components/HomePage';
+import AllRecipes from './pages/AllRecipes';
+import CreateRecipeForm from './pages/CreateRecipeForm';
+import EditRecipe from './pages/EditRecipe';
+import RecipeDetails from './pages/RecipeDetails';
 
-const { Header, Content } = Layout;
 
-const App: React.FC = () => {
-    const [currentPage, setCurrentPage] = useState<'home' | 'addRecipe' | 'recipeList'>('home');
-
-    const handleRecipeAdded = () => {
-      setCurrentPage('recipeList'); // Optionally navigate to the recipe list after adding a recipe
-    };
-
+const App = () => {
     return (
         <Router>
-            <Layout>
-                <Header>
-                    <h1 style={{ color: 'white' }}>Easy Tasty Fun</h1>
-                </Header>
-                <Content style={{ padding: '20px' }}>
-                    <Routes>
-                        <Route path="/easy-tasty-fun" element={<HomePage />} />
-                        <Route path="/easy-tasty-fun/add-recipe" element={<RecipeForm onRecipeAdded={handleRecipeAdded} />} />
-                        <Route path="/easy-tasty-fun/recipes" element={<RecipeList />} />
-                    </Routes>
-                </Content>
-            </Layout>
-        </Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/recipes" element={<AllRecipes />} />
+          <Route path="/recipes/add-recipe" element={<CreateRecipeForm />} />
+          <Route path="/recipe/:id" element={<RecipeDetails />} />
+          <Route path="/recipe/edit/:id" element={<EditRecipe />} />
+        </Routes>
+      </Router>
     );
 };
 

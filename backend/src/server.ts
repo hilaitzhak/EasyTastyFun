@@ -25,13 +25,7 @@ export class AppServer {
 
     private setMiddlewares() {
         this.app.use(cors());
-        this.app.use(express.json());
-        // this.app.use((req, res, next) => {
-        //     console.log(`Incoming request: ${req.method} ${req.url}`);
-        //     console.log('Request Body:', req.body);
-        //     next();
-        // });
-    }
+        this.app.use(express.json({ limit: '50mb' }));    }
 
     private setRouter() {
         const app_router = new AppRouter();

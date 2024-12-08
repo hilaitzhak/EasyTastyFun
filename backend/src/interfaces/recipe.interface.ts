@@ -1,5 +1,6 @@
-export interface IRecipe {
-  [x: string]: any;
+import { Document } from 'mongoose';
+
+export interface IRecipe extends Document {
   name: string;
   description: string;
   prepTime: number;
@@ -17,9 +18,4 @@ export interface IRecipe {
   }[];
   createdAt: Date;
   updatedAt: Date;
-}
-
-export interface RecipeCardProps {
-  recipe: IRecipe;
-  onClick?: (id: string) => void;
 }

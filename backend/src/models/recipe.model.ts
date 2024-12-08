@@ -1,23 +1,24 @@
 import mongoose, { Schema, Document } from "mongoose";
-
-export interface IRecipe extends Document {
-  title: string;
-  description?: string;
-  ingredients: string[];
-  instructions: string;
-  images?: string[];
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { IRecipe } from "../interfaces/recipe.interface";
 
 const RecipeSchema: Schema = new Schema({
-  title: { type: String, required: true },
-  description: { type: String },
-  ingredients: { type: [String], required: true },
-  instructions: { type: String, required: true },
-  images: { type: [String] },
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  prepTime: { type: Number, required: true },
+  cookTime: { type: Number, required: true },
+  servings: { type: Number, required: true },
+  ingredients: [{
+    name: { type: String, required: true },
+    amount: { type: Number, required: true },
+    unit: { type: String, required: true }
+  }],
+  instructions: [{ type: String, required: true }],
+  images: [{
+    data: { type: String, required: true },
+    description: { type: String }
+  }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
 
-export const Recipe = mongoose.model<IRecipe>('Recipe', RecipeSchema);
+export default mongoose.model<IRecipe>('Recipe', RecipeSchema);

@@ -4,19 +4,13 @@ import { RecipeService } from "../services/recipe.service";
 export class RecipeController {
     private recipeService = new RecipeService();
 
-    public async createRecipe(req: Request, res: Response): Promise<void> {
+    async createRecipe(req: Request, res: Response): Promise<void> {
         try {
-            const recipeData = req.body;
-            if (req.file) {
-                recipeData.image = `/uploads/${req.file.filename}`;
-            } else {
-            console.error('No file uploaded'); // Log if no file was uploaded
-            }
-            const newRecipe = await this.recipeService.createRecipe(recipeData);
-            res.status(201).json(newRecipe);
+            const recipe = await this.recipeService.createRecipe(req.body);
+            res.status(201).json(recipe);
         } catch (error) {
-            console.error('Error creating recipe:', error); // Log any errors
-            res.status(500).json({ message: "Error creating recipe", error });
+          res.status(500).json({ 
+            message: "Error creating recipe", error });
         }
     }
 
@@ -29,13 +23,13 @@ export class RecipeController {
         }
     }
 
-    public async getLatestRecipes(req: Request, res: Response) {
+    public async getRecentRecipes(req: Request, res: Response) {
         try {
-            const recipes = await this.recipeService.getLatestRecipes();
+            const recipes = await this.recipeService.getRecentRecipes();
             res.status(200).json(recipes);
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: "Failed to fetch latest recipes" });
+            res.status(500).json({ message: "Failed to fetch recent recipes" });
         }
     }
 
