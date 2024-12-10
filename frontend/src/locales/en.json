@@ -119,5 +119,15 @@
       "connectionError": "No response from server. Please check your connection.",
       "createError": "Error creating recipe: {{message}}"
     }
+  },
+  "editRecipe": {
+    "title": "Edit Recipe",
+    "backToRecipe": "Back to Recipe",
+    "addMoreImages": "Add more images",
+    "saveChanges": "Save Changes",
+    "savingChanges": "Saving Changes...",
+    "updateError": "Failed to update recipe",
+    "loadError": "Failed to load recipe",
+    "updateSuccess": "Recipe updated successfully"
   }
 }

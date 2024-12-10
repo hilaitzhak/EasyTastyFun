@@ -119,5 +119,15 @@
       "connectionError": "אין תגובה מהשרת. אנא בדוק את החיבור שלך.",
       "createError": "שגיאה ביצירת מתכון: {{message}}"
     }
+  },
+  "editRecipe": {
+    "title": "עריכת מתכון",
+    "backToRecipe": "חזרה למתכון",
+    "addMoreImages": "הוסף עוד תמונות",
+    "saveChanges": "שמור שינויים",
+    "savingChanges": "שומר שינויים...",
+    "updateError": "עדכון המתכון נכשל",
+    "loadError": "טעינת המתכון נכשלה",
+    "updateSuccess": "המתכון עודכן בהצלחה"
   }
 }

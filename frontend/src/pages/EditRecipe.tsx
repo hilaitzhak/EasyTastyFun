@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Plus, Minus, Upload, Loader, ArrowLeft } from 'lucide-react';
+import { Plus, Minus, Upload, Loader, ArrowLeft, ArrowRight } from 'lucide-react';
 import { recipeApi } from '../api/recipe.api';
+import { useTranslation } from 'react-i18next';
+import i18n from '../i18n/i18n';
 
 const EditRecipe = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -12,6 +15,7 @@ const EditRecipe = () => {
   const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: '' }]);
   const [instructions, setInstructions] = useState(['']);
   const [images, setImages] = useState<{ data: string; file: File }[]>([]);
+  const isRTL = i18n.language === 'he';
 
   // Fetch recipe data
   useEffect(() => {
@@ -25,7 +29,7 @@ const EditRecipe = () => {
         setImages(recipeData.images.map((img: any) => ({ data: img.data, file: new File([], "placeholder") })));
       } catch (error) {
         console.error('Error fetching recipe:', error);
-        alert('Failed to load recipe');
+        alert(t('editRecipe.loadError'));
         navigate('/recipes');
       } finally {
         setLoading(false);
@@ -33,7 +37,7 @@ const EditRecipe = () => {
     };
 
     fetchRecipe();
-  }, [id, navigate]);
+  }, [id, navigate, t]);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -41,7 +45,7 @@ const EditRecipe = () => {
 
     Array.from(files).forEach(file => {
       if (file.size > 5 * 1024 * 1024) {
-        alert('Image size should be less than 5MB');
+        alert(t('createRecipe.imageSizeError'));
         return;
       }
 
@@ -124,32 +128,34 @@ const EditRecipe = () => {
               onClick={() => navigate(`/recipe/${id}`)}
               className="flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-colors"
             >
-              <ArrowLeft className="w-5 h-5" />
-              Back to Recipe
+              {isRTL ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
+              {t('editRecipe.backToRecipe')}
             </button>
-            <h1 className="text-3xl font-bold text-gray-800">Edit Recipe</h1>
+            <h1 className="text-3xl font-bold text-gray-800">{t('editRecipe.title')}</h1>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Basic Info Section */}
             <div className="bg-white rounded-xl shadow-md p-6 space-y-6">
               <div>
-                <label className="block text-gray-700 font-medium mb-2">Recipe Name</label>
+                <label className="block text-gray-700 font-medium mb-2">{t('createRecipe.basicInfo.name.label')}</label>
                 <input
                   type="text"
                   name="name"
                   defaultValue={recipe.name}
                   required
+                  placeholder={t('createRecipe.basicInfo.name.placeholder')}
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
 
               <div>
-                <label className="block text-gray-700 font-medium mb-2">Description</label>
+                <label className="block text-gray-700 font-medium mb-2">{t('createRecipe.basicInfo.description.label')}</label>
                 <textarea
                   name="description"
                   defaultValue={recipe.description}
                   required
+                  placeholder={t('createRecipe.basicInfo.description.placeholder')}
                   rows={3}
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
@@ -346,7 +352,7 @@ const EditRecipe = () => {
                 onClick={() => navigate(`/recipe/${id}`)}
                 className="px-8 py-3 rounded-full border border-gray-300 hover:bg-gray-50 transition-colors"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 type="submit"
@@ -356,10 +362,10 @@ const EditRecipe = () => {
                 {saving ? (
                   <>
                     <Loader className="w-5 h-5 animate-spin" />
-                    Saving Changes...
+                    {t('editRecipe.savingChanges')}
                   </>
                 ) : (
-                  'Save Changes'
+                  t('editRecipe.saveChanges')
                 )}
               </button>
             </div>
