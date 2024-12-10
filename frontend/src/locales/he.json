@@ -1,0 +1,123 @@
+{
+    "nav": {
+      "home": "דף הבית",
+      "allRecipes": "כל המתכונים",
+      "createRecipe": "צור מתכון",
+      "backToRecipes": "חזור למתכונים",
+      "cakes": "עוגות",
+      "desserts": "קינוחים",
+      "hotStews": "תבשילים",
+      "pasta": "פסטה",
+      "salads": "סלטים",
+      "breakfast":" ארוחות בוקר",
+      "backToHome": "חזרה לדף הבית"
+    },
+    "recipe": {
+      "favorite": "הוסף למועדפים",
+      "ingredients": "מצרכים",
+      "instructions": "הוראות הכנה",
+      "servings": "מנות",
+      "prepTime": "זמן הכנה",
+      "cookTime": "זמן בישול",
+      "totalTime": "זמן כולל",
+      "minutes": "דקות",
+      "description": "תיאור",
+      "edit": "ערוך",
+      "delete": "מחק",
+      "create": "צור מתכון חדש",
+      "update": "עדכן מתכון",
+      "createdAt": "נוצר ב: {{date}}",
+      "notFound": "המתכון לא נמצא",
+      "deleteConfirmation": "האם אתה בטוח שברצונך למחוק מתכון זה?",
+      "deleteFailed": "מחיקת המתכון נכשלה",
+      "totalTimeInMin": "{{time}} דקות",
+      "servingsCount": "{{count}} מנות",
+      "ingredientAmount": "{{amount}} {{unit}}"
+    },
+    "common": {
+        "loading": "טוען...",
+        "tryAgain": "נסה שוב",
+        "error": "שגיאה",
+        "save": "שמור",
+        "cancel": "בטל",
+        "confirmation": "האם אתה בטוח?",
+        "yes": "כן",
+        "no": "לא",
+        "noImage": "אין תמונה זמינה"
+    },
+    "hero": {
+        "discoverTitle": "גלה את אומנות",
+        "cookingTitle": "הבישול",
+        "description": "חקור עולם של טעמים, שתף את היצירות הקולינריות שלך והצטרף לקהילת חובבי האוכל שלנו.",
+        "shareRecipe": "שתף את המתכון שלך",
+        "browseRecipes": "עיין במתכונים"
+    },
+    "latestRecipes": {
+        "title": "מתכונים אחרונים שנוצרו",
+        "subtitle": "גלה את ההרפתקאות הקולינריות האחרונות של הקהילה שלנו",
+        "addRecipe": "הוסף מתכון",
+        "noRecipes": "אין מתכונים שנוצרו לאחרונה",
+        "beFirst": "היה הראשון לשתף את המתכון המדהים שלך!",
+        "createRecipe": "צור מתכון"
+    },
+    "allRecipes": {
+        "title": "כל המתכונים",
+        "subtitle": "גלה את האוסף המלא של המתכונים המדהימים שלנו",
+        "searchPlaceholder": "חיפוש מתכונים...",
+        "noSearchResults": "לא נמצאו מתכונים עבור \"{{searchTerm}}\"",
+        "clearSearch": "נקה חיפוש",
+        "noRecipes": "אין מתכונים זמינים",
+        "startAdding": "התחל על ידי הוספת המתכון הראשון שלך!",
+        "fetchError": "שגיאה בטעינת המתכונים. אנא נסה שוב מאוחר יותר.",
+        "loading": "טוען מתכונים..."
+    },
+    "createRecipe": {
+    "title": "יצירת מתכון חדש",
+    "imageSizeError": "גודל התמונה צריך להיות פחות מ-5MB",
+    "basicInfo": {
+      "name": {
+        "label": "שם המתכון",
+        "placeholder": "הזן שם מתכון"
+      },
+      "description": {
+        "label": "תיאור",
+        "placeholder": "תאר את המתכון שלך"
+      },
+      "prepTime": {
+        "label": "זמן הכנה (דקות)"
+      },
+      "cookTime": {
+        "label": "זמן בישול (דקות)"
+      },
+      "servings": {
+        "label": "מנות"
+      }
+    },
+    "images": {
+      "title": "תמונות של המתכון",
+      "upload": "העלאת תמונות",
+      "dragDrop": "לחץ להעלאת תמונות"
+    },
+    "ingredients": {
+      "title": "מצרכים",
+      "add": "הוסף מצרך",
+      "namePlaceholder": "שם המצרך",
+      "amountPlaceholder": "כמות",
+      "unitPlaceholder": "יחידה"
+    },
+    "instructions": {
+      "title": "הוראות הכנה",
+      "addStep": "הוסף שלב",
+      "stepPlaceholder": "שלב {{number}}"
+    },
+    "submit": {
+      "creating": "יוצר מתכון...",
+      "create": "צור מתכון"
+    },
+    "errors": {
+      "serverError": "שגיאת שרת: {{message}}",
+      "connectionError": "אין תגובה מהשרת. אנא בדוק את החיבור שלך.",
+      "createError": "שגיאה ביצירת מתכון: {{message}}"
+    }
+  }
+}

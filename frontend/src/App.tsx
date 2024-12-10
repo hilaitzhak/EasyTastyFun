@@ -5,11 +5,12 @@ import AllRecipes from './pages/AllRecipes';
 import CreateRecipeForm from './pages/CreateRecipeForm';
 import EditRecipe from './pages/EditRecipe';
 import RecipeDetails from './pages/RecipeDetails';
+import i18n from './i18n/i18n';
 
 
 const App = () => {
     return (
-        <Router>
+      <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/recipes" element={<AllRecipes />} />

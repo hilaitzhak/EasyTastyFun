@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Clock, Users, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Clock, Users, Edit, Trash2, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { recipeApi } from '../api/recipe.api';
+import i18n from '../i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 const RecipeDetails = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [recipe, setRecipe] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const isRTL = i18n.language === 'he';
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -26,7 +30,7 @@ const RecipeDetails = () => {
   }, [id]);
 
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this recipe?')) {
+    if (!window.confirm(t('recipe.deleteConfirmation'))) {
       return;
     }
 
@@ -35,7 +39,7 @@ const RecipeDetails = () => {
       navigate('/recipes');
     } catch (error) {
       console.error('Error deleting recipe:', error);
-      alert('Failed to delete recipe');
+      alert(t('recipe.deleteFailed'));
     }
   };
 
@@ -67,12 +71,12 @@ const RecipeDetails = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Recipe not found</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">{t('recipe.notFound')}</h2>
           <button
             onClick={() => navigate('/recipes')}
             className="text-purple-600 hover:text-purple-700"
           >
-            Back to recipes
+            {t('nav.backToRecipes')}
           </button>
         </div>
       </div>
@@ -88,8 +92,8 @@ const RecipeDetails = () => {
             onClick={() => navigate('/recipes')}
             className="flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-colors"
           >
-            <ArrowLeft className="w-5 h-5" />
-            Back to All Recipes
+            { isRTL ? (<ArrowRight className="w-5 h-5" />) : (<ArrowLeft className="w-5 h-5" />) }
+            {t('nav.backToRecipes')}
           </button>
           
           <div className="flex gap-4">
@@ -98,14 +102,14 @@ const RecipeDetails = () => {
               className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
             >
               <Edit className="w-4 h-4" />
-              Edit
+              {t('recipe.edit')}
             </button>
             <button
               onClick={handleDelete}
               className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
             >
               <Trash2 className="w-4 h-4" />
-              Delete
+              {t('recipe.delete')}
             </button>
           </div>
         </div>
@@ -117,11 +121,11 @@ const RecipeDetails = () => {
           <div className="flex gap-6 text-gray-600 mb-8">
             <div className="flex items-center gap-2">
               <Clock className="w-5 h-5" />
-              <span>{recipe.prepTime + recipe.cookTime} mins</span>
+              <span>{t('recipe.totalTimeInMin', { time: recipe.prepTime + recipe.cookTime })}</span>
             </div>
             <div className="flex items-center gap-2">
               <Users className="w-5 h-5" />
-              <span>{recipe.servings} servings</span>
+              <span>{t('recipe.servingsCount', { count: recipe.servings })}</span>
             </div>
           </div>
 
@@ -162,13 +166,16 @@ const RecipeDetails = () => {
 
           {/* Ingredients */}
           <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Ingredients</h2>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">{t('recipe.ingredients')}</h2>
             <ul className="space-y-3">
               {recipe.ingredients.map((ingredient: any, index: number) => (
                 <li key={index} className="flex justify-between items-center border-b border-gray-100 py-2">
                   <span className="text-gray-800">{ingredient.name}</span>
                   <span className="text-gray-600">
-                    {ingredient.amount} {ingredient.unit}
+                    {t('recipe.ingredientAmount', { 
+                      amount: ingredient.amount, 
+                      unit: ingredient.unit 
+                    })}
                   </span>
                 </li>
               ))}
@@ -177,7 +184,7 @@ const RecipeDetails = () => {
 
           {/* Instructions */}
           <div className="bg-white rounded-xl shadow-md p-6">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Instructions</h2>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">{t('recipe.instructions')}</h2>
             <ol className="space-y-4">
               {recipe.instructions.map((instruction: string, index: number) => (
                 <li key={index} className="flex gap-4">

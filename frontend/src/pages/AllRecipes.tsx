@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Loader, ArrowLeft } from 'lucide-react';
+import { Search, Loader, ArrowLeft, Plus, ArrowRight } from 'lucide-react';
 import { IRecipe } from '../interfaces/Recipe';
 import { recipeApi } from '../api/recipe.api';
 import { RecipeCard } from '../components/RecipeCard';
-
+import { useTranslation } from 'react-i18next';
+import i18n from '../i18n/i18n';
 
 const AllRecipes = () => {
+  const { t } = useTranslation();
   const [recipes, setRecipes] = useState<IRecipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const isRTL = i18n.language === 'he';
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,14 +24,13 @@ const AllRecipes = () => {
         setRecipes(data);
         setError(null);
       } catch (err) {
-        setError('Failed to fetch recipes. Please try again later.');
+        setError(t('allRecipes.fetchError'));
       } finally {
         setLoading(false);
       }
     };
-
     fetchRecipes();
-  }, []);
+  }, [t]);
 
   const filteredRecipes = recipes.filter(recipe =>
     recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -39,24 +41,36 @@ const AllRecipes = () => {
     <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 py-8">
       <div className="container mx-auto px-4">
         {/* Header Section */}
-        <div className="flex items-center mb-8">
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-colors p-2 rounded-lg hover:bg-purple-50"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Back to Home</span>
-          </button>
+        <div className="flex items-center justify-between w-full mb-8">
+          <div className="flex items-center">
+            <button
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-colors p-2 rounded-lg hover:bg-purple-50"
+            >
+              { isRTL ? (<ArrowRight className="w-5 h-5" />) : (<ArrowLeft className="w-5 h-5" />) }
+              <span>{t('nav.backToHome')}</span>
+            </button>
+          </div>
+
+          <div className="flex items-center">
+            <button
+              onClick={() => navigate('/recipes/add-recipe')}
+              className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-6 py-3 rounded-full hover:from-purple-700 hover:to-pink-600 transition-all transform hover:scale-105 shadow-lg"
+            >
+              <Plus className="w-5 h-5" />
+              <span>{t('recipe.create')}</span>
+            </button>
+          </div>
         </div>
         <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">All Recipes</h1>
-          <p className="text-gray-600 mb-8">Discover our complete collection of amazing recipes</p>
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">{t('allRecipes.title')}</h1>
+          <p className="text-gray-600 mb-8">{t('allRecipes.subtitle')}</p>
           
           {/* Search Bar */}
           <div className="max-w-xl mx-auto relative">
             <input
               type="text"
-              placeholder="Search recipes..."
+              placeholder={t('allRecipes.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full px-6 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 pl-12"
@@ -70,7 +84,7 @@ const AllRecipes = () => {
           <div className="flex justify-center items-center min-h-[400px]">
             <div className="flex items-center gap-3 text-purple-600">
               <Loader className="w-6 h-6 animate-spin" />
-              <span className="text-lg">Loading recipes...</span>
+              <span className="text-lg">{t('common.loading')}</span>
             </div>
           </div>
         ) : error ? (
@@ -80,7 +94,7 @@ const AllRecipes = () => {
               onClick={() => window.location.reload()}
               className="text-purple-600 hover:text-purple-700 font-medium underline"
             >
-              Try again
+              {t('common.tryAgain')}
             </button>
           </div>
         ) : filteredRecipes.length === 0 ? (
@@ -88,24 +102,26 @@ const AllRecipes = () => {
             {searchTerm ? (
               <>
                 <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-                  No recipes found for "{searchTerm}"
+                  {t('allRecipes.noSearchResults', { searchTerm })}
                 </h3>
                 <button
                   onClick={() => setSearchTerm('')}
                   className="text-purple-600 hover:text-purple-700 font-medium"
                 >
-                  Clear search
+                  {t('allRecipes.clearSearch')}
                 </button>
               </>
             ) : (
               <>
-                <h3 className="text-2xl font-semibold text-gray-800 mb-4">No recipes available</h3>
-                <p className="text-gray-600 mb-6">Start by adding your first recipe!</p>
+                <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+                  {t('allRecipes.noRecipes')}
+                </h3>
+                <p className="text-gray-600 mb-6">{t('allRecipes.startAdding')}</p>
                 <button
                   onClick={() => navigate('/recipes/add-recipe')}
                   className="bg-gradient-to-r from-purple-600 to-pink-500 text-white px-6 py-3 rounded-full hover:from-purple-700 hover:to-pink-600 transition-all"
                 >
-                  Create Recipe
+                  {t('recipe.create')}
                 </button>
               </>
             )}

@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Minus, Upload, Loader } from 'lucide-react';
 import { recipeApi } from '../api/recipe.api';
-import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
-
-const CreateRecipe = () => {
+const CreateRecipeForm = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: '' }]);
@@ -18,8 +18,8 @@ const CreateRecipe = () => {
 
         Array.from(files).forEach(file => {
         if (file.size > 5 * 1024 * 1024) {
-            alert('Image size should be less than 5MB');
-            return;
+          alert(t('createRecipe.imageSizeError'));
+          return;
         }
 
         const reader = new FileReader();
@@ -79,19 +79,14 @@ const CreateRecipe = () => {
         navigate(`/recipe/${response.data._id}`);
       }
     } catch (error: any) {
-      console.error('Error details:', error); // Debug log
       if (error.response) {
-        alert(`Server Error: ${error.response.data.message || error.response.statusText}`);
-        console.log('Error response:', error.response.data);
-        console.log('Error status:', error.response.status);
+        alert(t('createRecipe.errors.serverError', { 
+          message: error.response.data.message || error.response.statusText 
+        }));
       } else if (error.request) {
-        // The request was made but no response was received
-        alert('No response from server. Please check your connection.');
-        console.log('Error request:', error.request);
+        alert(t('createRecipe.errors.connectionError'));
       } else {
-        // Something happened in setting up the request that triggered an Error
-        alert('Error creating recipe: ' + error.message);
-        console.log('Error message:', error.message);
+        alert(t('createRecipe.errors.createError', { message: error.message }));
       }
     } finally {
       setLoading(false);
@@ -102,36 +97,36 @@ const CreateRecipe = () => {
     <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 py-12">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl font-bold text-gray-800 mb-8">Create New Recipe</h1>
+          <h1 className="text-4xl font-bold text-gray-800 mb-8">{t('createRecipe.title')}</h1>
 
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Basic Info Section */}
             <div className="bg-white rounded-xl shadow-md p-6 space-y-6">
               <div>
-                <label className="block text-gray-700 font-medium mb-2">Recipe Name</label>
+                <label className="block text-gray-700 font-medium mb-2">{t('createRecipe.basicInfo.name.label')}</label>
                 <input
                   type="text"
                   name="name"
                   required
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="Enter recipe name"
+                  placeholder={t('createRecipe.basicInfo.name.placeholder')}
                 />
               </div>
 
               <div>
-                <label className="block text-gray-700 font-medium mb-2">Description</label>
+                <label className="block text-gray-700 font-medium mb-2">{t('createRecipe.basicInfo.description.label')}</label>
                 <textarea
                   name="description"
                   required
                   rows={3}
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="Describe your recipe"
+                  placeholder={t('createRecipe.basicInfo.description.placeholder')}
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-gray-700 font-medium mb-2">Prep Time (minutes)</label>
+                  <label className="block text-gray-700 font-medium mb-2">{t('createRecipe.basicInfo.prepTime.label')}</label>
                   <input
                     type="number"
                     name="prepTime"
@@ -141,7 +136,7 @@ const CreateRecipe = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-medium mb-2">Cook Time (minutes)</label>
+                  <label className="block text-gray-700 font-medium mb-2">{t('createRecipe.basicInfo.cookTime.label')}</label>
                   <input
                     type="number"
                     name="cookTime"
@@ -151,7 +146,7 @@ const CreateRecipe = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-medium mb-2">Servings</label>
+                  <label className="block text-gray-700 font-medium mb-2">{t('createRecipe.basicInfo.servings.label')}</label>
                   <input
                     type="number"
                     name="servings"
@@ -165,14 +160,14 @@ const CreateRecipe = () => {
 
             {/* Images Section */}
             <div className="bg-white rounded-xl shadow-md p-6">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">Recipe Images</h2>
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4">{t('createRecipe.images.title')}</h2>
               
               <div className="space-y-4">
-                <label className="block text-gray-700 font-medium mb-2">Upload Images</label>
+                <label className="block text-gray-700 font-medium mb-2">{t('createRecipe.images.upload')}</label>
                 <div className="flex items-center justify-center w-full">
                   <label className="w-full flex flex-col items-center px-4 py-6 bg-white rounded-lg border-2 border-dashed border-gray-300 cursor-pointer hover:border-purple-500">
                     <Upload className="w-8 h-8 text-gray-400" />
-                    <span className="mt-2 text-gray-500">Click to upload images</span>
+                    <span className="mt-2 text-gray-500">{t('createRecipe.images.dragDrop')}</span>
                     <input type="file" className="hidden" accept="image/*" multiple onChange={handleImageUpload} />
                   </label>
                 </div>
@@ -203,14 +198,14 @@ const CreateRecipe = () => {
             {/* Ingredients Section */}
             <div className="bg-white rounded-xl shadow-md p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold text-gray-800">Ingredients</h2>
+                <h2 className="text-2xl font-semibold text-gray-800">{t('createRecipe.ingredients.title')}</h2>
                 <button
                   type="button"
                   onClick={addIngredient}
                   className="flex items-center gap-2 text-purple-600 hover:text-purple-700"
                 >
                   <Plus className="w-4 h-4" />
-                  Add Ingredient
+                  {t('createRecipe.ingredients.add')}
                 </button>
               </div>
 
@@ -225,7 +220,7 @@ const CreateRecipe = () => {
                         newIngredients[index].name = e.target.value;
                         setIngredients(newIngredients);
                       }}
-                      placeholder="Ingredient name"
+                      placeholder={t('createRecipe.ingredients.namePlaceholder')}
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   </div>
@@ -238,7 +233,7 @@ const CreateRecipe = () => {
                         newIngredients[index].amount = e.target.value;
                         setIngredients(newIngredients);
                       }}
-                      placeholder="Amount"
+                      placeholder={t('createRecipe.ingredients.amountPlaceholder')}
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   </div>
@@ -251,7 +246,7 @@ const CreateRecipe = () => {
                         newIngredients[index].unit = e.target.value;
                         setIngredients(newIngredients);
                       }}
-                      placeholder="Unit"
+                      placeholder={t('createRecipe.ingredients.unitPlaceholder')}
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   </div>
@@ -278,7 +273,7 @@ const CreateRecipe = () => {
                   className="flex items-center gap-2 text-purple-600 hover:text-purple-700"
                 >
                   <Plus className="w-4 h-4" />
-                  Add Step
+                  {t('createRecipe.instructions.addStep')}
                 </button>
               </div>
 
@@ -293,7 +288,7 @@ const CreateRecipe = () => {
                         newInstructions[index] = e.target.value;
                         setInstructions(newInstructions);
                       }}
-                      placeholder={`Step ${index + 1}`}
+                      placeholder={t('createRecipe.instructions.stepPlaceholder', { number: index + 1 })}
                       rows={2}
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
@@ -319,14 +314,12 @@ const CreateRecipe = () => {
                 className="bg-gradient-to-r from-purple-600 to-pink-500 text-white px-8 py-3 rounded-full hover:from-purple-700 hover:to-pink-600 transition-all transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {loading ? (
-                  <>
-                    <Loader className="w-5 h-5 animate-spin" />
-                    Creating Recipe...
-                  </>
+                    <>
+                      <Loader className="w-5 h-5 animate-spin" />
+                      {t('createRecipe.submit.creating')}
+                    </>
                 ) : (
-                  <>
-                    Create Recipe
-                  </>
+                    t('createRecipe.submit.create')
                 )}
               </button>
             </div>
@@ -337,4 +330,4 @@ const CreateRecipe = () => {
   );
 };
 
-export default CreateRecipe;
+export default CreateRecipeForm;

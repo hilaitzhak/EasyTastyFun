@@ -1,0 +1,123 @@
+{
+  "nav": {
+    "home": "Home",
+    "allRecipes": "All Recipes",
+    "createRecipe": "Create Recipe",
+    "backToRecipes": "Back to Recipes",
+    "cakes": "Cakes",
+    "desserts": "Desserts",
+    "hotStews": "Hot Stews",
+    "pasta": "Pasta",
+    "salads": "Salads",
+    "breakfast": "Breakfast",
+    "backToHome": "Back to Home"
+  },
+  "recipe": {
+    "favorite": "Add to favorites",
+    "ingredients": "Ingredients",
+    "instructions": "Instructions",
+    "servings": "Servings",
+    "prepTime": "Prep Time",
+    "cookTime": "Cook Time",
+    "totalTime": "Total Time",
+    "minutes": "minutes",
+    "description": "Description",
+    "edit": "Edit",
+    "delete": "Delete",
+    "create": "Create a New Recipe",
+    "update": "Update Recipe",
+    "createdAt": "Created: {{date}}",
+    "notFound": "Recipe not found",
+    "deleteConfirmation": "Are you sure you want to delete this recipe?",
+    "deleteFailed": "Failed to delete recipe",
+    "totalTimeInMin": "{{time}} mins",
+    "servingsCount": "{{count}} servings",
+    "ingredientAmount": "{{amount}} {{unit}}"
+  },
+  "common": {
+    "loading": "Loading...",
+    "tryAgain": "Try again",
+    "error": "Error",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirmation": "Are you sure?",
+    "yes": "Yes",
+    "no": "No",
+    "noImage": "No image available"
+  },
+  "hero": {
+    "discoverTitle": "Discover the Art of",
+    "cookingTitle": "Cooking",
+    "description": "Explore a world of flavors, share your culinary masterpieces, and join our community of food enthusiasts.",
+    "shareRecipe": "Share Your Recipe",
+    "browseRecipes": "Browse Recipes"
+  },
+  "latestRecipes": {
+    "title": "Latest Creations",
+    "subtitle": "Discover our community's most recent culinary adventures",
+    "addRecipe": "Add Recipe",
+    "noRecipes": "No recipes yet",
+    "beFirst": "Be the first to share your amazing recipe!",
+    "createRecipe": "Create Recipe"
+  },
+  "allRecipes": {
+    "title": "All Recipes",
+    "subtitle": "Discover our complete collection of amazing recipes",
+    "searchPlaceholder": "Search recipes...",
+    "noSearchResults": "No recipes found for \"{{searchTerm}}\"",
+    "clearSearch": "Clear search",
+    "noRecipes": "No recipes available",
+    "startAdding": "Start by adding your first recipe!",
+    "fetchError": "Failed to fetch recipes. Please try again later.",
+    "loading": "Loading recipes..."
+  },
+  "createRecipe": {
+    "title": "Create New Recipe",
+    "imageSizeError": "Image size should be less than 5MB",
+    "basicInfo": {
+      "name": {
+        "label": "Recipe Name",
+        "placeholder": "Enter recipe name"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Describe your recipe"
+      },
+      "prepTime": {
+        "label": "Prep Time (minutes)"
+      },
+      "cookTime": {
+        "label": "Cook Time (minutes)"
+      },
+      "servings": {
+        "label": "Servings"
+      }
+    },
+    "images": {
+      "title": "Recipe Images",
+      "upload": "Upload Images",
+      "dragDrop": "Click to upload images"
+    },
+    "ingredients": {
+      "title": "Ingredients",
+      "add": "Add Ingredient",
+      "namePlaceholder": "Ingredient name",
+      "amountPlaceholder": "Amount",
+      "unitPlaceholder": "Unit"
+    },
+    "instructions": {
+      "title": "Instructions",
+      "addStep": "Add Step",
+      "stepPlaceholder": "Step {{number}}"
+    },
+    "submit": {
+      "creating": "Creating Recipe...",
+      "create": "Create Recipe"
+    },
+    "errors": {
+      "serverError": "Server Error: {{message}}",
+      "connectionError": "No response from server. Please check your connection.",
+      "createError": "Error creating recipe: {{message}}"
+    }
+  }
+}
