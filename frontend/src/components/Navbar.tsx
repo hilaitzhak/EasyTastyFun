@@ -1,56 +1,89 @@
-import { Globe, Menu, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { Globe, Menu, X, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { Category, SubCategory } from '../interfaces/Category';
+import { categoryApi } from '../api/category.api';
 
-const categories = [
-  { nameKey: 'nav.allRecipes', path: '/recipes' },
-  { nameKey: 'nav.cakes', path: '/category/cakes' },
-  { nameKey: 'nav.desserts', path: '/category/desserts' },
-  { nameKey: 'nav.hotStews', path: '/category/stews' },
-  { nameKey: 'nav.pasta', path: '/category/pasta' },
-  { nameKey: 'nav.salads', path: '/category/salads' },
-  { nameKey: 'nav.breakfast', path: '/category/breakfast' }
-];
-
-const Navbar = () => {
+const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const { t, i18n } = useTranslation();
-
-  // const toggleLanguage = () => {
-  //   const newLang = i18n.language === 'en' ? 'he' : 'en';
-  //   i18n.changeLanguage(newLang);
-  //   document.dir = newLang === 'he' ? 'rtl' : 'ltr';
-  // };
 
   useEffect(() => {
     document.dir = i18n.language === 'he' ? 'rtl' : 'ltr';
-  }, []); // Run once on mount
+  }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await categoryApi.getCategories();
+        setCategories(data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const toggleLanguage = () => {
     const newLang = i18n.language === 'en' ? 'he' : 'en';
     i18n.changeLanguage(newLang);
     document.dir = newLang === 'he' ? 'rtl' : 'ltr';
   };
-  
+
+  const renderSubCategories = (subCategories: SubCategory[]) => {
+    return (
+      <div className="grid grid-cols-3 gap-4 p-6">
+        {subCategories.map((subCategory) => (
+          <Link
+            key={subCategory._id}
+            to={subCategory.path}
+            className="text-gray-700 hover:bg-gray-100 p-2 rounded transition-colors"
+          >
+            {t(subCategory.nameKey)}
+          </Link>
+        ))}
+      </div>
+    );
+  };
+
   return (
-    <nav className="bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg">
+    <nav className="bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg relative">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-20">
-          <div className="hidden md:flex space-x-6">
+          {/* Desktop Menu */}
+          <div className="hidden md:flex space-x-6 relative">
             {categories.map((category) => (
-              <Link
-                key={category.path}
-                to={category.path}
-                className="text-white/90 hover:text-white transition-colors px-3 py-2 rounded-full hover:bg-white/10"
+              <div 
+                key={category._id}
+                className="relative group"
+                onMouseEnter={() => setActiveCategory(category._id)}
+                onMouseLeave={() => setActiveCategory(null)}
               >
-                {t(category.nameKey)}
-              </Link>
+                <Link
+                  to={category.path}
+                  className="flex items-center text-white/90 hover:text-white transition-colors px-3 py-2 rounded-full hover:bg-white/10"
+                >
+                  {t(category.nameKey)}
+                  {(category.subCategories ?? []).length > 0 && (
+                    <ChevronDown className="ml-1 w-4 h-4" />
+                  )}
+                </Link>
+                
+                {(category.subCategories ?? []).length > 0 && activeCategory === category._id && (
+                  <div className="absolute top-full left-0 w-full z-50 bg-white shadow-lg rounded-lg mt-2 overflow-hidden">
+                    {renderSubCategories((category.subCategories ?? []))}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
 
+          {/* Language and Mobile Menu Buttons */}
           <div className="flex items-center gap-4">
-            {/* Language Switcher */}
             <button
               onClick={toggleLanguage}
               className="flex items-center gap-2 text-white/90 hover:text-white transition-colors px-3 py-2 rounded-full hover:bg-white/10"
@@ -59,7 +92,6 @@ const Navbar = () => {
               <span>{i18n.language === 'en' ? 'עברית' : 'English'}</span>
             </button>
 
-            {/* Mobile Menu Button */}
             <button 
               onClick={() => setIsOpen(!isOpen)}
               className="md:hidden p-2 hover:bg-white/10 rounded-lg"
@@ -69,18 +101,33 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile Menu */}
         {isOpen && (
           <div className="md:hidden pb-6">
             {categories.map((category) => (
-              <Link
-                key={category.path}
-                to={category.path}
-                className="block py-2 px-4 text-white/90 hover:bg-white/10 rounded-lg"
-                onClick={() => setIsOpen(false)}
-              >
-                {t(category.nameKey)}
-              </Link>
+              <div key={category._id} className="mb-2">
+                <Link
+                  to={category.path}
+                  className="block py-2 px-4 text-white/90 hover:bg-white/10 rounded-lg"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {t(category.nameKey)}
+                </Link>
+                {(category.subCategories ?? []).length > 0 && (
+                  <div className="pl-4">
+                    {(category.subCategories ?? []).map((subCategory) => (
+                      <Link
+                        key={subCategory._id}
+                        to={subCategory.path}
+                        className="block py-1 px-4 text-white/80 hover:bg-white/10 rounded-lg"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        {t(subCategory.nameKey)}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         )}

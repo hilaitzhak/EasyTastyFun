@@ -1,8 +1,9 @@
 import cors from 'cors';
 import express, { Express } from "express";
-import { AppRouter } from "./routes/recipe.router";
 import { AppConfig } from './config/config';
 import { connectDB } from './config/db.config';
+import { RecipeRouter } from './routes/recipe.router';
+import { CategoryRouter } from './routes/category.router';
 
 export class AppServer {
     public app: Express;
@@ -16,7 +17,7 @@ export class AppServer {
         this.setApp();
         await connectDB(); 
         this.setMiddlewares();
-        this.setRouter();
+        this.setRouters();
     }
 
     private setApp() {
@@ -27,9 +28,11 @@ export class AppServer {
         this.app.use(cors());
         this.app.use(express.json({ limit: '50mb' }));    }
 
-    private setRouter() {
-        const app_router = new AppRouter();
-        this.app.use('/easy-tasty-fun', app_router.getRouter());
+    private setRouters() {
+        const recipeRouter = new RecipeRouter();
+        const categoryRouter = new CategoryRouter();
+        this.app.use('/easy-tasty-fun', recipeRouter.getRouter());
+        this.app.use('/easy-tasty-fun', categoryRouter.getRouter());
     }
 
     public listen() {

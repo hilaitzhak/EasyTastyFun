@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import { RecipeController } from '../controllers/recipe.controller';
 
-export class AppRouter {
+export class RecipeRouter {
     private router: Router;
     private recipeController: RecipeController;
 

@@ -1,0 +1,10 @@
+import mongoose, { Schema } from "mongoose";
+import { ISubCategory } from "../interfaces/recipe.interface";
+
+const SubCategorySchema = new Schema({
+    nameKey: { type: String, required: true },
+    path: { type: String, required: true },
+    isActive: { type: Boolean, default: true }
+});
+  
+export default mongoose.model<ISubCategory>('SubCategory', SubCategorySchema);

@@ -19,3 +19,17 @@ export interface IRecipe extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface ICategory extends Document {
+  nameKey: string; // For translation keys
+  path: string; // For routing
+  isActive: boolean; // Enable/Disable categories
+  order: number; // For custom sorting
+  subCategories?: ISubCategory[];
+}
+
+export interface ISubCategory {
+  nameKey: string;
+  path: string;
+  isActive: boolean;
+}

@@ -4,6 +4,10 @@ import { RecipeService } from "../services/recipe.service";
 export class RecipeController {
     private recipeService = new RecipeService();
 
+    constructor() {
+        this.recipeService = new RecipeService();
+    }
+    
     async createRecipe(req: Request, res: Response): Promise<void> {
         try {
             const recipe = await this.recipeService.createRecipe(req.body);
