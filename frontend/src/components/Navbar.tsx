@@ -36,14 +36,14 @@ const Navbar: React.FC = () => {
 
   const renderSubCategories = (subCategories: SubCategory[]) => {
     return (
-      <div className="grid grid-cols-3 gap-4 p-6">
+      <div className="grid grid-cols-3 gap-4 p-6 bg-white text-gray-700 rounded-lg shadow-lg">
         {subCategories.map((subCategory) => (
           <Link
             key={subCategory._id}
             to={subCategory.path}
-            className="text-gray-700 hover:bg-gray-100 p-2 rounded transition-colors"
+            className="block px-4 py-2 hover:bg-gray-100 transition-colors"
           >
-            {t(subCategory.nameKey)}
+            {t(`${subCategory.nameKey}`)}
           </Link>
         ))}
       </div>
@@ -55,9 +55,9 @@ const Navbar: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-20">
           {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-6 relative">
+          <div className="hidden md:flex space-x-8 relative">
             {categories.map((category) => (
-              <div 
+              <div
                 key={category._id}
                 className="relative group"
                 onMouseEnter={() => setActiveCategory(category._id)}
@@ -65,17 +65,17 @@ const Navbar: React.FC = () => {
               >
                 <Link
                   to={category.path}
-                  className="flex items-center text-white/90 hover:text-white transition-colors px-3 py-2 rounded-full hover:bg-white/10"
+                  className="flex items-center text-white hover:text-white/80 transition-colors px-4 py-2 rounded-full hover:bg-white/10"
                 >
-                  {t(category.nameKey)}
-                  {(category.subCategories ?? []).length > 0 && (
+                  {t(`${category.nameKey}`)}
+                  {category.subCategories && category.subCategories.length > 0 && (
                     <ChevronDown className="ml-1 w-4 h-4" />
                   )}
                 </Link>
-                
-                {(category.subCategories ?? []).length > 0 && activeCategory === category._id && (
-                  <div className="absolute top-full left-0 w-full z-50 bg-white shadow-lg rounded-lg mt-2 overflow-hidden">
-                    {renderSubCategories((category.subCategories ?? []))}
+
+                {category.subCategories && category.subCategories.length > 0 && activeCategory === category._id && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-max z-50">
+                    {renderSubCategories(category.subCategories)}
                   </div>
                 )}
               </div>
@@ -86,13 +86,13 @@ const Navbar: React.FC = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={toggleLanguage}
-              className="flex items-center gap-2 text-white/90 hover:text-white transition-colors px-3 py-2 rounded-full hover:bg-white/10"
+              className="flex items-center gap-2 text-white hover:text-white/80 transition-colors px-3 py-2 rounded-full hover:bg-white/10"
             >
               <Globe className="w-5 h-5" />
               <span>{i18n.language === 'en' ? 'עברית' : 'English'}</span>
             </button>
 
-            <button 
+            <button
               onClick={() => setIsOpen(!isOpen)}
               className="md:hidden p-2 hover:bg-white/10 rounded-lg"
             >
@@ -108,21 +108,21 @@ const Navbar: React.FC = () => {
               <div key={category._id} className="mb-2">
                 <Link
                   to={category.path}
-                  className="block py-2 px-4 text-white/90 hover:bg-white/10 rounded-lg"
+                  className="block py-2 px-4 text-white hover:bg-white/10 rounded-lg"
                   onClick={() => setIsOpen(false)}
                 >
-                  {t(category.nameKey)}
+                  {t(`nav.${category.nameKey}`)}
                 </Link>
-                {(category.subCategories ?? []).length > 0 && (
+                {category.subCategories && category.subCategories.length > 0 && (
                   <div className="pl-4">
-                    {(category.subCategories ?? []).map((subCategory) => (
+                    {category.subCategories.map((subCategory) => (
                       <Link
                         key={subCategory._id}
                         to={subCategory.path}
                         className="block py-1 px-4 text-white/80 hover:bg-white/10 rounded-lg"
                         onClick={() => setIsOpen(false)}
                       >
-                        {t(subCategory.nameKey)}
+                        {t(`${subCategory.nameKey}`)}
                       </Link>
                     ))}
                   </div>

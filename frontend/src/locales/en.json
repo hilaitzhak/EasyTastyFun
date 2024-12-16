@@ -9,8 +9,14 @@
     "hotStews": "Hot Stews",
     "pasta": "Pasta",
     "salads": "Salads",
-    "breakfast": "Breakfast",
-    "backToHome": "Back to Home"
+    "backToHome": "Back to Home",
+    "subCategories": {
+      "chocolateCakes":"Chocolate cakes",
+      "cheesecakes":"Cheesecakes",
+      "torteCakes":"Torte cakes",
+      "sweetDesserts":"Sweet desserts",
+      "savoryDesserts":"Savory desserts"
+    }
   },
   "recipe": {
     "favorite": "Add to favorites",

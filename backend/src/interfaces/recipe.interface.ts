@@ -1,4 +1,4 @@
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 export interface IRecipe extends Document {
   name: string;
@@ -25,7 +25,7 @@ export interface ICategory extends Document {
   path: string; // For routing
   isActive: boolean; // Enable/Disable categories
   order: number; // For custom sorting
-  subCategories?: ISubCategory[];
+  subCategories?: mongoose.Types.ObjectId[];
 }
 
 export interface ISubCategory {
