@@ -90,6 +90,14 @@
         "label": "תיאור",
         "placeholder": "תאר את המתכון שלך"
       },
+      "category": {
+        "label": "קטגוריה",
+        "placeholder":"בחר קטגוריה"
+      },
+      "subcategory": {
+        "label": "תת-קטגוריה",
+        "placeholder":"בחר תת-קטגוריה"
+      },
       "prepTime": {
         "label": "זמן הכנה (דקות)"
       },

@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, Types } from "mongoose";
 import { IRecipe } from "../interfaces/recipe.interface";
 
 const RecipeSchema: Schema = new Schema({
@@ -17,6 +17,8 @@ const RecipeSchema: Schema = new Schema({
     data: { type: String, required: true },
     description: { type: String }
   }],
+  category: { type: Types.ObjectId, ref: 'Category', required: true },
+  subCategory: { type: Types.ObjectId, ref: 'SubCategory', required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

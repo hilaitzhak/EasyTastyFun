@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { ISubCategory } from "../interfaces/recipe.interface";
+import { ISubCategory } from "../interfaces/category.interface";
 
 const SubCategorySchema: Schema<ISubCategory> = new Schema({
     nameKey: { type: String, required: true },

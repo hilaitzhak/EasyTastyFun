@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { recipeApi } from "../api/recipe.api";
 import RecipeForm from "../components/RecipeForm";
+import { Category, SubCategory } from "../interfaces/Category";
+import { categoryApi } from "../api/category.api";
 
 const CreateRecipeForm = () => {
   const navigate = useNavigate();
@@ -11,7 +13,27 @@ const CreateRecipeForm = () => {
   const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: '' }]);
   const [instructions, setInstructions] = useState(['']);
   const [images, setImages] = useState<{ data: string; file: File }[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [subcategories, setSubcategories] = useState<SubCategory[]>([]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data: categoryData } = await categoryApi.getCategories();
+        setCategories(categoryData);
+
+        console.log('Fetching subcategories...');
+        const subcategoryData = await categoryApi.getAllSubCategories();
+        console.log('Subcategories fetched:', subcategoryData);
+        setSubcategories(subcategoryData);
+      } catch (error) {
+        console.error('Error fetching categories or subcategories:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -66,6 +88,8 @@ const CreateRecipeForm = () => {
             setInstructions={setInstructions}
             images={images}
             setImages={setImages}
+            categories={categories}
+            subcategories={subcategories}
           />
         </div>
       </div>

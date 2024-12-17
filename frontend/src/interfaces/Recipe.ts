@@ -1,3 +1,5 @@
+import { Category, SubCategory } from "./Category";
+
 export interface IRecipe {
   _id: string;
   name: string;
@@ -15,6 +17,8 @@ export interface IRecipe {
     data: string;
     description?: string;
   }[];
+  categories: Category;
+  subcategories: SubCategory;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -38,6 +42,8 @@ export interface RecipeImage {
 export interface RecipeFormData {
   name: string;
   description: string;
+  categories: Category[];
+  subcategories: SubCategory[];
   prepTime: number;
   cookTime: number;
   servings: number;
@@ -45,7 +51,6 @@ export interface RecipeFormData {
   instructions: string[];
   images: RecipeImage[];
 }
-
 
 export interface RecipeFormProps {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
@@ -59,6 +64,8 @@ export interface RecipeFormProps {
   images: Array<{ data: string; file: File }>;
   setImages: React.Dispatch<React.SetStateAction<Array<{ data: string; file: File }>>>;
   onCancel?: () => void;
+  categories: Category[];
+  subcategories: SubCategory[];
 }
 
 export interface BasicInfoSectionProps {
@@ -69,6 +76,8 @@ export interface BasicInfoSectionProps {
     cookTime?: number;
     servings?: number;
   };
+  categories: Category[];
+  subcategories: SubCategory[];
 }
 
 export interface ImageUploadSectionProps {

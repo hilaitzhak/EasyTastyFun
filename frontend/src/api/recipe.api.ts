@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/easy-tasty-fun';
+const API_URL = 'http://localhost:4000/easy-tasty-fun';
 
 export const recipeApi = {
     createRecipe: (data: any) => axios.post(`${API_URL}/recipes/add-recipe`, data),

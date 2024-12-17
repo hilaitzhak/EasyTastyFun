@@ -25,6 +25,7 @@ export class CategoryRouter {
 
     private setRoutes() {
         this.router.get('/categories', this.categoryController.getCategories.bind(this.categoryController));
+        this.router.get('/subcategories', this.categoryController.getAllSubCategories.bind(this.categoryController));
     }
 
     public getRouter(): Router {

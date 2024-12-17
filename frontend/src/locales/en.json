@@ -85,6 +85,14 @@
         "label": "Recipe Name",
         "placeholder": "Enter recipe name"
       },
+      "category": {
+        "label": "Category",
+        "placeholder": "Select a category"
+      },
+      "subcategory": {
+        "label": "Subcategory",
+        "placeholder": "Select a subcategory"
+      },
       "description": {
         "label": "Description",
         "placeholder": "Describe your recipe"

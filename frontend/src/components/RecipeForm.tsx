@@ -18,14 +18,16 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
     setInstructions,
     images,
     setImages,
-    onCancel
+    onCancel,
+    categories,
+    subcategories
   }) => {
 
     const { t } = useTranslation();
 
     return (
         <form onSubmit={onSubmit} className="space-y-8">
-            <BasicInfoSection initialData={initialData} />
+            <BasicInfoSection initialData={initialData} categories={categories} subcategories={subcategories}/>
             
             <ImageUploadSection
             images={images}

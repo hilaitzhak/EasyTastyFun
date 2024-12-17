@@ -1,4 +1,5 @@
-import mongoose, { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
+import { ICategory, ISubCategory } from './category.interface';
 
 export interface IRecipe extends Document {
   name: string;
@@ -16,20 +17,8 @@ export interface IRecipe extends Document {
     data: string;
     description?: string;
   }[];
+  category: Types.ObjectId | ICategory;
+  subCategory: Types.ObjectId | ISubCategory;
   createdAt: Date;
   updatedAt: Date;
-}
-
-export interface ICategory extends Document {
-  nameKey: string; // For translation keys
-  path: string; // For routing
-  isActive: boolean; // Enable/Disable categories
-  order: number; // For custom sorting
-  subCategories?: mongoose.Types.ObjectId[];
-}
-
-export interface ISubCategory {
-  nameKey: string;
-  path: string;
-  isActive: boolean;
 }

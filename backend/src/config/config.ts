@@ -9,7 +9,7 @@ export class AppConfig {
     }
 
     private getPort(): number {
-        const port = process.env.PORT || '3000'; // Fallback to port 3000 if not provided
+        const port = process.env.PORT || '4000'; // Fallback to port 3000 if not provided
         return parseInt(port, 10); // Parse it as an integer
     }
 }
