@@ -16,15 +16,26 @@ export class CategoryController {
     }
 
     async getCategoryByPath(req: Request, res: Response): Promise<void> {
-        try {
-          const { categoryPath } = req.params;
-          const category = await this.categoryService.getCategoryByPath(categoryPath);
-          res.status(200).json(category);
-        } catch (error) {
-          res.status(500).json({ message: 'Controller error fetching category by path' });
-        }
+      try {
+        const { categoryPath } = req.params;
+        const fullCategoryPath = `/categories/${categoryPath}`
+        const category = await this.categoryService.getCategoryByPath(fullCategoryPath);
+        res.status(200).json(category);
+      } catch (error) {
+        res.status(500).json({ message: 'Error fetching category by path' });
       }
+    }
     
+    async getSubCategoriesByCategory(req: Request, res: Response): Promise<void> {
+      try {
+        const { categoryPath } = req.params;
+        const subcategories = await this.categoryService.getSubCategoriesByCategory(categoryPath);
+        res.status(200).json(subcategories);
+      } catch (error) {
+        res.status(500).json({ message: 'Error fetching subcategories by category' });
+      }
+    }
+
     async getRecipesByCategory(req: Request, res: Response): Promise<void> {
         try {
             const { categoryId } = req.params;
@@ -44,15 +55,17 @@ export class CategoryController {
       }
     }
     
-    async getSubCategoryByPath(req: Request, res: Response): Promise<void> {
-        try {
-          const { categoryPath, subCategoryPath } = req.params;
-          const subCategory = await this.categoryService.getSubCategoryByPath(categoryPath, subCategoryPath);
-          res.status(200).json(subCategory);
-        } catch (error) {
-          res.status(500).json({ message: 'Error fetching subcategory by path' });
-        }
-      }
+  async getSubCategoryByPath(req: Request, res: Response): Promise<void> {
+    try {
+      const { categoryPath, subCategoryPath } = req.params;
+      const fullCategoryPath = `/categories/${categoryPath}`;
+      const fullSubCategoryPath = `/categories/${categoryPath}/${subCategoryPath}`;
+      const subCategory = await this.categoryService.getSubCategoryByPath(fullCategoryPath, fullSubCategoryPath);
+      res.status(200).json(subCategory);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching subcategory by path' });
+    }
+  }
     
     // async getRecipesBySubCategory(req: Request, res: Response): Promise<void> {
     //     try {

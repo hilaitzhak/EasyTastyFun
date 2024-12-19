@@ -18,8 +18,9 @@ const App = () => {
           <Route path="/recipes/add-recipe" element={<CreateRecipeForm />} />
           <Route path="/recipe/:id" element={<RecipeDetails />} />
           <Route path="/recipe/edit/:id" element={<EditRecipe />} />
-          <Route path="/category/:categoryPath" element={<CategoryPage />} />
-          <Route path="/category/:categoryPath/:subCategoryPath" element={<CategoryPage />} />
+          <Route path="/categories/:categoryPath" element={<CategoryPage />} />
+          <Route path="/categories/:categoryPath/subcategories" element={<CategoryPage />} />
+          <Route path="/categories/:categoryPath/:subCategoryPath" element={<CategoryPage />} />
         </Routes>
       </Router>
     );

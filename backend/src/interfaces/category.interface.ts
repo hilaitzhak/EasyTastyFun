@@ -1,6 +1,7 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 export interface ICategory extends Document {
+    _id: Types.ObjectId;
     nameKey: string; // For translation keys
     path: string; // For routing
     isActive: boolean; // Enable/Disable categories
@@ -11,6 +12,7 @@ export interface ICategory extends Document {
 }
   
 export interface ISubCategory {
+    _id: Types.ObjectId;
     nameKey: string;
     path: string;
     isActive: boolean;

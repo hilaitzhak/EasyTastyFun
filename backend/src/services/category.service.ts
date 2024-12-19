@@ -25,7 +25,7 @@ export class CategoryService {
 
   async getCategoryByPath(categoryPath: string): Promise<ICategory | null> {
     try {
-      return await Category.findOne({ path: categoryPath }).populate('subCategories');
+      return await Category.findOne({ path: categoryPath });
     } catch (error) {
       console.error('Error fetching category by path:', error);
       return null;
@@ -51,15 +51,26 @@ export class CategoryService {
     }
   }
   
+  async getSubCategoriesByCategory(categoryPath: string): Promise<ISubCategory[]> {
+    try {
+      const category = await Category.findOne({ path: categoryPath }).populate('subCategories');
+      return category ? category.subCategories : [];
+    } catch (error) {
+      console.error('Error fetching subcategories by category:', error);
+      return [];
+    }
+  }
+
   async getSubCategoryByPath(categoryPath: string, subCategoryPath: string): Promise<ISubCategory | null> {
     try {
       const category = await Category.findOne({ path: categoryPath }).populate('subCategories');
       if (category) {
-        return category.subCategories.find((subCategory) => subCategory.path === subCategoryPath) || null;
+        const subCategory = await SubCategory.findOne({ path: subCategoryPath, _id: { $in: category.subCategories.map(sc => sc._id) } });
+        return subCategory || null;
       }
       return null;
     } catch (error) {
-      console.error('Error fetching subcategory by path:', error);
+      console.error('Service error fetching subcategory by path:', error);
       return null;
     }
   }

@@ -19,6 +19,7 @@ const Navbar: React.FC = () => {
     const fetchCategories = async () => {
       try {
         const { data } = await categoryApi.getCategories();
+        console.log("Fetched categories:", data); // Log the data
         setCategories(data);
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -56,7 +57,7 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between items-center h-20">
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-8 relative">
-            {categories.map((category) => (
+            {categories.length > 0 && categories.map((category) => (
               <div
                 key={category._id}
                 className="relative group"
