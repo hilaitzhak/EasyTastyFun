@@ -46,6 +46,8 @@ const CreateRecipeForm = () => {
         prepTime: Number(formData.get('prepTime')),
         cookTime: Number(formData.get('cookTime')),
         servings: Number(formData.get('servings')),
+        category: formData.get('category'),
+        subcategory: formData.get('subcategory'),
         ingredients: ingredients.filter(ing => ing.name && ing.amount && ing.unit),
         instructions: instructions.filter(Boolean),
         images: images.map(img => ({

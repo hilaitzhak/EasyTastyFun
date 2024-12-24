@@ -18,7 +18,7 @@ export interface IRecipe extends Document {
     description?: string;
   }[];
   category: Types.ObjectId | ICategory;
-  subCategory: Types.ObjectId | ISubCategory;
+  subcategory: Types.ObjectId | ISubCategory;
   createdAt: Date;
   updatedAt: Date;
 }

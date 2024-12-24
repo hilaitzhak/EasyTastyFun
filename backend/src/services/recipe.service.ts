@@ -4,14 +4,14 @@ import Recipe from '../models/recipe.model';
 
 export class RecipeService {
 
-    async createRecipe(recipeData: IRecipe) {
-      try {
-        const recipe = new Recipe(recipeData);
-        return await recipe.save();
-      } catch (error) {
-        throw new Error('Error creating recipe');
+      async createRecipe(recipeData: IRecipe) {
+        try {
+          const recipe = new Recipe(recipeData);
+          return await recipe.save();
+        } catch (error) {
+          throw new Error('Error creating recipe');
+        }
       }
-    }
 
     async getAllRecipes() {
       try {

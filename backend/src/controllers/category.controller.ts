@@ -67,13 +67,13 @@ export class CategoryController {
     }
   }
     
-    // async getRecipesBySubCategory(req: Request, res: Response): Promise<void> {
-    //     try {
-    //         const { subCategoryId } = req.params;
-    //         const recipes = await this.categoryService.getRecipesBySubCategory(subCategoryId);
-    //         res.status(200).json(recipes);
-    //     } catch (error) {
-    //         res.status(500).json({ message: 'Error fetching recipes by subcategory' });
-    //     }
-    // }
+  async getRecipesBySubCategory(req: Request, res: Response): Promise<void> {
+    try {
+      const { categoryPath, subCategoryPath } = req.params;
+      const recipes = await this.categoryService.getRecipesBySubCategory(categoryPath, subCategoryPath);
+      res.status(200).json(recipes);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching recipes by subcategory' });
+    }
+  }
 }

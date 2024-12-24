@@ -20,7 +20,9 @@ const CategoryPage: React.FC = () => {
           const subCategoryData = await categoryApi.getSubCategoryByPath(categoryPath, subCategoryPath);
           if (subCategoryData) {
             setSubCategory(subCategoryData);
-            const recipeData = await categoryApi.getRecipesBySubCategory(subCategoryData._id);
+            console.log('subCategoryData._id: ', subCategoryData._id)
+            const recipeData = await categoryApi.getRecipesBySubCategory(categoryPath, subCategoryPath);
+            console.log('recipeData: ', recipeData)
             setRecipes(recipeData);
           } else {
             setSubCategory(null);

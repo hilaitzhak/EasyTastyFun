@@ -1,6 +1,8 @@
 import { ICategory, ISubCategory } from '../interfaces/category.interface';
+import { IRecipe } from '../interfaces/recipe.interface';
 import Category from '../models/category.model';
 import SubCategory from '../models/subcategory.model';
+import Recipe from '../models/recipe.model';
 
 export class CategoryService {
 
@@ -75,13 +77,27 @@ export class CategoryService {
     }
   }
 
-  // async getRecipesBySubCategory(subCategoryId: string): Promise<IRecipe[]> {
-  //   try {
-  //     const subCategory = await SubCategory.findById(subCategoryId).populate('recipes');
-  //     return subCategory?.recipes || [];
-  //   } catch (error) {
-  //     console.error('Error fetching recipes by subcategory:', error);
-  //     return [];
-  //   }
-  // }
+  async getRecipesBySubCategory(categoryPath: string, subCategoryPath: string): Promise<IRecipe[]> {
+    try {
+      const subCategory = await this.getSubCategoryByPath(categoryPath, subCategoryPath);
+      // if (subCategory) {
+      //   return await this.getRecipesForSubCategory(subCategory._id);
+      // }
+      return [];
+    } catch (error) {
+      console.error('Error fetching recipes by subcategory:', error);
+      return [];
+    }
+  }
+
+  private async getRecipesForSubCategory(subCategoryId: string): Promise<IRecipe[]> {
+    try {
+      // Fetch recipes associated with the given subcategory
+      // You'll need to update this based on your recipe model and associations
+      return await Recipe.find({ subCategory: subCategoryId });
+    } catch (error) {
+      console.error('Error fetching recipes for subcategory:', error);
+      return [];
+    }
+  }
 }
