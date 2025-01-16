@@ -39,9 +39,6 @@ export const RecipeCard = ({ recipe, onClick }: RecipeCardProps) => {
         <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-purple-600 transition-colors">
           {recipe.name}
         </h3>
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-          {recipe.description}
-        </p>
 
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-500">
           <div className="flex items-center gap-2">

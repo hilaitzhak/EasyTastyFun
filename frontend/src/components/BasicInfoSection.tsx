@@ -22,20 +22,6 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({ initialData, catego
   
         <div>
           <label className="block text-gray-700 font-medium mb-2">
-            {t('createRecipe.basicInfo.description.label')}
-          </label>
-          <textarea
-            name="description"
-            defaultValue={initialData?.description}
-            required
-            rows={3}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            placeholder={t('createRecipe.basicInfo.description.placeholder')}
-          />
-        </div>
-  
-        <div>
-          <label className="block text-gray-700 font-medium mb-2">
             {t('createRecipe.basicInfo.category.label')}
           </label>
           <select

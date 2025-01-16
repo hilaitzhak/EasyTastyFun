@@ -42,7 +42,6 @@ const CreateRecipeForm = () => {
       const formData = new FormData(e.currentTarget);
       const recipeData = {
         name: formData.get('name'),
-        description: formData.get('description'),
         prepTime: Number(formData.get('prepTime')),
         cookTime: Number(formData.get('cookTime')),
         servings: Number(formData.get('servings')),

@@ -3,17 +3,16 @@ import { Category, SubCategory } from "./Category";
 export interface IRecipe {
   _id: string;
   name: string;
-  description: string;
-  prepTime: number;
-  cookTime: number;
-  servings: number;
+  prepTime?: number;
+  cookTime?: number;
+  servings?: number;
   ingredients: {
     name: string;
     amount: number;
-    unit: string;
+    unit?: string;
   }[];
   instructions: string[];
-  images: {
+  images?: {
     data: string;
     description?: string;
   }[];
@@ -31,7 +30,7 @@ export interface RecipeCardProps {
 export interface Ingredient {
   name: string;
   amount: string;
-  unit: string;
+  unit?: string;
 }
 
 export interface RecipeImage {
@@ -41,15 +40,14 @@ export interface RecipeImage {
 
 export interface RecipeFormData {
   name: string;
-  description: string;
   categories: Category[];
   subcategories: SubCategory[];
-  prepTime: number;
-  cookTime: number;
-  servings: number;
+  prepTime?: number;
+  cookTime?: number;
+  servings?: number;
   ingredients: Ingredient[];
   instructions: string[];
-  images: RecipeImage[];
+  images?: RecipeImage[];
 }
 
 export interface RecipeFormProps {
@@ -71,7 +69,6 @@ export interface RecipeFormProps {
 export interface BasicInfoSectionProps {
   initialData?: {
     name?: string;
-    description?: string;
     prepTime?: number;
     cookTime?: number;
     servings?: number;

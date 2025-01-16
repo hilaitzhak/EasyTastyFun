@@ -3,18 +3,17 @@ import { IRecipe } from "../interfaces/recipe.interface";
 
 const RecipeSchema: Schema = new Schema({
   name: { type: String, required: true },
-  description: { type: String, required: true },
-  prepTime: { type: Number, required: true },
-  cookTime: { type: Number, required: true },
-  servings: { type: Number, required: true },
+  prepTime: { type: Number },
+  cookTime: { type: Number },
+  servings: { type: Number },
   ingredients: [{
     name: { type: String, required: true },
     amount: { type: Number, required: true },
-    unit: { type: String, required: true }
+    unit: { type: String }
   }],
   instructions: [{ type: String, required: true }],
   images: [{
-    data: { type: String, required: true },
+    data: { type: String},
     description: { type: String }
   }],
   category: { type: Types.ObjectId, ref: 'Category', required: true },

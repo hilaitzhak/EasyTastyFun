@@ -88,7 +88,6 @@ const EditRecipe = () => {
       const formData = new FormData(e.currentTarget);
       const updatedRecipe = {
         name: formData.get('name'),
-        description: formData.get('description'),
         prepTime: Number(formData.get('prepTime')),
         cookTime: Number(formData.get('cookTime')),
         servings: Number(formData.get('servings')),
@@ -145,18 +144,6 @@ const EditRecipe = () => {
                   defaultValue={recipe.name}
                   required
                   placeholder={t('createRecipe.basicInfo.name.placeholder')}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">{t('createRecipe.basicInfo.description.label')}</label>
-                <textarea
-                  name="description"
-                  defaultValue={recipe.description}
-                  required
-                  placeholder={t('createRecipe.basicInfo.description.placeholder')}
-                  rows={3}
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>

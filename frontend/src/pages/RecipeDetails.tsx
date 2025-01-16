@@ -159,11 +159,6 @@ const RecipeDetails = () => {
             </div>
           )}
 
-          {/* Description */}
-          <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-            <p className="text-gray-700 leading-relaxed">{recipe.description}</p>
-          </div>
-
           {/* Ingredients */}
           <div className="bg-white rounded-xl shadow-md p-6 mb-8">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">{t('recipe.ingredients')}</h2>

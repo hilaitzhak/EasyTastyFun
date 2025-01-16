@@ -3,17 +3,16 @@ import { ICategory, ISubCategory } from './category.interface';
 
 export interface IRecipe extends Document {
   name: string;
-  description: string;
-  prepTime: number;
-  cookTime: number;
-  servings: number;
+  prepTime?: number;
+  cookTime?: number;
+  servings?: number;
   ingredients: {
     name: string;
     amount: number;
-    unit: string;
+    unit?: string;
   }[];
   instructions: string[];
-  images: {
+  images?: {
     data: string;
     description?: string;
   }[];
