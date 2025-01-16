@@ -9,23 +9,22 @@ export const useRecipes = (recent = false) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-        const endpoint = recent ? '/recipes/recent' : '/recipes';
-        const { data } = await axios.get(`http://localhost:3000/easy-tasty-fun/${endpoint}`);
-        setRecipes(data);
-        setError(null);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : 'An error occurred while fetching recipes'
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchRecipes();
   }, [recent]);
-
+  
+  const fetchRecipes = async () => {
+    try {
+      const endpoint = recent ? 'recipes/recent' : 'recipes';
+      const { data } = await axios.get(`http://localhost:4000/easy-tasty-fun/${endpoint}`);
+      setRecipes(data);
+      setError(null);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'An error occurred while fetching recipes'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
   return { recipes, loading, error };
 };

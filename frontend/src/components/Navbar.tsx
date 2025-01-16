@@ -16,18 +16,18 @@ const Navbar: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const { data } = await categoryApi.getCategories();
-        console.log("Fetched categories:", data); // Log the data
-        setCategories(data);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
-
     fetchCategories();
   }, []);
+  
+  const fetchCategories = async () => {
+    try {
+      const { data } = await categoryApi.getCategories();
+      console.log("Fetched categories:", data); // Log the data
+      setCategories(data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
 
   const toggleLanguage = () => {
     const newLang = i18n.language === 'en' ? 'he' : 'en';
@@ -55,7 +55,6 @@ const Navbar: React.FC = () => {
     <nav className="bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg relative">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-20">
-          {/* Desktop Menu */}
           <div className="hidden md:flex space-x-8 relative">
             {categories.length > 0 && categories.map((category) => (
               <div

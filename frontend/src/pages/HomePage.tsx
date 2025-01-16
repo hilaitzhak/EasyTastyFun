@@ -1,7 +1,7 @@
 import React from 'react';
-import Navbar from './Navbar';
-import HeroSection from './HeroSection';
-import LatestRecipes from './LatestRecipes';
+import Navbar from '../components/Navbar';
+import HeroSection from '../components/HeroSection';
+import LatestRecipes from '../components/LatestRecipes';
 
 export const HomePage = () => {
   return (
