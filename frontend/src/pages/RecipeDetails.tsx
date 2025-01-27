@@ -5,7 +5,7 @@ import { recipeApi } from '../api/recipe.api';
 import i18n from '../i18n/i18n';
 import { useTranslation } from 'react-i18next';
 
-const RecipeDetails = () => {
+function RecipeDetails() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -118,16 +118,18 @@ const RecipeDetails = () => {
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">{recipe.name}</h1>
           
-          <div className="flex gap-6 text-gray-600 mb-8">
-            <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5" />
-              <span>{t('recipe.totalTimeInMin', { time: recipe.prepTime + recipe.cookTime })}</span>
+          {(recipe.prepTime > 0 || recipe?.cookTime > 0 || recipe.servings > 0) && (
+            <div className="flex gap-6 text-gray-600 mb-8">
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5" />
+                <span>{t('recipe.totalTimeInMin', { time: recipe.prepTime + recipe.cookTime })}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5" />
+                <span>{t('recipe.servingsCount', { count: recipe.servings })}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Users className="w-5 h-5" />
-              <span>{t('recipe.servingsCount', { count: recipe.servings })}</span>
-            </div>
-          </div>
+          )}
 
           {/* Image Gallery */}
           {recipe.images && recipe.images.length > 0 && (

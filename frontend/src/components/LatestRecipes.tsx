@@ -1,17 +1,17 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecipes } from '../hooks/useRecipes';
-import { RecipeCard } from './RecipeCard';
 import { PlusCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import RecipeCard from './RecipeCard';
 
-const LatestRecipes = () => {
+function LatestRecipes() {
   const { recipes, loading, error } = useRecipes(true);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   return (
-    <section className="py-20 bg-gradient-to-b from-white to-purple-50">
+    <div className="py-20 bg-gradient-to-b from-white to-purple-50">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-12">
           <div>
@@ -57,7 +57,7 @@ const LatestRecipes = () => {
           </div>
         )}
       </div>
-    </section>
+    </div>
   );
 };
 

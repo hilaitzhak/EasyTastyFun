@@ -1,4 +1,4 @@
-import express, { Router } from 'express';
+import { Router } from 'express';
 import { RecipeController } from '../controllers/recipe.controller';
 
 export class RecipeRouter {

@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
 import LatestRecipes from '../components/LatestRecipes';
 
-export const HomePage = () => {
+function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />

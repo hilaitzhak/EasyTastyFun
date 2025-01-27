@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Category, SubCategory } from '../interfaces/Category';
 import { categoryApi } from '../api/category.api';
 
-const Navbar: React.FC = () => {
+function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);

@@ -1,9 +1,8 @@
 import { ChefHat, UtensilsCrossed } from 'lucide-react';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
-const HeroSection = () => {
+function HeroSection() {
   const { t } = useTranslation();
   return (
     <div className="relative h-[600px] overflow-hidden">

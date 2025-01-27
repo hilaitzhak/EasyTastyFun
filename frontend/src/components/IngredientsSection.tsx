@@ -3,7 +3,7 @@ import { Plus, Minus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { IngredientsProps } from '../interfaces/Recipe';
 
-const IngredientsSection: React.FC<IngredientsProps> = ({ ingredients, setIngredients }) => {
+function IngredientsSection({ ingredients, setIngredients }: IngredientsProps) {
   const { t } = useTranslation();
 
   const addIngredient = () => {

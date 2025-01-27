@@ -3,9 +3,9 @@ import { Category, SubCategory } from "./Category";
 export interface IRecipe {
   _id: string;
   name: string;
-  prepTime?: number;
-  cookTime?: number;
-  servings?: number;
+  prepTime?: number | undefined;
+  cookTime?: number | undefined;
+  servings?: number | undefined;
   ingredients: {
     name: string;
     amount: number;

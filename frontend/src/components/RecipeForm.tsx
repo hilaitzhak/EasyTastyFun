@@ -7,21 +7,8 @@ import ImageUploadSection from './ImageUploadSection';
 import IngredientsSection from './IngredientsSection';
 import InstructionsSection from './InstructionsSection';
 
-const RecipeForm: React.FC<RecipeFormProps> = ({
-    onSubmit,
-    loading,
-    isEdit = false,
-    initialData,
-    ingredients,
-    setIngredients,
-    instructions,
-    setInstructions,
-    images,
-    setImages,
-    onCancel,
-    categories,
-    subcategories
-  }) => {
+function RecipeForm({ onSubmit, loading, isEdit = false, initialData, ingredients, setIngredients,instructions,
+    setInstructions,images,setImages,onCancel,categories,subcategories }: RecipeFormProps) {
 
     const { t } = useTranslation();
 
