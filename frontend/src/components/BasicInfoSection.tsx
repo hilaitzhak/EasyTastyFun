@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { BasicInfoSectionProps } from "../interfaces/Recipe";
 
-function BasicInfoSection({ initialData, categories, subcategories }: BasicInfoSectionProps) {
+function BasicInfoSection({ initialData, categories, subcategories, onCategoryChange, selectedCategory }: BasicInfoSectionProps) {
   const { t } = useTranslation();
   
   return (
@@ -26,6 +26,8 @@ function BasicInfoSection({ initialData, categories, subcategories }: BasicInfoS
         </label>
         <select
           name="category"
+          value={selectedCategory}
+          onChange={(e) => onCategoryChange(e.target.value)}
           required
           className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
         >
@@ -44,6 +46,7 @@ function BasicInfoSection({ initialData, categories, subcategories }: BasicInfoS
         </label>
         <select
           name="subcategory"
+          disabled={!selectedCategory}
           required
           className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
         >

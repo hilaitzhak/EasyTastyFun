@@ -64,6 +64,8 @@ export interface RecipeFormProps {
   onCancel?: () => void;
   categories: Category[];
   subcategories: SubCategory[];
+  onCategoryChange: (categoryId: string) => void;
+  selectedCategory: string;
 }
 
 export interface BasicInfoSectionProps {
@@ -75,6 +77,8 @@ export interface BasicInfoSectionProps {
   };
   categories: Category[];
   subcategories: SubCategory[];
+  onCategoryChange: (categoryId: string) => void;
+  selectedCategory: string;
 }
 
 export interface ImageUploadSectionProps {

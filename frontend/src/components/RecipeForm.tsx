@@ -8,13 +8,13 @@ import IngredientsSection from './IngredientsSection';
 import InstructionsSection from './InstructionsSection';
 
 function RecipeForm({ onSubmit, loading, isEdit = false, initialData, ingredients, setIngredients,instructions,
-    setInstructions,images,setImages,onCancel,categories,subcategories }: RecipeFormProps) {
+    setInstructions,images,setImages,onCancel,categories,subcategories,onCategoryChange, selectedCategory }: RecipeFormProps) {
 
     const { t } = useTranslation();
 
     return (
         <form onSubmit={onSubmit} className="space-y-8">
-            <BasicInfoSection initialData={initialData} categories={categories} subcategories={subcategories}/>
+            <BasicInfoSection initialData={initialData} categories={categories} subcategories={subcategories} onCategoryChange={onCategoryChange} selectedCategory={selectedCategory} />
             
             <ImageUploadSection
             images={images}

@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Loader, ArrowLeft, Plus, ArrowRight } from 'lucide-react';
 import { IRecipe } from '../interfaces/Recipe';
 import { recipeApi } from '../api/recipe.api';
-import { RecipeCard } from '../components/RecipeCard';
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n/i18n';
+import RecipeCard from '../components/RecipeCard';
 
-const AllRecipes = () => {
+function AllRecipes() {
   const { t } = useTranslation();
   const [recipes, setRecipes] = useState<IRecipe[]>([]);
   const [loading, setLoading] = useState(true);

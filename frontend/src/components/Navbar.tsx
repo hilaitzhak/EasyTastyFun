@@ -22,7 +22,6 @@ function Navbar() {
   const fetchCategories = async () => {
     try {
       const { data } = await categoryApi.getCategories();
-      console.log("Fetched categories:", data); // Log the data
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -56,6 +55,12 @@ function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-20">
           <div className="hidden md:flex space-x-8 relative">
+            <Link
+              to="/recipes"
+              className="flex items-center text-white hover:text-white/80 transition-colors px-4 py-2 rounded-full hover:bg-white/10"
+            >
+              {t('nav.allRecipes')}
+            </Link>
             {categories.length > 0 && categories.map((category) => (
               <div
                 key={category._id}
@@ -104,6 +109,15 @@ function Navbar() {
         {/* Mobile Menu */}
         {isOpen && (
           <div className="md:hidden pb-6">
+            <div className="mb-2">
+              <Link
+                to="/recipes"
+                className="block py-2 px-4 text-white hover:bg-white/10 rounded-lg"
+                onClick={() => setIsOpen(false)}
+              >
+                {t('nav.allRecipes')}
+              </Link>
+            </div>
             {categories.map((category) => (
               <div key={category._id} className="mb-2">
                 <Link
@@ -111,11 +125,11 @@ function Navbar() {
                   className="block py-2 px-4 text-white hover:bg-white/10 rounded-lg"
                   onClick={() => setIsOpen(false)}
                 >
-                  {t(`nav.${category.nameKey}`)}
+                  {t(`${category.nameKey}`)}
                 </Link>
                 {category.subCategories && category.subCategories.length > 0 && (
                   <div className="pl-4">
-                    {category.subCategories.map((subCategory) => (
+                    {category.subCategories.map((subCategory: SubCategory) => (
                       <Link
                         key={subCategory._id}
                         to={subCategory.path}

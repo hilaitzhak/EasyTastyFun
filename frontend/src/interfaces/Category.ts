@@ -9,6 +9,7 @@ export interface Category {
 
 export interface SubCategory {
     _id: string;
+    categoryId: string;
     nameKey: string;
     path: string;
     isActive: boolean;
