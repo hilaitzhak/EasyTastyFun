@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { Category, SubCategory } from "./Category";
+import { DragEndEvent } from '@dnd-kit/core';
 
 export interface IRecipe {
   _id: string;
@@ -7,12 +8,18 @@ export interface IRecipe {
   prepTime?: number | undefined;
   cookTime?: number | undefined;
   servings?: number | undefined;
-  ingredients: {
-    name: string;
-    amount: string;
-    unit?: string;
+  ingredientGroups: {
+    title: string;
+    ingredients: {
+      name: string;
+      amount: string;
+      unit: string;
+    }[];
   }[];
-  instructions: string[];
+  instructionGroups: {
+    title: string;
+    instructions: string[];
+  }[];
   images?: {
     data: string;
     description?: string;
@@ -23,9 +30,19 @@ export interface IRecipe {
   updatedAt: Date;
 }
 
+export interface IngredientTitle {
+  name: string;
+  isTitle: true;
+}
+
 export interface RecipeCardProps {
   recipe: IRecipe;
   onClick?: (id: string) => void;
+}
+
+export interface IngredientGroup {
+  title: string;
+  ingredients: Ingredient[];
 }
 
 export interface Ingredient {
@@ -36,6 +53,11 @@ export interface Ingredient {
 
 export interface Instruction {
   content: string;
+}
+
+export interface InstructionGroup {
+  title: string;
+  instructions: Instruction[];
 }
 
 export interface RecipeImage {
@@ -60,10 +82,10 @@ export interface RecipeFormProps {
   loading: boolean;
   isEdit?: boolean;
   initialData?: any;
-  ingredients: Array<{ name: string; amount: string; unit: string }>;
-  setIngredients: React.Dispatch<React.SetStateAction<Array<{ name: string; amount: string; unit: string }>>>;
-  instructions: string[];
-  setInstructions: React.Dispatch<React.SetStateAction<string[]>>;
+  ingredientGroups: IngredientGroup[];
+  setIngredientGroups: React.Dispatch<React.SetStateAction<IngredientGroup[]>>;
+  instructionGroups: InstructionGroup[];
+  setInstructionGroups: React.Dispatch<React.SetStateAction<InstructionGroup[]>>;
   images: Array<{ data: string; file: File }>;
   setImages: React.Dispatch<React.SetStateAction<Array<{ data: string; file: File }>>>;
   onCancel?: () => void;
@@ -92,22 +114,25 @@ export interface ImageUploadSectionProps {
 }
 
 export interface IngredientsProps {
-  ingredients: Array<{ name: string; amount: string; unit: string }>;
-  setIngredients: React.Dispatch<React.SetStateAction<Array<{ name: string; amount: string; unit: string }>>>;
+  ingredientGroups: IngredientGroup[];
+  setIngredientGroups: React.Dispatch<React.SetStateAction<IngredientGroup[]>>;
 }
 
 export interface InstructionsSectionProps {
-  instructions: string[];
-  setInstructions: React.Dispatch<React.SetStateAction<string[]>>;
+  instructionGroups: InstructionGroup[];
+  setInstructionGroups: React.Dispatch<React.SetStateAction<InstructionGroup[]>>;
 }
 
 export interface SortableItemProps {
   id: string;
   children: ReactNode;
+  nested?: boolean;
 }
 
 export interface SortableListProps<T> {
   items: T[];
   setItems: (items: T[]) => void;
-  renderItem: (item: T, index: number) => ReactNode;
+  renderItem: (item: T, index: number) => React.ReactNode;
+  groupId?: string;
+  onDragEnd?: (event: DragEndEvent) => void;
 }

@@ -121,12 +121,18 @@
       "add": "הוסף מצרך",
       "namePlaceholder": "שם המצרך",
       "amountPlaceholder": "כמות",
-      "unitPlaceholder": "יחידה"
+      "unitPlaceholder": "יחידה",
+      "addGroup": "הוסף קבוצה",
+      "groupTitlePlaceholder": "כותרת לקבוצה",
+      "addToGroup": "הוסף מצרך לקבוצה"
     },
     "instructions": {
       "title": "הוראות הכנה",
       "addStep": "הוסף שלב",
-      "stepPlaceholder": "שלב {{number}}"
+      "stepPlaceholder": "שלב {{number}}",
+      "addGroup": "הוסף קבוצה",
+      "groupTitlePlaceholder": "כותרת לקבוצה",
+      "addToGroup": "הוסף שלב לקבוצה"
     },
     "submit": {
       "creating": "יוצר מתכון...",
@@ -150,7 +156,10 @@
     "instructions": {
       "title": "הוראות הכנה",
       "addStep": "הוסף שלב",
-      "stepPlaceholder": "שלב {{number}}"
+      "stepPlaceholder": "שלב {{number}}",
+      "addGroup": "הוסף קבוצה",
+      "groupTitlePlaceholder": "כותרת לקבוצה",
+      "addToGroup": "הוסף שלב לקבוצה"
     }
   }
 }

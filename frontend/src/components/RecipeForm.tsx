@@ -6,8 +6,8 @@ import ImageUploadSection from './ImageUploadSection';
 import IngredientsSection from './IngredientsSection';
 import InstructionsSection from './InstructionsSection';
 
-function RecipeForm({ onSubmit, loading, isEdit = false, initialData, ingredients, setIngredients,instructions,
-    setInstructions,images,setImages,onCancel,categories,subcategories,onCategoryChange, selectedCategory }: RecipeFormProps) {
+function RecipeForm({ onSubmit, loading, isEdit = false, initialData, ingredientGroups, setIngredientGroups,instructionGroups,
+    setInstructionGroups,images,setImages,onCancel,categories,subcategories,onCategoryChange, selectedCategory }: RecipeFormProps) {
 
     const { t } = useTranslation();
 
@@ -21,13 +21,13 @@ function RecipeForm({ onSubmit, loading, isEdit = false, initialData, ingredient
             />
 
             <IngredientsSection
-            ingredients={ingredients}
-            setIngredients={setIngredients}
+            ingredientGroups={ingredientGroups}
+            setIngredientGroups={setIngredientGroups}
             />
 
             <InstructionsSection
-            instructions={instructions}
-            setInstructions={setInstructions}
+            instructionGroups={instructionGroups}
+            setInstructionGroups={setInstructionGroups}
             />
 
             <div className="flex justify-end gap-4">

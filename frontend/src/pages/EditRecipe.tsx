@@ -5,7 +5,9 @@ import { recipeApi } from '../api/recipe.api';
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n/i18n';
 import SortableList from '../components/SortableList';
-import { Ingredient } from '../interfaces/Recipe';
+import { Ingredient, IngredientGroup, InstructionGroup } from '../interfaces/Recipe';
+import { arrayMove } from '@dnd-kit/sortable';
+import InstructionsSection from '../components/InstructionsSection';
 
 const EditRecipe = () => {
   const { t } = useTranslation();
@@ -18,7 +20,60 @@ const EditRecipe = () => {
   const [instructions, setInstructions] = useState(['']);
   const [images, setImages] = useState<{ data: string; file: File }[]>([]);
   const isRTL = i18n.language === 'he';
-
+  const [ingredientGroups, setIngredientGroups] = useState<IngredientGroup[]>([
+    {
+      title: '',
+      ingredients: [{ name: '', amount: '', unit: '' }]
+    }
+  ]);
+  const [instructionGroups, setInstructionGroups] = useState<InstructionGroup[]>([
+    { title: '', instructions: [{ content: '' }] }
+  ]);
+  
+  const addInstructionGroup = () => {
+    setInstructionGroups([...instructionGroups, { title: '', instructions: [{ content: '' }] }]);
+  };
+  
+  const removeInstructionGroup = (groupIndex: number) => {
+    setInstructionGroups(instructionGroups.filter((_, i) => i !== groupIndex));
+  };
+  
+  const addInstructionToGroup = (groupIndex: number) => {
+    const newGroups = [...instructionGroups];
+    newGroups[groupIndex].instructions.push( { content: '' });
+    setInstructionGroups(newGroups);
+  };
+  
+  const removeInstructionFromGroup = (groupIndex: number, instructionIndex: number) => {
+    const newGroups = [...instructionGroups];
+    newGroups[groupIndex].instructions = newGroups[groupIndex].instructions.filter(
+      (_: any, i: number) => i !== instructionIndex
+    );
+    setInstructionGroups(newGroups);
+  };
+  
+  const addIngredientGroup = () => {
+    setIngredientGroups([...ingredientGroups, {
+      title: '',
+      ingredients: [{ name: '', amount: '', unit: '' }]
+    }]);
+  };
+  
+  const removeIngredientGroup = (groupIndex: number) => {
+    setIngredientGroups(ingredientGroups.filter((_, i) => i !== groupIndex));
+  };
+  
+  const addIngredientToGroup = (groupIndex: number) => {
+    const newGroups = [...ingredientGroups];
+    newGroups[groupIndex].ingredients.push({ name: '', amount: '', unit: '' });
+    setIngredientGroups(newGroups);
+  };
+  
+  const removeIngredientFromGroup = (groupIndex: number, ingredientIndex: number) => {
+    const newGroups = [...ingredientGroups];
+    newGroups[groupIndex].ingredients = newGroups[groupIndex].ingredients.filter((_, i) => i !== ingredientIndex);
+    setIngredientGroups(newGroups);
+  };
   // Fetch recipe data
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -66,26 +121,10 @@ const EditRecipe = () => {
     setImages(images.filter((_, i) => i !== index));
   };
 
-  const addIngredient = () => {
-    setIngredients([...ingredients, { name: '', amount: '', unit: '' }]);
-  };
-
-  const removeIngredient = (index: number) => {
-    setIngredients(ingredients.filter((_, i) => i !== index));
-  };
-
-  const addInstruction = () => {
-    setInstructions([...instructions, '']);
-  };
-
-  const removeInstruction = (index: number) => {
-    setInstructions(instructions.filter((_, i) => i !== index));
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
-
+  
     try {
       const formData = new FormData(e.currentTarget);
       const updatedRecipe = {
@@ -93,13 +132,14 @@ const EditRecipe = () => {
         prepTime: Number(formData.get('prepTime')),
         cookTime: Number(formData.get('cookTime')),
         servings: Number(formData.get('servings')),
-        ingredients: ingredients.filter(ing => ing.name && ing.amount && ing.unit),
-        instructions: instructions.filter(Boolean),
+        ingredientGroups,
+        instructionGroups,
         images: images.map(img => ({
           data: img.data,
           description: ''
         }))
       };
+      console.log('Frontend Updated Recipe:', updatedRecipe);
 
       await recipeApi.update(id!, updatedRecipe);
       navigate(`/recipe/${id}`);
@@ -223,118 +263,124 @@ const EditRecipe = () => {
             <div className="bg-white rounded-xl shadow-md p-6">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-semibold text-gray-800">{t('recipe.ingredients')}</h2>
-                <button
-                  type="button"
-                  onClick={addIngredient}
-                  className="flex items-center gap-2 text-purple-600 hover:text-purple-700"
-                >
-                  <Plus className="w-4 h-4" />
-                  {t('createRecipe.ingredients.add')}
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => addIngredientGroup()}
+                    className="flex items-center gap-2 text-purple-600 hover:text-purple-700"
+                  >
+                    <Plus className="w-4 h-4" />
+                    {t('createRecipe.ingredients.addGroup')}
+                  </button>
+                </div>
               </div>
+
               <SortableList 
-                items={ingredients}
-                setItems={setIngredients}
-                renderItem={(ingredient: Ingredient, index: number) => (
-                  <>
-                    <div className="w-24">
+                items={ingredientGroups}
+                setItems={setIngredientGroups}
+                renderItem={(group: IngredientGroup, groupIndex: number) => (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4">
                       <input
                         type="text"
-                        value={ingredient.amount}
+                        value={group.title}
                         onChange={(e) => {
-                          const newIngredients = [...ingredients];
-                          newIngredients[index].amount = e.target.value;
-                          setIngredients(newIngredients);
+                          const newGroups = [...ingredientGroups];
+                          newGroups[groupIndex].title = e.target.value;
+                          setIngredientGroups(newGroups);
                         }}
-                        placeholder={t('createRecipe.ingredients.amountPlaceholder')}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        placeholder={t('createRecipe.ingredients.groupTitlePlaceholder')}
+                        className="font-semibold text-lg px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                       />
+                      {ingredientGroups.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeIngredientGroup(groupIndex)}
+                          className="p-2 text-red-500 hover:text-red-600"
+                        >
+                          <Minus className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
-                    <div className="w-24">
-                      <input
-                        type="text"
-                        value={ingredient.unit}
-                        onChange={(e) => {
-                          const newIngredients = [...ingredients];
-                          newIngredients[index].unit = e.target.value;
-                          setIngredients(newIngredients);
+
+                    <div className="pl-4 space-y-4">
+                      <SortableList
+                        items={group.ingredients}
+                        setItems={(newIngredients) => {
+                          const newGroups = [...ingredientGroups];
+                          newGroups[groupIndex].ingredients = newIngredients;
+                          setIngredientGroups(newGroups);
                         }}
-                        placeholder={t('createRecipe.ingredients.unitPlaceholder')}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        groupId={`group-${groupIndex}`}
+                        renderItem={(ingredient, ingredientIndex) => (
+                          <div className="flex gap-4 items-start">
+                            <div className="w-24">
+                              <input
+                                type="text"
+                                value={ingredient.amount}
+                                onChange={(e) => {
+                                  const newGroups = [...ingredientGroups];
+                                  newGroups[groupIndex].ingredients[ingredientIndex].amount = e.target.value;
+                                  setIngredientGroups(newGroups);
+                                }}
+                                placeholder={t('createRecipe.ingredients.amountPlaceholder')}
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                              />
+                            </div>
+                            <div className="w-24">
+                              <input
+                                type="text"
+                                value={ingredient.unit}
+                                onChange={(e) => {
+                                  const newGroups = [...ingredientGroups];
+                                  newGroups[groupIndex].ingredients[ingredientIndex].unit = e.target.value;
+                                  setIngredientGroups(newGroups);
+                                }}
+                                placeholder={t('createRecipe.ingredients.unitPlaceholder')}
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <input
+                                type="text"
+                                value={ingredient.name}
+                                onChange={(e) => {
+                                  const newGroups = [...ingredientGroups];
+                                  newGroups[groupIndex].ingredients[ingredientIndex].name = e.target.value;
+                                  setIngredientGroups(newGroups);
+                                }}
+                                placeholder={t('createRecipe.ingredients.namePlaceholder')}
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                              />
+                            </div>
+                            {group.ingredients.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => removeIngredientFromGroup(groupIndex, ingredientIndex)}
+                                className="p-2 text-red-500 hover:text-red-600"
+                              >
+                                <Minus className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        )}
                       />
-                    </div>
-                    <div className="flex-1">
-                      <input
-                        type="text"
-                        value={ingredient.name}
-                        onChange={(e) => {
-                          const newIngredients = [...ingredients];
-                          newIngredients[index].name = e.target.value;
-                          setIngredients(newIngredients);
-                        }}
-                        placeholder={t('createRecipe.ingredients.namePlaceholder')}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      />
-                    </div>
-                    {ingredients.length > 1 && (
                       <button
                         type="button"
-                        onClick={() => removeIngredient(index)}
-                        className="p-2 text-red-500 hover:text-red-600"
+                        onClick={() => addIngredientToGroup(groupIndex)}
+                        className="flex items-center gap-2 text-purple-600 hover:text-purple-700 ml-4"
                       >
-                        <Minus className="w-4 h-4" />
+                        <Plus className="w-4 h-4" />
+                        {t('createRecipe.ingredients.addToGroup')}
                       </button>
-                    )}
-                  </>
+                    </div>
+                  </div>
                 )}
               />
             </div>
 
             {/* Instructions Section */}
-            <div className="bg-white rounded-xl shadow-md p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold text-gray-800">{t('editRecipe.instructions.title')}</h2>
-                <button
-                  type="button"
-                  onClick={addInstruction}
-                  className="flex items-center gap-2 text-purple-600 hover:text-purple-700"
-                >
-                  <Plus className="w-4 h-4" />
-                  {t('editRecipe.instructions.addStep')}
-                </button>
-              </div>
-              <SortableList 
-                items={instructions}
-                setItems={setInstructions}
-                renderItem={(instruction: any, index: number) => (
-                  <>
-                    <span className="mt-3 text-gray-500 font-medium">{index + 1}.</span>
-                    <div className="flex-1">
-                      <textarea
-                        value={instruction}
-                        onChange={(e) => {
-                          const newInstructions = [...instructions];
-                          newInstructions[index] = e.target.value;
-                          setInstructions(newInstructions);
-                        }}
-                        placeholder={t('editRecipe.instructions.stepPlaceholder', { number: index + 1 })}
-                        rows={2}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      />
-                    </div>
-                    {instructions.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeInstruction(index)}
-                        className="p-2 text-red-500 hover:text-red-600"
-                      >
-                        <Minus className="w-4 h-4" />
-                      </button>
-                    )}
-                  </>
-                )}
-              />
-            </div>
+            <InstructionsSection instructionGroups={instructionGroups} setInstructionGroups={setInstructionGroups}/>
 
             {/* Submit Button */}
             <div className="flex justify-end gap-4">

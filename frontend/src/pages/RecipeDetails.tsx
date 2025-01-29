@@ -163,39 +163,62 @@ function RecipeDetails() {
           )}
 
           {/* Ingredients */}
-          <div className="bg-white rounded-xl shadow-md p-4 mb-8">
+          <div className="bg-white rounded-xl shadow-md p-6 mb-8">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">{t('recipe.ingredients')}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {recipe.ingredients.map((ingredient: Ingredient, index: number) => (
-                <li 
-                  key={index} 
-                  className="flex items-center gap-3 border-b border-gray-100 py-2 list-none"
-                >
-                  <span className="text-gray-600">
-                    {t('recipe.ingredientAmount', { 
-                      amount: ingredient.amount, 
-                      unit: ingredient.unit 
-                    })}
-                  </span>
-                  <span className="text-gray-800">{ingredient.name}</span>
-                </li>
-              ))}
-            </div>
+            
+            {recipe.ingredientGroups.map((group: any, groupIndex: number) => (
+              <div key={groupIndex} className="mb-6">
+                {group.title && (
+                  <h3 className="text-xl font-semibold text-gray-700 mb-3 border-b pb-2">
+                    {group.title}
+                  </h3>
+                )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  {group.ingredients.map((ingredient: Ingredient, ingIndex: number) => (
+                    <li 
+                      key={`${groupIndex}-${ingIndex}`} 
+                      className="flex items-center gap-3 border-b border-gray-100 py-2 list-none"
+                    >
+                      <span className="text-gray-600">
+                        {t('recipe.ingredientAmount', { 
+                          amount: ingredient.amount, 
+                          unit: ingredient.unit 
+                        })}
+                      </span>
+                      <span className="text-gray-800">{ingredient.name}</span>
+                    </li>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Instructions */}
           <div className="bg-white rounded-xl shadow-md p-6">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">{t('recipe.instructions')}</h2>
-            <ol className="space-y-4">
-              {recipe.instructions.map((instruction: string, index: number) => (
-                <li key={index} className="flex gap-4">
-                  <span className="flex-shrink-0 w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-semibold">
-                    {index + 1}
-                  </span>
-                  <p className="text-gray-700 leading-relaxed">{instruction}</p>
-                </li>
-              ))}
-            </ol>
+            
+            {recipe.instructionGroups.map((group: any, groupIndex: number) => (
+              <div key={groupIndex} className="mb-6">
+                {group.title && (
+                  <h3 className="text-xl font-semibold text-gray-700 mb-3 border-b pb-2">
+                    {group.title}
+                  </h3>
+                )}
+                <ol className="space-y-4">
+                  {group.instructions.map((instruction: { content: string }, instIndex: number) => (
+                    <li 
+                      key={`${groupIndex}-${instIndex}`} 
+                      className="flex gap-4"
+                    >
+                      <span className="flex-shrink-0 w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-semibold">
+                        {instIndex + 1}
+                      </span>
+                      <p className="text-gray-700 leading-relaxed">{instruction.content}</p>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            ))}
           </div>
         </div>
       </div>

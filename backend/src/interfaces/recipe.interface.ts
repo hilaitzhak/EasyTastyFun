@@ -6,12 +6,8 @@ export interface IRecipe extends Document {
   prepTime?: number;
   cookTime?: number;
   servings?: number;
-  ingredients: {
-    name: string;
-    amount: string;
-    unit?: string;
-  }[];
-  instructions: string[];
+  ingredientGroups: IngredientGroup[];
+  instructionGroups: InstructionGroup[];
   images?: {
     data: string;
     description?: string;
@@ -20,4 +16,34 @@ export interface IRecipe extends Document {
   subcategory: Types.ObjectId | ISubCategory;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface IngredientTitle {
+  name: string;
+  isTitle: true;
+}
+
+export interface RecipeCardProps {
+  recipe: IRecipe;
+  onClick?: (id: string) => void;
+}
+
+export interface IngredientGroup {
+  title: string;
+  ingredients: Ingredient[];
+}
+
+export interface Ingredient {
+  name: string;
+  amount: string;
+  unit?: string;
+}
+
+export interface Instruction {
+  content: string;
+}
+
+export interface InstructionGroup {
+  title: string;
+  instructions: Instruction[];
 }

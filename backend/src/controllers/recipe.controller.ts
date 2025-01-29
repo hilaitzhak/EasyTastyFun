@@ -52,8 +52,12 @@ export class RecipeController {
 
     public async updateRecipe(req: Request, res: Response): Promise<void> {
         try {
-            const updatedRecipe = await this.recipeService.updateRecipe(req.params.id, req.body);
+            const { id } = req.params;
+            const recipeData = req.body;
+            const updatedRecipe = await this.recipeService.updateRecipe(id, recipeData);
             if (updatedRecipe) {
+                console.log('Sending Updated Recipe:',updatedRecipe);
+
                 res.status(200).json(updatedRecipe);
             } else {
                 res.status(404).json({ message: "Recipe not found" });

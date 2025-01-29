@@ -7,19 +7,30 @@
   import { categoryApi } from "../api/category.api";
   import { ArrowLeft, ArrowRight } from "lucide-react";
   import i18n from "../i18n/i18n";
+import { Ingredient, IngredientGroup, Instruction, InstructionGroup } from "../interfaces/Recipe";
 
-  function CreateRecipeForm() {
-    const isRTL = i18n.language === 'he';
-    const navigate = useNavigate();
-    const { t } = useTranslation();
-    const [loading, setLoading] = useState(false);
-    const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: '' }]);
-    const [instructions, setInstructions] = useState(['']);
-    const [images, setImages] = useState<{ data: string; file: File }[]>([]);
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [subcategories, setSubcategories] = useState<SubCategory[]>([]);
-    const [selectedCategory, setSelectedCategory] = useState<string>('');
-    const [filteredSubcategories, setFilteredSubcategories] = useState<SubCategory[]>([]);
+function CreateRecipeForm() {
+  const isRTL = i18n.language === 'he';
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
+  const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: '' }]);
+  const [instructions, setInstructions] = useState(['']);
+  const [images, setImages] = useState<{ data: string; file: File }[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [subcategories, setSubcategories] = useState<SubCategory[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [filteredSubcategories, setFilteredSubcategories] = useState<SubCategory[]>([]);
+  const [ingredientGroups, setIngredientGroups] = useState<IngredientGroup[]>([
+    {
+      title: '',
+      ingredients: [{ name: '', amount: '', unit: '' }]
+    }
+  ]);
+  const [instructionGroups, setInstructionGroups] = useState<InstructionGroup[]>([
+    { title: '', instructions: [{ content: '' }] }
+  ]);
+
 
     useEffect(() => {
       const fetchData = async () => {
@@ -64,8 +75,15 @@
           servings: Number(formData.get('servings')),
           category: formData.get('category'),
           subcategory: formData.get('subcategory'),
-          ingredients: ingredients.filter(ing => ing.name && ing.amount && ing.unit),
-          instructions: instructions.filter(Boolean),
+          ingredientGroups: ingredientGroups.filter(group => 
+            group.ingredients.some((ing: Ingredient) => ing.name && ing.amount)
+          ),
+          instructionGroups: instructionGroups.map(group => ({
+            title: group.title,
+            instructions: group.instructions
+              .filter(inst => inst.content.trim())
+              .map(inst => ({ content: inst.content }))
+          })),
           images: images.map(img => ({
             data: img.data,
             description: ''
@@ -73,7 +91,7 @@
         };
 
         const response = await recipeApi.createRecipe(recipeData);
-
+        console.log('response:', response.data);
         if (response.data) {
           navigate(`/recipe/${response.data._id}`);
         }
@@ -109,10 +127,10 @@
           <RecipeForm
             onSubmit={handleSubmit}
             loading={loading}
-            ingredients={ingredients}
-            setIngredients={setIngredients}
-            instructions={instructions}
-            setInstructions={setInstructions}
+            ingredientGroups={ingredientGroups}
+            setIngredientGroups={setIngredientGroups}
+            instructionGroups={instructionGroups}
+            setInstructionGroups={setInstructionGroups}
             images={images}
             setImages={setImages}
             categories={categories}

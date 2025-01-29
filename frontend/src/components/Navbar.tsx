@@ -22,7 +22,6 @@ function Navbar() {
   const fetchCategories = async () => {
     try {
       const { data } = await categoryApi.getCategories();
-      console.log('data: ', data);
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);
