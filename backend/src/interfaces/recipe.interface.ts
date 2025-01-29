@@ -8,7 +8,7 @@ export interface IRecipe extends Document {
   servings?: number;
   ingredients: {
     name: string;
-    amount: number;
+    amount: string;
     unit?: string;
   }[];
   instructions: string[];

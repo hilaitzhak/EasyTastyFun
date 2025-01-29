@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RecipeFormProps } from '../interfaces/Recipe';
 import { Loader } from 'lucide-react';

@@ -8,7 +8,7 @@ export interface IRecipe {
   servings?: number | undefined;
   ingredients: {
     name: string;
-    amount: number;
+    amount: string;
     unit?: string;
   }[];
   instructions: string[];

@@ -22,6 +22,7 @@ function Navbar() {
   const fetchCategories = async () => {
     try {
       const { data } = await categoryApi.getCategories();
+      console.log('data: ', data);
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -37,7 +38,7 @@ function Navbar() {
   const renderSubCategories = (subCategories: SubCategory[]) => {
     return (
       <div className="grid grid-cols-3 gap-4 p-6 bg-white text-gray-700 rounded-lg shadow-lg">
-        {subCategories.map((subCategory) => (
+        {subCategories.map((subCategory: SubCategory) => (
           <Link
             key={subCategory._id}
             to={subCategory.path}

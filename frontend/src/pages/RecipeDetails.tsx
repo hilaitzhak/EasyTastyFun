@@ -4,6 +4,7 @@ import { ArrowLeft, Clock, Users, Edit, Trash2, ChevronLeft, ChevronRight, Arrow
 import { recipeApi } from '../api/recipe.api';
 import i18n from '../i18n/i18n';
 import { useTranslation } from 'react-i18next';
+import { Ingredient } from '../interfaces/Recipe';
 
 function RecipeDetails() {
   const { t } = useTranslation();
@@ -162,21 +163,24 @@ function RecipeDetails() {
           )}
 
           {/* Ingredients */}
-          <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+          <div className="bg-white rounded-xl shadow-md p-4 mb-8">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">{t('recipe.ingredients')}</h2>
-            <ul className="space-y-3">
-              {recipe.ingredients.map((ingredient: any, index: number) => (
-                <li key={index} className="flex justify-between items-center border-b border-gray-100 py-2">
-                  <span className="text-gray-800">{ingredient.name}</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {recipe.ingredients.map((ingredient: Ingredient, index: number) => (
+                <li 
+                  key={index} 
+                  className="flex items-center gap-3 border-b border-gray-100 py-2 list-none"
+                >
                   <span className="text-gray-600">
                     {t('recipe.ingredientAmount', { 
                       amount: ingredient.amount, 
                       unit: ingredient.unit 
                     })}
                   </span>
+                  <span className="text-gray-800">{ingredient.name}</span>
                 </li>
               ))}
-            </ul>
+            </div>
           </div>
 
           {/* Instructions */}

@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Types } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import { IRecipe } from "../interfaces/recipe.interface";
 
 const RecipeSchema: Schema = new Schema({
@@ -8,7 +8,7 @@ const RecipeSchema: Schema = new Schema({
   servings: { type: Number },
   ingredients: [{
     name: { type: String, required: true },
-    amount: { type: Number, required: true },
+    amount: { type: String, required: true },
     unit: { type: String }
   }],
   instructions: [{ type: String, required: true }],

@@ -92,38 +92,38 @@
       }
     };
 
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 py-12">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <div className="mb-4">
-              <button
-                onClick={() => navigate('/recipes')}
-                className="flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-colors p-2 rounded-lg hover:bg-purple-50"
-              >
-                {isRTL ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
-                <span>{t('nav.backToRecipes')}</span>
-              </button>
-            </div>
-            <h1 className="text-center text-4xl font-bold text-gray-800 mb-8">{t('createRecipe.title')}</h1>
-            <RecipeForm
-              onSubmit={handleSubmit}
-              loading={loading}
-              ingredients={ingredients}
-              setIngredients={setIngredients}
-              instructions={instructions}
-              setInstructions={setInstructions}
-              images={images}
-              setImages={setImages}
-              categories={categories}
-              subcategories={filteredSubcategories}
-              onCategoryChange={handleCategoryChange}
-              selectedCategory={selectedCategory}
-            />
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 py-12">
+      <div className="container mx-auto px-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="mb-4">
+            <button
+              onClick={() => navigate('/recipes')}
+              className="flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-colors p-2 rounded-lg hover:bg-purple-50"
+            >
+              {isRTL ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
+              <span>{t('nav.backToRecipes')}</span>
+            </button>
           </div>
+          <h1 className="text-center text-4xl font-bold text-gray-800 mb-8">{t('createRecipe.title')}</h1>
+          <RecipeForm
+            onSubmit={handleSubmit}
+            loading={loading}
+            ingredients={ingredients}
+            setIngredients={setIngredients}
+            instructions={instructions}
+            setInstructions={setInstructions}
+            images={images}
+            setImages={setImages}
+            categories={categories}
+            subcategories={filteredSubcategories}
+            onCategoryChange={handleCategoryChange}
+            selectedCategory={selectedCategory}
+          />
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
-  export default CreateRecipeForm;
+export default CreateRecipeForm;

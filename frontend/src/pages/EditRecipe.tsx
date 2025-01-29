@@ -121,17 +121,16 @@ const EditRecipe = () => {
     <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 py-12">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
-          {/* Header with back button */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex justify-between items-center mb-8">
             <button
               onClick={() => navigate(`/recipe/${id}`)}
               className="flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-colors"
             >
-              {isRTL ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
+              { isRTL ? (<ArrowRight className="w-5 h-5" />) : (<ArrowLeft className="w-5 h-5" />) }
               {t('editRecipe.backToRecipe')}
             </button>
-            <h1 className="text-3xl font-bold text-gray-800">{t('editRecipe.title')}</h1>
           </div>
+          <h1 className="text-3xl font-bold text-gray-800">{t('editRecipe.title')}</h1>
 
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Basic Info Section */}
@@ -150,35 +149,32 @@ const EditRecipe = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-gray-700 font-medium mb-2">Prep Time (minutes)</label>
+                  <label className="block text-gray-700 font-medium mb-2">{t('recipe.prepTime')}</label>
                   <input
                     type="number"
                     name="prepTime"
                     defaultValue={recipe.prepTime}
-                    required
                     min="0"
                     className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-medium mb-2">Cook Time (minutes)</label>
+                  <label className="block text-gray-700 font-medium mb-2">{t('recipe.cookTime')}</label>
                   <input
                     type="number"
                     name="cookTime"
                     defaultValue={recipe.cookTime}
-                    required
                     min="0"
                     className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-medium mb-2">Servings</label>
+                  <label className="block text-gray-700 font-medium mb-2">{t('recipe.servings')}</label>
                   <input
                     type="number"
                     name="servings"
                     defaultValue={recipe.servings}
-                    required
-                    min="1"
+                    min="0"
                     className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
@@ -187,7 +183,7 @@ const EditRecipe = () => {
 
             {/* Images Section */}
             <div className="bg-white rounded-xl shadow-md p-6">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">Recipe Images</h2>
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4">{t('createRecipe.images.title')}</h2>
               
               <div className="space-y-4">
                 <div className="flex items-center justify-center w-full">
@@ -224,32 +220,19 @@ const EditRecipe = () => {
             {/* Ingredients Section */}
             <div className="bg-white rounded-xl shadow-md p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold text-gray-800">Ingredients</h2>
+                <h2 className="text-2xl font-semibold text-gray-800">{t('recipe.ingredients')}</h2>
                 <button
                   type="button"
                   onClick={addIngredient}
                   className="flex items-center gap-2 text-purple-600 hover:text-purple-700"
                 >
                   <Plus className="w-4 h-4" />
-                  Add Ingredient
+                  {t('createRecipe.ingredients.add')}
                 </button>
               </div>
 
               {ingredients.map((ingredient, index) => (
                 <div key={index} className="flex gap-4 items-start mb-4">
-                  <div className="flex-1">
-                    <input
-                      type="text"
-                      value={ingredient.name}
-                      onChange={(e) => {
-                        const newIngredients = [...ingredients];
-                        newIngredients[index].name = e.target.value;
-                        setIngredients(newIngredients);
-                      }}
-                      placeholder="Ingredient name"
-                      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                  </div>
                   <div className="w-24">
                     <input
                       type="text"
@@ -259,7 +242,7 @@ const EditRecipe = () => {
                         newIngredients[index].amount = e.target.value;
                         setIngredients(newIngredients);
                       }}
-                      placeholder="Amount"
+                      placeholder={t('createRecipe.ingredients.amountPlaceholder')}
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   </div>
@@ -272,7 +255,20 @@ const EditRecipe = () => {
                         newIngredients[index].unit = e.target.value;
                         setIngredients(newIngredients);
                       }}
-                      placeholder="Unit"
+                      placeholder={t('createRecipe.ingredients.unitPlaceholder')}
+                      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      value={ingredient.name}
+                      onChange={(e) => {
+                        const newIngredients = [...ingredients];
+                        newIngredients[index].name = e.target.value;
+                        setIngredients(newIngredients);
+                      }}
+                      placeholder={t('createRecipe.ingredients.namePlaceholder')}
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   </div>

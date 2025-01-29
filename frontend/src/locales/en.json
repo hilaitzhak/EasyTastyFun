@@ -5,6 +5,7 @@
     "createRecipe": "Create Recipe",
     "backToRecipes": "Back to Recipes",
     "cakes": "Cakes",
+    "cookies": "Cookies",
     "desserts": "Desserts",
     "hotStews": "Hot Stews",
     "pasta": "Pasta",
@@ -15,7 +16,9 @@
       "cheesecakes":"Cheesecakes",
       "torteCakes":"Torte cakes",
       "sweetDesserts":"Sweet desserts",
-      "savoryDesserts":"Savory desserts"
+      "savoryDesserts":"Savory desserts",
+      "sweetCookies": "Sweet cookies",
+      "savoryCookies": "Savory cookies"
     }
   },
   "recipe": {

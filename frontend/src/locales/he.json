@@ -5,6 +5,7 @@
     "createRecipe": "צור מתכון",
     "backToRecipes": "חזור למתכונים",
     "cakes": "עוגות",
+    "cookies": "עוגיות",
     "desserts": "קינוחים",
     "hotStews": "תבשילים",
     "pasta": "פסטה",
@@ -16,7 +17,9 @@
       "cheesecakes":"עוגות גבינה",
       "torteCakes":"עוגות טורט",
       "sweetDesserts":"קינוחים מתוקים",
-      "savoryDesserts":"קינוחים מלוחים"
+      "savoryDesserts":"קינוחים מלוחים",
+      "sweetCookies": "עוגיות מתוקות",
+      "savoryCookies": "עוגיות מלוחות"
     }
   },
   "recipe": {
@@ -24,7 +27,7 @@
     "ingredients": "מצרכים",
     "instructions": "הוראות הכנה",
     "servings": "מנות",
-    "prepTime": "זמן הכנה",
+    "prepTime": "זמן הכנה (בדקות)",
     "cookTime": "זמן בישול",
     "totalTime": "זמן כולל",
     "minutes": "דקות",

@@ -44,19 +44,34 @@ export class RecipeService {
   }
 
   async updateRecipe(id: string, recipeData: IRecipe) {
-      try {
-        const recipe = await Recipe.findByIdAndUpdate(
-          id,
-          { $set: recipeData },
-          { new: true }
-        );
-        if (!recipe) {
-          throw new Error('Recipe not found');
+    try {
+      // Convert all amounts to strings
+      const formattedData = {
+        ...recipeData,
+        ingredients: recipeData.ingredients.map(ing => ({
+          ...ing,
+          amount: ing.amount.toString()
+        })),
+        updatedAt: new Date()
+      };
+  
+      const recipe = await Recipe.findByIdAndUpdate(
+        id,
+        { $set: formattedData },
+        { 
+          new: true,
+          runValidators: true
         }
-        return recipe;
-      } catch (error) {
-        throw new Error('Error updating recipe');
+      );
+  
+      if (!recipe) {
+        throw new Error('Recipe not found');
       }
+      return recipe;
+    } catch (error) {
+      console.error('Update error:', error);
+      throw new Error('Error updating recipe');
+    }
   }
 
   async deleteRecipe(id: string) {
