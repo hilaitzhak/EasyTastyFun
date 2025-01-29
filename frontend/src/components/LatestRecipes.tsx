@@ -16,7 +16,7 @@ function LatestRecipes() {
         <div className="flex justify-between items-center mb-12">
           <div>
             <h2 className="text-4xl font-bold text-gray-800 mb-2">{t('latestRecipes.title')}</h2>
-            <p className="text-gray-600">{t('latestRecipes.subtitle')}</p>
+            {/* <p className="text-gray-600">{t('latestRecipes.subtitle')}</p> */}
           </div>
           <button
             onClick={() => navigate('/recipes')}

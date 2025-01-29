@@ -10,12 +10,12 @@
 import { Ingredient, IngredientGroup, Instruction, InstructionGroup } from "../interfaces/Recipe";
 
 function CreateRecipeForm() {
-  const isRTL = i18n.language === 'he';
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
-  const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: '' }]);
-  const [instructions, setInstructions] = useState(['']);
+  const isRTL = i18n.language === 'he';
+  // const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: '' }]);
+  // const [instructions, setInstructions] = useState(['']);
   const [images, setImages] = useState<{ data: string; file: File }[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<SubCategory[]>([]);
@@ -127,6 +127,7 @@ function CreateRecipeForm() {
           <RecipeForm
             onSubmit={handleSubmit}
             loading={loading}
+            isEdit={false}
             ingredientGroups={ingredientGroups}
             setIngredientGroups={setIngredientGroups}
             instructionGroups={instructionGroups}

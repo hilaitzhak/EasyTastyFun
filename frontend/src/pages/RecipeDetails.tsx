@@ -68,6 +68,7 @@ function RecipeDetails() {
     );
   }
 
+
   if (!recipe) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -75,7 +76,7 @@ function RecipeDetails() {
           <h2 className="text-2xl font-bold text-gray-800 mb-4">{t('recipe.notFound')}</h2>
           <button
             onClick={() => navigate('/recipes')}
-            className="text-purple-600 hover:text-purple-700"
+            className="text-purple-600 hover:text-purple-700 transition-colors"
           >
             {t('nav.backToRecipes')}
           </button>

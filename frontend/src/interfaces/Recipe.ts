@@ -95,6 +95,12 @@ export interface RecipeFormProps {
   selectedCategory: string;
 }
 
+export interface SubmitButtonProps {
+  onCancel?: () => void;
+  loading: boolean;
+  isEdit?: boolean;
+}
+
 export interface BasicInfoSectionProps {
   initialData?: {
     name?: string;
