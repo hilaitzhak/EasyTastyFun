@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { InstructionsSectionProps } from "../interfaces/Recipe";
 import { Minus, Plus } from "lucide-react";
+import SortableList from "./SortableList";
 
 function InstructionsSection({ instructions, setInstructions }: InstructionsSectionProps) {
   const { t } = useTranslation();
@@ -28,34 +29,37 @@ function InstructionsSection({ instructions, setInstructions }: InstructionsSect
           {t('createRecipe.instructions.addStep')}
         </button>
       </div>
-
-      {instructions.map((instruction, index) => (
-        <div key={index} className="flex gap-4 items-start mb-4">
-          <span className="mt-3 text-gray-500 font-medium">{index + 1}.</span>
-          <div className="flex-1">
-            <textarea
-              value={instruction}
-              onChange={(e) => {
-                const newInstructions = [...instructions];
-                newInstructions[index] = e.target.value;
-                setInstructions(newInstructions);
-              }}
-              placeholder={t('createRecipe.instructions.stepPlaceholder', { number: index + 1 })}
-              rows={2}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-          </div>
-          {instructions.length > 1 && (
-            <button
-              type="button"
-              onClick={() => removeInstruction(index)}
-              className="p-2 text-red-500 hover:text-red-600"
-            >
-              <Minus className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-      ))}
+      <SortableList
+        items={instructions}
+        setItems={setInstructions}
+        renderItem={(instruction, index) => (
+          <>
+            <span className="mt-3 text-gray-500 font-medium">{index + 1}.</span>
+            <div className="flex-1">
+              <textarea
+                value={instruction}
+                onChange={(e) => {
+                  const newInstructions = [...instructions];
+                  newInstructions[index] = e.target.value;
+                  setInstructions(newInstructions);
+                }}
+                placeholder={t('createRecipe.instructions.stepPlaceholder', { number: index + 1 })}
+                rows={2}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+            {instructions.length > 1 && (
+              <button
+                type="button"
+                onClick={() => removeInstruction(index)}
+                className="p-2 text-red-500 hover:text-red-600"
+              >
+                <Minus className="w-4 h-4" />
+              </button>
+            )}
+          </>
+        )}
+      />
     </div>
   );
 };

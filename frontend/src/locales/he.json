@@ -146,6 +146,11 @@
     "savingChanges": "שומר שינויים...",
     "updateError": "עדכון המתכון נכשל",
     "loadError": "טעינת המתכון נכשלה",
-    "updateSuccess": "המתכון עודכן בהצלחה"
+    "updateSuccess": "המתכון עודכן בהצלחה",
+    "instructions": {
+      "title": "הוראות הכנה",
+      "addStep": "הוסף שלב",
+      "stepPlaceholder": "שלב {{number}}"
+    }
   }
 }

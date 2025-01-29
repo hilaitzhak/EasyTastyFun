@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { Category, SubCategory } from "./Category";
 
 export interface IRecipe {
@@ -31,6 +32,10 @@ export interface Ingredient {
   name: string;
   amount: string;
   unit?: string;
+}
+
+export interface Instruction {
+  content: string;
 }
 
 export interface RecipeImage {
@@ -94,4 +99,15 @@ export interface IngredientsProps {
 export interface InstructionsSectionProps {
   instructions: string[];
   setInstructions: React.Dispatch<React.SetStateAction<string[]>>;
+}
+
+export interface SortableItemProps {
+  id: string;
+  children: ReactNode;
+}
+
+export interface SortableListProps<T> {
+  items: T[];
+  setItems: (items: T[]) => void;
+  renderItem: (item: T, index: number) => ReactNode;
 }

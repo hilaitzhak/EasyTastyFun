@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Plus, Minus, Upload, Loader, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Plus, Minus, Upload, Loader, ArrowLeft, ArrowRight, GripVertical } from 'lucide-react';
 import { recipeApi } from '../api/recipe.api';
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n/i18n';
+import SortableList from '../components/SortableList';
+import { Ingredient } from '../interfaces/Recipe';
 
 const EditRecipe = () => {
   const { t } = useTranslation();
@@ -230,102 +232,108 @@ const EditRecipe = () => {
                   {t('createRecipe.ingredients.add')}
                 </button>
               </div>
-
-              {ingredients.map((ingredient, index) => (
-                <div key={index} className="flex gap-4 items-start mb-4">
-                  <div className="w-24">
-                    <input
-                      type="text"
-                      value={ingredient.amount}
-                      onChange={(e) => {
-                        const newIngredients = [...ingredients];
-                        newIngredients[index].amount = e.target.value;
-                        setIngredients(newIngredients);
-                      }}
-                      placeholder={t('createRecipe.ingredients.amountPlaceholder')}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                  </div>
-                  <div className="w-24">
-                    <input
-                      type="text"
-                      value={ingredient.unit}
-                      onChange={(e) => {
-                        const newIngredients = [...ingredients];
-                        newIngredients[index].unit = e.target.value;
-                        setIngredients(newIngredients);
-                      }}
-                      placeholder={t('createRecipe.ingredients.unitPlaceholder')}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <input
-                      type="text"
-                      value={ingredient.name}
-                      onChange={(e) => {
-                        const newIngredients = [...ingredients];
-                        newIngredients[index].name = e.target.value;
-                        setIngredients(newIngredients);
-                      }}
-                      placeholder={t('createRecipe.ingredients.namePlaceholder')}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                  </div>
-                  {ingredients.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeIngredient(index)}
-                      className="p-2 text-red-500 hover:text-red-600"
-                    >
-                      <Minus className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              ))}
+              <SortableList 
+                items={ingredients}
+                setItems={setIngredients}
+                renderItem={(ingredient: Ingredient, index: number) => (
+                  <>
+                    <div className="w-24">
+                      <input
+                        type="text"
+                        value={ingredient.amount}
+                        onChange={(e) => {
+                          const newIngredients = [...ingredients];
+                          newIngredients[index].amount = e.target.value;
+                          setIngredients(newIngredients);
+                        }}
+                        placeholder={t('createRecipe.ingredients.amountPlaceholder')}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+                    <div className="w-24">
+                      <input
+                        type="text"
+                        value={ingredient.unit}
+                        onChange={(e) => {
+                          const newIngredients = [...ingredients];
+                          newIngredients[index].unit = e.target.value;
+                          setIngredients(newIngredients);
+                        }}
+                        placeholder={t('createRecipe.ingredients.unitPlaceholder')}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        value={ingredient.name}
+                        onChange={(e) => {
+                          const newIngredients = [...ingredients];
+                          newIngredients[index].name = e.target.value;
+                          setIngredients(newIngredients);
+                        }}
+                        placeholder={t('createRecipe.ingredients.namePlaceholder')}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+                    {ingredients.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeIngredient(index)}
+                        className="p-2 text-red-500 hover:text-red-600"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                    )}
+                  </>
+                )}
+              />
             </div>
 
             {/* Instructions Section */}
             <div className="bg-white rounded-xl shadow-md p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold text-gray-800">Instructions</h2>
+                <h2 className="text-2xl font-semibold text-gray-800">{t('editRecipe.instructions.title')}</h2>
                 <button
                   type="button"
                   onClick={addInstruction}
                   className="flex items-center gap-2 text-purple-600 hover:text-purple-700"
                 >
                   <Plus className="w-4 h-4" />
-                  Add Step
+                  {t('editRecipe.instructions.addStep')}
                 </button>
               </div>
-
-              {instructions.map((instruction, index) => (
-                <div key={index} className="flex gap-4 items-start mb-4">
-                  <span className="mt-3 text-gray-500 font-medium">{index + 1}.</span>
-                  <div className="flex-1">
-                    <textarea
-                      value={instruction}
-                      onChange={(e) => {
-                        const newInstructions = [...instructions];
-                        newInstructions[index] = e.target.value;
-                        setInstructions(newInstructions);
-                      }}
-                      placeholder={`Step ${index + 1}`}
-                      rows={2}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                  </div>
-                  {instructions.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeInstruction(index)}
-                      className="p-2 text-red-500 hover:text-red-600"
-                    >
-                      <Minus className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              ))}
+              <SortableList 
+                items={instructions}
+                setItems={setInstructions}
+                renderItem={(instruction: any, index: number) => (
+                  <>
+                    <span className="mt-3 text-gray-500 font-medium">{index + 1}.</span>
+                    <div className="flex-1">
+                      <textarea
+                        value={instruction}
+                        onChange={(e) => {
+                          const newInstructions = [...instructions];
+                          newInstructions[index] = e.target.value;
+                          setInstructions(newInstructions);
+                        }}
+                        placeholder={t('editRecipe.instructions.stepPlaceholder', { number: index + 1 })}
+                        rows={2}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+                    {instructions.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeInstruction(index)}
+                        className="p-2 text-red-500 hover:text-red-600"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                    )}
+                  </>
+                )}
+              />
             </div>
 
             {/* Submit Button */}
