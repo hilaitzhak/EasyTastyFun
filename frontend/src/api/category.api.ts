@@ -25,7 +25,7 @@ export const categoryApi = {
   getCategoryById: (id: string) => {
     return axios.get(`${API_URL}/categories/${id}`).then((response) => response);
   },
-  getSubcategoryById: (id: string) => {
-    return axios.get(`${API_URL}/subcategories/${id}`).then((response) => response);
+  getSubcategoryById: (subCategoryId: string) => {
+    return axios.get(`${API_URL}/subcategories/${subCategoryId}`).then((response) => response);
   }
 };

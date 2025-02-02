@@ -155,7 +155,7 @@ function RecipeDetails() {
           <h1 className="text-4xl font-bold text-gray-800 mb-4">{recipe.name}</h1>
           {category && subcategory && (
             <p className="text-gray-600 mb-8">
-              {category.nameKey} &gt; {subcategory.nameKey}
+              {t(category.nameKey)} {'>'} {t(subcategory.nameKey)}
             </p>
           )}
 
