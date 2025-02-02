@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, Users, Edit, Trash2, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { recipeApi } from '../api/recipe.api';
 import i18n from '../i18n/i18n';
 import { useTranslation } from 'react-i18next';
 import { Ingredient } from '../interfaces/Recipe';
+import ImageModal from '../components/ImageModal';
+import { Category, SubCategory } from '../interfaces/Category';
+import { categoryApi } from '../api/category.api';
 
 function RecipeDetails() {
   const { t } = useTranslation();
@@ -13,13 +16,28 @@ function RecipeDetails() {
   const [recipe, setRecipe] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [category, setCategory] = useState<Category | null>(null);
+  const [subcategory, setSubcategory] = useState<SubCategory | null>(null);
   const isRTL = i18n.language === 'he';
 
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
         const response = await recipeApi.getById(id!);
-        setRecipe(response.data);
+        const recipeData = response.data;
+        setRecipe(recipeData);
+        if (recipeData.category) {
+
+          const categoryResponse = await categoryApi.getCategoryById(recipeData.category);
+          console.log('categoryResponse: ', categoryResponse.data)
+          setCategory(categoryResponse.data);
+        }
+  
+        if (recipeData.subcategory) {
+          const subcategoryResponse = await categoryApi.getSubcategoryById(recipeData.subcategory);
+          setSubcategory(subcategoryResponse.data);
+        }
       } catch (error) {
         console.error('Error fetching recipe:', error);
       } finally {
@@ -44,6 +62,15 @@ function RecipeDetails() {
     }
   };
 
+  const handleImageNavigation = (e: React.MouseEvent, direction: 'next' | 'prev') => {
+    e.stopPropagation(); // Prevent modal from opening when clicking navigation buttons
+    if (direction === 'next') {
+      nextImage();
+    } else {
+      previousImage();
+    }
+  };
+
   const nextImage = () => {
     if (recipe?.images?.length > 0) {
       setCurrentImageIndex((prev) => 
@@ -60,6 +87,14 @@ function RecipeDetails() {
     }
   };
 
+  const handleImageClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -67,7 +102,6 @@ function RecipeDetails() {
       </div>
     );
   }
-
 
   if (!recipe) {
     return (
@@ -116,10 +150,15 @@ function RecipeDetails() {
           </div>
         </div>
 
-        {/* Recipe Title and Meta */}
+        {/* Recipe Title */}
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">{recipe.name}</h1>
-          
+          {category && subcategory && (
+            <p className="text-gray-600 mb-8">
+              {category.nameKey} &gt; {subcategory.nameKey}
+            </p>
+          )}
+
           {(recipe.prepTime > 0 || recipe?.cookTime > 0 || recipe.servings > 0) && (
             <div className="flex gap-6 text-gray-600 mb-8">
               <div className="flex items-center gap-2">
@@ -133,34 +172,41 @@ function RecipeDetails() {
             </div>
           )}
 
-          {/* Image Gallery */}
           {recipe.images && recipe.images.length > 0 && (
-            <div className="relative mb-8 rounded-xl overflow-hidden">
-              <div className="aspect-w-16 aspect-h-9 bg-gray-100">
+            <div className="relative mb-8 rounded-2xl overflow-hidden">
+              <div className="w-full h-[32rem] bg-gray-100 cursor-pointer" onClick={handleImageClick}>
                 <img
                   src={recipe.images[currentImageIndex].data}
                   alt={recipe.name}
                   className="w-full h-full object-cover"
                 />
               </div>
-              
+
               {recipe.images.length > 1 && (
                 <>
                   <button
-                    onClick={previousImage}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                    onClick={(e) => handleImageNavigation(e, 'prev')}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors cursor-pointer"
                   >
                     <ChevronLeft className="w-6 h-6" />
                   </button>
                   <button
-                    onClick={nextImage}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                    onClick={(e) => handleImageNavigation(e, 'next')}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors cursor-pointer"
                   >
                     <ChevronRight className="w-6 h-6" />
                   </button>
                 </>
               )}
             </div>
+          )}
+
+          {isModalOpen && (
+            <ImageModal
+              images={recipe.images}
+              currentIndex={currentImageIndex}
+              onClose={handleModalClose}
+            />
           )}
 
           {/* Ingredients */}

@@ -21,5 +21,11 @@ export const categoryApi = {
   },
   getAllSubCategories: () => {
     return axios.get(`${API_URL}/subcategories`).then((response) => response.data);
+  },
+  getCategoryById: (id: string) => {
+    return axios.get(`${API_URL}/categories/${id}`).then((response) => response);
+  },
+  getSubcategoryById: (id: string) => {
+    return axios.get(`${API_URL}/subcategories/${id}`).then((response) => response);
   }
 };

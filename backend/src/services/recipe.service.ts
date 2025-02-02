@@ -45,7 +45,6 @@ export class RecipeService {
 
   async updateRecipe(id: string, recipeData: IRecipe) {
     try {
-      // Convert all amounts to strings and handle ingredient groups
       const formattedData = {
         ...recipeData,
         ingredientGroups: recipeData.ingredientGroups.map(group => ({
@@ -63,6 +62,7 @@ export class RecipeService {
         })),
         updatedAt: new Date()
       };
+      
   
       const recipe = await Recipe.findByIdAndUpdate(
         id,

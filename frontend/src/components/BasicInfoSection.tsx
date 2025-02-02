@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { BasicInfoSectionProps } from "../interfaces/Recipe";
 
-function BasicInfoSection({ initialData, categories, subcategories, onCategoryChange, selectedCategory }: BasicInfoSectionProps) {
+function BasicInfoSection({ initialData, categories, subcategories, onCategoryChange, onSubCategoryChange, selectedCategory, selectedSubCategory }: BasicInfoSectionProps) {
   const { t } = useTranslation();
   
   return (
@@ -24,10 +24,10 @@ function BasicInfoSection({ initialData, categories, subcategories, onCategoryCh
 
         <div className="grid grid-cols-3 gap-4">
           {[
-            { name: 'prepTime', label: t('recipe.prepTime') },
-            { name: 'cookTime', label: t('recipe.cookTime') },
-            { name: 'servings', label: t('recipe.servings') }
-          ].map(({ name, label }) => (
+            { name: 'prepTime', label: t('recipe.prepTime'), value: initialData?.prepTime },
+            { name: 'cookTime', label: t('recipe.cookTime'), value: initialData?.cookTime },
+            { name: 'servings', label: t('recipe.servings'), value: initialData?.servings }
+          ].map(({ name, label, value }) => (
             <div key={name} className="space-y-2">
               <label className="block text-xs font-medium text-gray-600">
                 {label}
@@ -35,7 +35,7 @@ function BasicInfoSection({ initialData, categories, subcategories, onCategoryCh
               <input
                 type="number"
                 name={name}
-                defaultValue={initialData?.name}
+                defaultValue={value}
                 min="0"
                 className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-purple-300 focus:outline-none transition-colors"
               />
@@ -49,7 +49,7 @@ function BasicInfoSection({ initialData, categories, subcategories, onCategoryCh
           </label>
           <select
             name="category"
-            value={selectedCategory}
+            value={selectedCategory || ''}
             onChange={(e) => onCategoryChange(e.target.value)}
             required
             className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -69,6 +69,8 @@ function BasicInfoSection({ initialData, categories, subcategories, onCategoryCh
           </label>
           <select
             name="subcategory"
+            value={selectedSubCategory || ''}
+            onChange={(e) => onSubCategoryChange(e.target.value)}
             disabled={!selectedCategory}
             required
             className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"

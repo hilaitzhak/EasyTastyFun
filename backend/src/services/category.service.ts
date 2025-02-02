@@ -25,6 +25,28 @@ export class CategoryService {
     }
   }
 
+  async getCategoryId(categoryId: string) {
+    try {
+      const category = await Category.findById(categoryId);
+
+      return category;
+    } catch (error) {
+      console.error('Error in CategoryService.getCategoryId:', error);
+      throw new Error('Service error fetching category');
+    }
+  }
+
+  async getSubcategoryById(subcategoryId: string) {
+    try {
+      const subcategory = await SubCategory.findById(subcategoryId);
+
+      return subcategory;
+    } catch (error) {
+      console.error('Error in CategoryService.getSubcategoryById:', error);
+      throw new Error('Service error fetching subcategory');
+    }
+  }
+
   async getCategoryByPath(categoryPath: string): Promise<ICategory | null> {
     try {
       return await Category.findOne({ path: categoryPath });

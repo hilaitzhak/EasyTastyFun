@@ -13,16 +13,17 @@ const EditRecipe = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
+  const isRTL = i18n.language === 'he';
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [recipe, setRecipe] = useState<any>(null);
-  const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: '' }]);
-  const [instructions, setInstructions] = useState(['']);
+  // const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: '' }]);
+  // const [instructions, setInstructions] = useState(['']);
   const [images, setImages] = useState<{ data: string; file: File }[]>([]);
-  const isRTL = i18n.language === 'he';
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<SubCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('');
   const [filteredSubcategories, setFilteredSubcategories] = useState<SubCategory[]>([]);
   const [ingredientGroups, setIngredientGroups] = useState<IngredientGroup[]>([]);
   const [instructionGroups, setInstructionGroups] = useState<InstructionGroup[]>([]);
@@ -46,6 +47,9 @@ const EditRecipe = () => {
           }))
         );
         setImages(recipeData.images.map((img: any) => ({ data: img.data, file: new File([], "placeholder") })));
+        setSelectedCategory(recipeData.category);
+        setSelectedSubCategory(recipeData.subcategory);
+        console.log('recipeData: ', recipeData);
       } catch (error) {
         console.error('Error fetching recipe:', error);
         alert(t('editRecipe.loadError'));
@@ -76,16 +80,24 @@ const EditRecipe = () => {
       
   useEffect(() => {
     if (selectedCategory) {
-      // Filter subcategories where categoryId matches the selected category
+      console.log('selectedCategory: ', selectedCategory)
       const filtered = subcategories.filter(sub => sub.categoryId === selectedCategory);
       setFilteredSubcategories(filtered);
+      console.log('filtered: ', filtered)
+
     } else {
       setFilteredSubcategories([]);
     }
-  }, [selectedCategory, subcategories]);
+  }, [selectedCategory, subcategories, recipe]);
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId);
+    // Reset subcategory when category changes
+    setSelectedSubCategory('');
+  };
+
+  const handleSubCategoryChange = (subCategoryId: string) => {
+    setSelectedSubCategory(subCategoryId);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -99,6 +111,8 @@ const EditRecipe = () => {
         prepTime: Number(formData.get('prepTime')),
         cookTime: Number(formData.get('cookTime')),
         servings: Number(formData.get('servings')),
+        category: selectedCategory,
+        subcategory: selectedSubCategory,
         ingredientGroups,
         instructionGroups,
         images: images.map(img => ({
@@ -107,6 +121,7 @@ const EditRecipe = () => {
         }))
       };
 
+      console.log('updatedRecipe:', updatedRecipe)
       await recipeApi.update(id!, updatedRecipe);
       navigate(`/recipe/${id}`);
     } catch (error) {
@@ -165,7 +180,9 @@ const EditRecipe = () => {
             categories={categories}
             subcategories={filteredSubcategories}
             onCategoryChange={handleCategoryChange}
+            onSubCategoryChange={handleSubCategoryChange}
             selectedCategory={selectedCategory}
+            selectedSubCategory={selectedSubCategory}
           />
         </div>
       </div>

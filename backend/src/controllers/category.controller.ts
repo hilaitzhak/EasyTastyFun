@@ -7,13 +7,33 @@ export class CategoryController {
     constructor() {}
 
     async getCategories(req: Request, res: Response): Promise<void> {
-        try {
-            const allCategories = await this.categoryService.getCategories();
-            res.status(200).json(allCategories);
-        } catch (error) {
-            res.status(500).json({ message: 'Controller error fetching categories' });
-        }
+      try {
+          const allCategories = await this.categoryService.getCategories();
+          res.status(200).json(allCategories);
+      } catch (error) {
+          res.status(500).json({ message: 'Controller error fetching categories' });
+      }
     }
+
+    async getCategoryById(req: Request, res: Response) {
+      try {
+        const { id } = req.params;
+        const category = await this.categoryService.getCategoryId(id);
+        res.status(200).json(category);
+      } catch (error) {
+        res.status(500).json({ message: 'Controller error fetching category' });
+      }
+    };
+
+    async getSubcategoryById(req: Request, res: Response) {
+      try {
+        const { id } = req.params;
+        const subcategory = await this.categoryService.getSubcategoryById(id);
+        res.status(200).json(subcategory);
+      } catch (error) {
+        res.status(500).json({ message: 'Controller error fetching subcategory' });
+      }
+    };
 
     async getCategoryByPath(req: Request, res: Response): Promise<void> {
       try {

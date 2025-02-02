@@ -92,7 +92,9 @@ export interface RecipeFormProps {
   categories: Category[];
   subcategories: SubCategory[];
   onCategoryChange: (categoryId: string) => void;
+  onSubCategoryChange: (subCategoryId: string) => void;
   selectedCategory: string;
+  selectedSubCategory: string;
 }
 
 export interface SubmitButtonProps {
@@ -111,7 +113,9 @@ export interface BasicInfoSectionProps {
   categories: Category[];
   subcategories: SubCategory[];
   onCategoryChange: (categoryId: string) => void;
+  onSubCategoryChange: (subCategoryId: string) => void;
   selectedCategory: string;
+  selectedSubCategory: string;
 }
 
 export interface ImageUploadSectionProps {
