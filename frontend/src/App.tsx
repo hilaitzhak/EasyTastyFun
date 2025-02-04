@@ -6,7 +6,7 @@ import CreateRecipeForm from './pages/CreateRecipeForm';
 import EditRecipe from './pages/EditRecipe';
 import RecipeDetails from './pages/RecipeDetails';
 import i18n from './i18n/i18n';
-import CategoryPage from './pages/CategoryPage';
+import RecipePage from './pages/RecipePage';
 
 
 const App = () => {
@@ -18,9 +18,9 @@ const App = () => {
           <Route path="/recipes/add-recipe" element={<CreateRecipeForm />} />
           <Route path="/recipe/:id" element={<RecipeDetails />} />
           <Route path="/recipe/edit/:id" element={<EditRecipe />} />
-          <Route path="/categories/:categoryPath" element={<CategoryPage />} />
-          <Route path="/categories/:categoryPath/subcategories" element={<CategoryPage />} />
-          <Route path="/categories/:categoryPath/:subCategoryPath" element={<CategoryPage />} />
+          <Route path="/categories/:categoryPath" element={<RecipePage />} />
+          {/* <Route path="/categories/:categoryPath/subcategories" element={<RecipePage />} /> */}
+          <Route path="/categories/:categoryPath/:subCategoryPath" element={<RecipePage />} />
         </Routes>
       </Router>
     );

@@ -23,6 +23,9 @@
     }
   },
   "recipe": {
+    "foundCount": "{{count}} מתכונים נמצאו",
+    "noRecipesFound": "לא נמצאו מתכונים",
+    "tryDifferentCategory": "נסה לבחור קטגוריה אחרת",
     "favorite": "הוסף למועדפים",
     "ingredients": "מצרכים",
     "instructions": "הוראות הכנה",

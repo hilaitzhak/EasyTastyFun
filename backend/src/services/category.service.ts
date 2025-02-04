@@ -49,17 +49,34 @@ export class CategoryService {
 
   async getCategoryByPath(categoryPath: string): Promise<ICategory | null> {
     try {
-      return await Category.findOne({ path: categoryPath });
+      return await Category.findOne({
+        path: `/categories/${categoryPath}`
+      });
     } catch (error) {
       console.error('Error fetching category by path:', error);
       return null;
     }
   }
 
-  async getRecipesByCategory(categoryId: string): Promise<ISubCategory[]> {
+  async getRecipesByCategory(categoryPath: string): Promise<IRecipe[]> {
     try {
-      const category = await Category.findById(categoryId).populate('subCategories');
-      return category?.subCategories || [];
+      if (!categoryPath) {
+        return [];
+      }
+      const category = await Category.findOne({ 
+        path: `/categories/${categoryPath}`
+      });
+  
+      if (!category) {
+        console.log('Category not found');
+        return [];
+      }
+      const recipes = await Recipe.find({
+        category: category._id,
+      }).sort({ createdAt: -1 });
+  
+      return recipes;
+
     } catch (error) {
       console.error('Error fetching recipes by category:', error);
       return [];
@@ -99,15 +116,39 @@ export class CategoryService {
     }
   }
 
-  async getRecipesBySubCategory(categoryPath: string, subCategoryPath: string): Promise<IRecipe[]> {
+  async getRecipesByCategoryAndSubcategory(categoryPath: string, subCategoryPath: string): Promise<IRecipe[]> {
     try {
-      const subCategory = await this.getSubCategoryByPath(categoryPath, subCategoryPath);
-      // if (subCategory) {
-      //   return await this.getRecipesForSubCategory(subCategory._id);
-      // }
-      return [];
+      if (!categoryPath || !subCategoryPath) {
+        return [];
+      }
+  
+      const category = await Category.findOne({ 
+        path: `/categories/${categoryPath}`
+      });
+  
+      if (!category) {
+        console.log('Category not found');
+        return [];
+      }
+
+      const subcategory = await SubCategory.findOne({
+        path: `/categories/${categoryPath}/${subCategoryPath}`
+      });
+  
+      if (!subcategory) {
+        console.log('Subcategory not found');
+        return [];
+      }
+  
+      // Find recipes that match both category and subcategory IDs
+      const recipes = await Recipe.find({
+        category: category._id,
+        subcategory: subcategory._id
+      }).sort({ createdAt: -1 });
+  
+      return recipes;
     } catch (error) {
-      console.error('Error fetching recipes by subcategory:', error);
+      console.error('Error fetching recipes by category and subcategory:', error);
       return [];
     }
   }

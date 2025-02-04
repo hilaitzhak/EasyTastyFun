@@ -10,10 +10,11 @@ function Navbar() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'he';
 
   useEffect(() => {
-    document.dir = i18n.language === 'he' ? 'rtl' : 'ltr';
-  }, []);
+    document.dir = isRTL ? 'rtl' : 'ltr';
+  }, [isRTL]);
 
   useEffect(() => {
     fetchCategories();
@@ -36,12 +37,12 @@ function Navbar() {
 
   const renderSubCategories = (subCategories: SubCategory[]) => {
     return (
-      <div className="grid grid-cols-3 gap-4 p-6 bg-white text-gray-700 rounded-lg shadow-lg">
+      <div className="grid grid-cols-2 gap-4 p-6 bg-white text-gray-700 rounded-xl shadow-2xl transition-opacity duration-300 opacity-100">
         {subCategories.map((subCategory: SubCategory) => (
           <Link
             key={subCategory._id}
             to={subCategory.path}
-            className="block px-4 py-2 hover:bg-gray-100 transition-colors"
+            className="block px-4 py-2 hover:bg-gray-200 transition-all rounded-lg"
           >
             {t(`${subCategory.nameKey}`)}
           </Link>

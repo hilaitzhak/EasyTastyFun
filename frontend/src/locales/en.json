@@ -22,6 +22,9 @@
     }
   },
   "recipe": {
+    "foundCount": "{{count}} recipes found",
+    "noRecipesFound": "No recipes found",
+    "tryDifferentCategory": "Try selecting a different category",
     "favorite": "Add to favorites",
     "ingredients": "Ingredients",
     "instructions": "Instructions",

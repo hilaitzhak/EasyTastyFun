@@ -28,11 +28,11 @@ function RecipeCard({ recipe, onClick }: RecipeCardProps) {
             <span className="text-gray-400">{t('common.noImage')}</span>
           </div>
         )}
-        <div className="absolute top-4 right-4">
+        {/* <div className="absolute top-4 right-4">
           <button className="p-2 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-colors">
             <Heart className="w-5 h-5 text-pink-500" />
           </button>
-        </div>
+        </div> */}
       </div>
   
       <div className="p-6">
