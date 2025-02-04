@@ -77,4 +77,14 @@ export class RecipeController {
             res.status(500).json({ message: "Error deleting recipe", error });
         }
     }
+
+    async checkSimilarRecipes(req: Request, res: Response) {
+        try {
+        const ingredients = req.body;
+        const similarRecipes = await this.recipeService.checkSimilarRecipes(ingredients);
+        res.json(similarRecipes);
+        } catch (error) {
+        res.status(500).json({ error: 'Error checking similar recipes' });
+        }
+    }
 }

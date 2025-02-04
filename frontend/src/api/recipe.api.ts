@@ -9,4 +9,5 @@ export const recipeApi = {
     getById: (id: string) => axios.get(`${API_URL}/recipes/${id}`),
     update: (id: string, data: any) => axios.put(`${API_URL}/recipes/${id}`, data),
     delete: (id: string) => axios.delete(`${API_URL}/recipes/${id}`),
+    checkSimilarRecipes: (ingredients: string[]) => axios.post(`${API_URL}/recipes/check-similar`, ingredients)
 };

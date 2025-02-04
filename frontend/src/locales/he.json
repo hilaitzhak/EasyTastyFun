@@ -147,6 +147,7 @@
       "creating": "יוצר מתכון...",
       "create": "צור מתכון"
     },
+    "similarRecipesFound": "נמצאו {{count}} מתכונים דומים : {{recipes}}. האם תרצה להמשיך ליצור את המתכון הזה?",
     "errors": {
       "serverError": "שגיאת שרת: {{message}}",
       "connectionError": "אין תגובה מהשרת. אנא בדוק את החיבור שלך.",

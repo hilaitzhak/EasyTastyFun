@@ -143,6 +143,7 @@
       "creating": "Creating Recipe...",
       "create": "Create Recipe"
     },
+    "similarRecipesFound": "Found {{count}} similar recipes: {{recipes}}. Would you like to continue creating this recipe?",
     "errors": {
       "serverError": "Server Error: {{message}}",
       "connectionError": "No response from server. Please check your connection.",

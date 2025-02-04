@@ -84,14 +84,37 @@ export class RecipeService {
   }
 
   async deleteRecipe(id: string) {
-      try {
-        const recipe = await Recipe.findByIdAndDelete(id);
-        if (!recipe) {
-          throw new Error('Recipe not found');
-        }
-        return recipe;
-      } catch (error) {
-        throw new Error('Error deleting recipe');
+    try {
+      const recipe = await Recipe.findByIdAndDelete(id);
+      if (!recipe) {
+        throw new Error('Recipe not found');
       }
+      return recipe;
+    } catch (error) {
+      throw new Error('Error deleting recipe');
+    }
+  }
+
+  async checkSimilarRecipes(ingredients: string[]) {
+    try {
+      const allRecipes = await Recipe.find({});
+      const similarRecipes = allRecipes.filter(recipe => {
+        const recipeIngredients = recipe.ingredientGroups
+          .flatMap(group => group.ingredients)
+          .map(ing => ing.name.toLowerCase().trim());
+
+        const matchingIngredients = ingredients.filter(ing => 
+          recipeIngredients.includes(ing.toLowerCase().trim())
+        );
+
+        const similarity = (matchingIngredients.length / ingredients.length) * 100;
+        return similarity >= 80;
+      });
+
+      return similarRecipes;
+    } catch (error) {
+      console.error('Error checking similar recipes:', error);
+      throw error;
+    }
   }
 }

@@ -70,9 +70,33 @@ function CreateRecipeForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-
+  
     try {
       const formData = new FormData(e.currentTarget);
+  
+      // Extract all ingredients for similarity check
+      const allIngredients = ingredientGroups
+        .flatMap(group => group.ingredients)
+        .map(ing => ing.name)
+        .filter(name => name.trim()); // Filter out empty ingredients
+      // Check for similar recipes first
+      const similarRecipesResponse = await recipeApi.checkSimilarRecipes(allIngredients);
+
+      if (similarRecipesResponse.data.length > 0) {
+        const confirmed = window.confirm(
+          t('createRecipe.similarRecipesFound', {
+            count: similarRecipesResponse.data.length,
+            recipes: similarRecipesResponse.data.map((r: any) => r.name).join(', ')
+          })
+        );
+  
+        if (!confirmed) {
+          setLoading(false);
+          return;
+        }
+      }
+  
+      // If confirmed or no similar recipes, proceed with recipe creation
       const recipeData = {
         name: formData.get('name'),
         prepTime: Number(formData.get('prepTime')),
@@ -94,7 +118,7 @@ function CreateRecipeForm() {
           description: ''
         }))
       };
-
+  
       const response = await recipeApi.createRecipe(recipeData);
       console.log('response:', response.data);
       if (response.data) {
