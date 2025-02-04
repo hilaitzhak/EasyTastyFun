@@ -6,7 +6,6 @@ import LatestRecipes from '../components/LatestRecipes';
 function HomePage() {
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
       <HeroSection />
       <LatestRecipes />
     </div>

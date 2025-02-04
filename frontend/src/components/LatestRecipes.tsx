@@ -19,7 +19,7 @@ function LatestRecipes() {
             {/* <p className="text-gray-600">{t('latestRecipes.subtitle')}</p> */}
           </div>
           <button
-            onClick={() => navigate('/recipes')}
+            onClick={() => navigate('/recipes/add-recipe')}
             className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-6 py-3 rounded-full hover:from-purple-700 hover:to-pink-600 transition-all transform hover:scale-105 shadow-lg"
           >
             <span>{t('latestRecipes.addRecipe')}</span>

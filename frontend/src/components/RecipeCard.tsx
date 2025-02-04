@@ -1,9 +1,11 @@
 import { Calendar, Clock, Heart, Users } from "lucide-react";
 import { RecipeCardProps } from "../interfaces/Recipe";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
-function RecipeCard({ recipe, onClick }: RecipeCardProps) {
+function RecipeCard({ recipe }: RecipeCardProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const totalTime = (recipe?.prepTime || 0) + (recipe?.cookTime || 0);
   const formattedDate = new Date(recipe.createdAt).toLocaleDateString('en-GB', {
     day: '2-digit',
@@ -11,9 +13,13 @@ function RecipeCard({ recipe, onClick }: RecipeCardProps) {
     year: 'numeric'
   });  
 
+  const handleClick = () => {
+    navigate(`/recipe/${recipe._id}`);
+  };
+
   return (
     <div 
-      onClick={() => onClick?.(recipe._id)}
+      onClick={handleClick}
       className="group bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
     >
       <div className="relative h-56">
