@@ -28,15 +28,16 @@ function RecipeDetails() {
         const recipeData = response.data;
         setRecipe(recipeData);
         if (recipeData.category) {
-
+          console.log('recipeData: ', recipeData)
           const categoryResponse = await categoryApi.getCategoryById(recipeData.category);
-          console.log('categoryResponse: ', categoryResponse.data)
-          setCategory(categoryResponse.data);
+          console.log('categoryResponse: ', categoryResponse)
+          setCategory(categoryResponse);
         }
   
         if (recipeData.subcategory) {
           const subcategoryResponse = await categoryApi.getSubcategoryById(recipeData.subcategory);
-          setSubcategory(subcategoryResponse.data);
+          console.log('subcategoryResponse: ', subcategoryResponse)
+          setSubcategory(subcategoryResponse);
         }
       } catch (error) {
         console.error('Error fetching recipe:', error);

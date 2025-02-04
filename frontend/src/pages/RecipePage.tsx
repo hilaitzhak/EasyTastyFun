@@ -24,7 +24,7 @@ function RecipePage() {
           if (subCategory) {
             setSubCategory(subCategory);
             const recipeData = await categoryApi.getRecipesByCategoryAndSubcategory(categoryPath, subCategoryPath);
-            setRecipes(recipeData);
+            setRecipes(recipeData || []);
             
             // Also fetch parent category for breadcrumb
             const category = await categoryApi.getCategoryByPath(categoryPath);
@@ -37,7 +37,7 @@ function RecipePage() {
             setCategory(category);
             const recipeData = await categoryApi.getRecipesByCategoryPath(categoryPath);
             console.log('recipeData: ', recipeData)
-            setRecipes(recipeData);
+            setRecipes(recipeData || []);
           }
           setSubCategory(null);
         }

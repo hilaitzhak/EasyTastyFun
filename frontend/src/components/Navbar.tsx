@@ -49,7 +49,6 @@ function Navbar() {
         setCategories(cachedData);
       }
 
-      // Then fetch fresh data
       const { data } = await categoryApi.getCategories();
       setCategories(data);
       setCachedCategories(data);
