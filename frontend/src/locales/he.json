@@ -7,10 +7,11 @@
     "cakes": "עוגות",
     "cookies": "עוגיות",
     "desserts": "קינוחים",
-    "hotStews": "תבשילים",
+    "stews": "תבשילים",
     "pies": "פשטידות",
     "pasta": "פסטה",
     "salads": "סלטים",
+    "pastries": "מאפים",
     "breakfast":" ארוחות בוקר",
     "backToHome": "חזרה לדף הבית",
     "subCategories": {
@@ -21,7 +22,10 @@
       "sweetDesserts":"קינוחים מתוקים",
       "savoryDesserts":"קינוחים מלוחים",
       "sweetCookies": "עוגיות מתוקות",
-      "savoryCookies": "עוגיות מלוחות"
+      "savoryCookies": "עוגיות מלוחות",
+      "meatStews": "תבשילי בשר",
+      "cheesePastries": "מאפי גבינה",
+      "chocolatePastries": "מאפי שוקולד"
     }
   },
   "recipe": {

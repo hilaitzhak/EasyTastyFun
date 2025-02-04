@@ -56,13 +56,13 @@ export class CategoryController {
   }
 
   async getRecipesByCategory(req: Request, res: Response): Promise<void> {
-      try {
-          const { categoryPath } = req.params;
-          const recipes = await this.categoryService.getRecipesByCategory(categoryPath);
-          res.status(200).json(recipes);
-      } catch (error) {
-          res.status(500).json({ message: 'Controller error fetching recipes by category' });
-      }
+    try {
+      const { categoryPath } = req.params;
+      const recipes = await this.categoryService.getRecipesByCategory(categoryPath);
+      res.status(200).json(recipes);
+    } catch (error) {
+      res.status(500).json({ message: 'Controller error fetching recipes by category' });
+    }
   }
 
   async getAllSubCategories(req: Request, res: Response): Promise<void> {

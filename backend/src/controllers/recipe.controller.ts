@@ -56,8 +56,6 @@ export class RecipeController {
             const recipeData = req.body;
             const updatedRecipe = await this.recipeService.updateRecipe(id, recipeData);
             if (updatedRecipe) {
-                console.log('Sending Updated Recipe:',updatedRecipe);
-
                 res.status(200).json(updatedRecipe);
             } else {
                 res.status(404).json({ message: "Recipe not found" });

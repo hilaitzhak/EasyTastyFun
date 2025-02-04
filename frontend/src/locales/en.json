@@ -11,6 +11,7 @@
     "pies": "Pies",
     "pasta": "Pasta",
     "salads": "Salads",
+    "pastries": "Pastries",
     "backToHome": "Back to Home",
     "subCategories": {
       "chocolateCakes":"Chocolate cakes",
@@ -20,7 +21,10 @@
       "sweetDesserts":"Sweet desserts",
       "savoryDesserts":"Savory desserts",
       "sweetCookies": "Sweet cookies",
-      "savoryCookies": "Savory cookies"
+      "savoryCookies": "Savory cookies",
+      "meatStews": "Meat Stews",
+      "cheesePastries": "Cheese pastries",
+      "chocolatePastries": "Chocolate pastries"
     }
   },
   "recipe": {

@@ -28,15 +28,12 @@ function RecipeDetails() {
         const recipeData = response.data;
         setRecipe(recipeData);
         if (recipeData.category) {
-          console.log('recipeData: ', recipeData)
           const categoryResponse = await categoryApi.getCategoryById(recipeData.category);
-          console.log('categoryResponse: ', categoryResponse)
           setCategory(categoryResponse);
         }
   
         if (recipeData.subcategory) {
           const subcategoryResponse = await categoryApi.getSubcategoryById(recipeData.subcategory);
-          console.log('subcategoryResponse: ', subcategoryResponse)
           setSubcategory(subcategoryResponse);
         }
       } catch (error) {
@@ -151,7 +148,6 @@ function RecipeDetails() {
           </div>
         </div>
 
-        {/* Recipe Title */}
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">{recipe.name}</h1>
           {category && subcategory && (
@@ -174,8 +170,8 @@ function RecipeDetails() {
           )}
 
           {recipe.images && recipe.images.length > 0 && (
-            <div className="relative mb-8 rounded-2xl overflow-hidden">
-              <div className="w-full h-[32rem] bg-gray-100 cursor-pointer" onClick={handleImageClick}>
+            <div className="relative mb-8 rounded-2xl overflow-hidden max-w-2xl mx-auto">
+              <div className="w-full h-[24rem] bg-gray-100 cursor-pointer" onClick={handleImageClick}>
                 <img
                   src={recipe.images[currentImageIndex].data}
                   alt={recipe.name}
@@ -217,7 +213,7 @@ function RecipeDetails() {
             {recipe.ingredientGroups.map((group: any, groupIndex: number) => (
               <div key={groupIndex} className="mb-6">
                 {group.title && (
-                  <h3 className="text-xl font-semibold text-gray-700 mb-3 border-b pb-2">
+                  <h3 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
                     {group.title}
                   </h3>
                 )}
@@ -248,7 +244,7 @@ function RecipeDetails() {
             {recipe.instructionGroups.map((group: any, groupIndex: number) => (
               <div key={groupIndex} className="mb-6">
                 {group.title && (
-                  <h3 className="text-xl font-semibold text-gray-700 mb-3 border-b pb-2">
+                  <h3 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
                     {group.title}
                   </h3>
                 )}
