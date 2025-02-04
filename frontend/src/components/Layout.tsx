@@ -3,10 +3,10 @@ import Navbar from "./Navbar";
 
 function Layout() {
     return (
-      <div>
-        <Navbar />
-        <Outlet />
-      </div>
+      <div className="min-h-screen w-full">
+      <Navbar />
+      <Outlet />
+    </div>
     );
 };
 

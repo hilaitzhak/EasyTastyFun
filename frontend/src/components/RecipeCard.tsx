@@ -45,11 +45,13 @@ function RecipeCard({ recipe }: RecipeCardProps) {
         <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-purple-600 transition-colors">
           {recipe.name}
         </h3>
-        <div className="grid grid-cols-2 gap-4 text-sm text-gray-500">
-          {recipe && (
-            ((recipe?.prepTime ?? 0) > 0 || (recipe?.cookTime ?? 0) > 0 || (recipe?.servings ?? 0) > 0) && (
+        
+        {/* Only render the grid if there's data to show */}
+        {(totalTime > 0 || (recipe?.servings ?? 0) > 0 || formattedDate) && (
+          <div className="grid grid-cols-2 gap-4 text-sm text-gray-500">
+            {recipe && (
               <>
-                {recipe?.prepTime && recipe?.prepTime > 0 && (
+                {totalTime > 0 && (
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-purple-500" />
                     <span>
@@ -57,22 +59,26 @@ function RecipeCard({ recipe }: RecipeCardProps) {
                     </span>
                   </div>
                 )}
-                {recipe?.servings && recipe?.servings > 0 && (
+                
+                {(recipe?.servings ?? 0) > 0 && (
                   <div className="flex items-center gap-2">
                     <Users className="w-4 h-4 text-purple-500" />
                     <span>
-                      {recipe?.servings} {t('recipe.servings')}
+                      {recipe.servings} {t('recipe.servings')}
                     </span>
                   </div>
                 )}
+                
+                {formattedDate && (
+                  <div className="flex items-center gap-2 col-span-2">
+                    <Calendar className="w-4 h-4 text-purple-500" />
+                    <span>{t('recipe.createdAt', { date: formattedDate })}</span>
+                  </div>
+                )}
               </>
-            )
-          )}
-          <div className="flex items-center gap-2 col-span-2">
-            <Calendar className="w-4 h-4 text-purple-500" />
-            <span>{formattedDate && t('recipe.createdAt', { date: formattedDate })}</span>
+            )}
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

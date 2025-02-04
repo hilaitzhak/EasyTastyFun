@@ -14,8 +14,6 @@ function CreateRecipeForm() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const isRTL = i18n.language === 'he';
-  // const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: '' }]);
-  // const [instructions, setInstructions] = useState(['']);
   const [images, setImages] = useState<{ data: string; file: File }[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<SubCategory[]>([]);
