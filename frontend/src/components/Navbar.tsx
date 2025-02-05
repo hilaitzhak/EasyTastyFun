@@ -77,7 +77,6 @@ function Navbar() {
     <nav className="sticky top-0 z-50 bg-gradient-to-r from-purple-600 via-fuchsia-500 to-pink-500 shadow-lg backdrop-blur-sm bg-opacity-90 w-full">
       <div className="container mx-auto px-6 w-full">
         <div className="flex justify-between items-center h-16">
-          {/* Logo/Brand - Add if you have one */}
           <div className="hidden md:flex items-center space-x-1">
             <Link
               to="/recipes"

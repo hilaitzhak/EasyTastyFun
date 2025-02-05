@@ -25,7 +25,8 @@
       "meatStews": "Meat Stews",
       "cheesePastries": "Cheese pastries",
       "chocolatePastries": "Chocolate pastries",
-      "meatPastries": "Meat pastries"
+      "meatPastries": "Meat pastries",
+      "pizza": "Pizza"
     }
   },
   "recipe": {

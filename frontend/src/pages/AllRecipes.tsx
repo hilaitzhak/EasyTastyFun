@@ -8,27 +8,69 @@ import i18n from '../i18n/i18n';
 import RecipeCard from '../components/RecipeCard';
 
 function AllRecipes() {
+  const CACHE_KEY = 'recipes_cache';
+  const CACHE_DURATION = 30 * 60 * 1000; 
+  const navigate = useNavigate();
   const { t } = useTranslation();
-  const [recipes, setRecipes] = useState<IRecipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const isRTL = i18n.language === 'he';
-  const navigate = useNavigate();
-
+  const [recipes, setRecipes] = useState<IRecipe[]>(() => {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      const { data, timestamp } = JSON.parse(cached);
+      const isExpired = new Date().getTime() - timestamp > CACHE_DURATION;
+      if (!isExpired) {
+        return data;
+      }
+    }
+    return [];
+  });
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
         setLoading(true);
+        
+        // Check cache first
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const { data, timestamp } = JSON.parse(cached);
+          const isExpired = new Date().getTime() - timestamp > CACHE_DURATION;
+          
+          if (!isExpired) {
+            setRecipes(data);
+            setLoading(false);
+            return; // Use cache if not expired
+          }
+        }
+
+        // Fetch fresh data if cache is expired or doesn't exist
         const { data } = await recipeApi.getAll();
         setRecipes(data);
+        
+        // Update cache with new timestamp
+        const cacheData = {
+          data,
+          timestamp: new Date().getTime()
+        };
+        localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
         setError(null);
       } catch (err) {
         setError(t('allRecipes.fetchError'));
+        
+        // Try to use cached data even if expired when API fails
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const { data } = JSON.parse(cached);
+          setRecipes(data);
+          setError(null);
+        }
       } finally {
         setLoading(false);
       }
     };
+
     fetchRecipes();
   }, [t]);
 
