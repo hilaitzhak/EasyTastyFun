@@ -26,6 +26,7 @@ function RecipeDetails() {
       try {
         const response = await recipeApi.getById(id!);
         const recipeData = response.data;
+        console.log('Recipe Data:', recipeData); // Add this line to check
         setRecipe(recipeData);
         if (recipeData.category) {
           const categoryResponse = await categoryApi.getCategoryById(recipeData.category);
@@ -204,6 +205,26 @@ function RecipeDetails() {
               currentIndex={currentImageIndex}
               onClose={handleModalClose}
             />
+          )}
+
+
+          {recipe.video && (
+            <div className="relative mb-8 rounded-2xl overflow-hidden max-w-2xl mx-auto">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                {t('createRecipe.video.title')}
+              </h2>
+              <div className="w-full h-[24rem] bg-gray-100 cursor-pointer">
+                <video 
+                  src={recipe.video} 
+                  controls
+                  className="w-full h-full rounded-xl"
+                  poster={recipe.images?.[0]?.data}
+                  controlsList="nodownload"
+                >
+                  {t('createRecipe.video.videoNotSupported')}
+                </video>
+              </div>
+            </div>
           )}
 
           {/* Ingredients */}

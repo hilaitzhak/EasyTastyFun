@@ -15,6 +15,7 @@ function CreateRecipeForm() {
   const [loading, setLoading] = useState(false);
   const isRTL = i18n.language === 'he';
   const [images, setImages] = useState<{ data: string; file: File }[]>([]);
+  const [video, setVideo] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<SubCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -116,6 +117,7 @@ function CreateRecipeForm() {
           data: img.data,
           description: ''
         })),
+        video: video,
         tips: tips.filter(tip => tip.trim())
       };
   
@@ -171,6 +173,8 @@ function CreateRecipeForm() {
             selectedSubCategory={selectedSubCategory}
             tips={tips}
             setTips={setTips}
+            video={video}
+            setVideo={setVideo} 
           />
         </div>
       </div>

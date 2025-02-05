@@ -98,6 +98,8 @@ export interface RecipeFormProps {
   selectedSubCategory: string;
   tips?: string[];
   setTips: (tips: string[]) => void;
+  video?: string | null;
+  setVideo: (video: string | null) => void;
 }
 
 export interface SubmitButtonProps {
@@ -153,4 +155,9 @@ export interface SortableListProps<T> {
 export interface TipsSectionProps {
   tips: string[];
   setTips: (tips: string[]) => void;
+}
+
+export interface VideoUploadSectionProps {
+  video: string | null;
+  setVideo: (video: string | null) => void;
 }

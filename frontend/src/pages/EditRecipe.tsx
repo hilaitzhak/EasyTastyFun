@@ -18,6 +18,7 @@ const EditRecipe = () => {
   const [saving, setSaving] = useState(false);
   const [recipe, setRecipe] = useState<any>(null);
   const [images, setImages] = useState<{ data: string; file: File }[]>([]);
+  const [video, setVideo] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<SubCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -49,7 +50,7 @@ const EditRecipe = () => {
         setSelectedCategory(recipeData.category);
         setSelectedSubCategory(recipeData.subcategory);
         setTips(recipeData.tips || []);
-        console.log('recipeData: ', recipeData);
+        setVideo(recipeData.video || null); 
       } catch (error) {
         console.error('Error fetching recipe:', error);
         alert(t('editRecipe.loadError'));
@@ -119,6 +120,7 @@ const EditRecipe = () => {
           data: img.data,
           description: ''
         })),
+        video: video ,
         tips: tips.filter(tip => tip.trim())
       };
 
@@ -185,7 +187,9 @@ const EditRecipe = () => {
             selectedCategory={selectedCategory}
             selectedSubCategory={selectedSubCategory}
             tips={tips}
-            setTips={setTips} 
+            setTips={setTips}
+            video={video}
+            setVideo={setVideo} 
           />
         </div>
       </div>

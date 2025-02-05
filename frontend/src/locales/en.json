@@ -127,6 +127,13 @@
       "upload": "Upload Images",
       "dragDrop": "Click to upload images"
     },
+    "video": {
+      "title": "Recipe Video",
+      "upload": "Upload video or drag and drop",
+      "maxSize": "Maximum size: 50MB",
+      "notSupported": "Your browser does not support the video tag",
+      "videoSizeError": "Video size must be less than 50MB"
+    },
     "ingredients": {
       "title": "Ingredients",
       "add": "Add Ingredient",

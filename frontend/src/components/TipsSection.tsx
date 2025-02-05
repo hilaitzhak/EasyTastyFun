@@ -46,8 +46,7 @@ function TipsSection({ tips, setTips }: TipsSectionProps) {
                     setTips(newTips);
                   }}
                   placeholder={t('createRecipe.tips.tipPlaceholder')}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-purple-200 focus:border-purple-400 focus:outline-none transition-colors"
-                />
+                  className="w-full min-w-[400px] px-6 py-3 rounded-xl border-2 border-purple-200 focus:border-purple-400 focus:outline-none transition-colors"                  />
               </div>
               {tips.length > 1 && (
                 <button

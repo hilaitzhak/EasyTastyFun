@@ -9,13 +9,27 @@ import RecipeCard from '../components/RecipeCard';
 
 function AllRecipes() {
   const CACHE_KEY = 'recipes_cache';
-  const CACHE_DURATION = 30 * 60 * 1000; 
+  const CACHE_DURATION = 5 * 60 * 1000; 
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const isRTL = i18n.language === 'he';
+  const minimizeRecipeData = (recipes: IRecipe[]) => {
+    return recipes.map(recipe => ({
+      _id: recipe._id,
+      name: recipe.name,
+      images: recipe.images ? [recipe.images[0]] : [],
+      prepTime: recipe.prepTime,
+      cookTime: recipe.cookTime,
+      servings: recipe.servings,
+      category: recipe.categories,
+      subcategory: recipe.subcategories,
+      createdAt: recipe.createdAt
+    }));
+  };
+
   const [recipes, setRecipes] = useState<IRecipe[]>(() => {
     const cached = localStorage.getItem(CACHE_KEY);
     if (cached) {
@@ -41,7 +55,7 @@ function AllRecipes() {
           if (!isExpired) {
             setRecipes(data);
             setLoading(false);
-            return; // Use cache if not expired
+            return;
           }
         }
 
@@ -50,13 +64,17 @@ function AllRecipes() {
         setRecipes(data);
         
         // Update cache with new timestamp
+        const minimalData = minimizeRecipeData(data);
+
         const cacheData = {
-          data,
+          data: minimalData,
           timestamp: new Date().getTime()
         };
         localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+
         setError(null);
       } catch (err) {
+        console.error('Error details:', err);
         setError(t('allRecipes.fetchError'));
         
         // Try to use cached data even if expired when API fails
@@ -75,9 +93,9 @@ function AllRecipes() {
   }, [t]);
 
   const filteredRecipes = recipes.filter(recipe =>
-    recipe.name.toLowerCase().includes(searchTerm.toLowerCase())
+    recipe?.name?.toLowerCase().includes((searchTerm || '').toLowerCase())
   );
-
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 py-8">
       <div className="container mx-auto px-4">
