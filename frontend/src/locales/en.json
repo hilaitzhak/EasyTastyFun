@@ -12,6 +12,7 @@
     "pasta": "Pasta",
     "salads": "Salads",
     "pastries": "Pastries",
+    "pareve": "Pareve",
     "backToHome": "Back to Home",
     "subCategories": {
       "chocolateCakes":"Chocolate cakes",
@@ -140,6 +141,11 @@
       "title": "Instructions",
       "addStep": "Add Step",
       "stepPlaceholder": "Step {{number}}"
+    },
+    "tips": {
+      "title": "Tips & Highlights",
+      "addTip": "Add Tip",
+      "tipPlaceholder": "Enter a helpful tip or highlight..."
     },
     "submit": {
       "creating": "Creating Recipe...",

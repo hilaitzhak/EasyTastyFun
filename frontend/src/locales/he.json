@@ -12,6 +12,7 @@
     "pasta": "פסטה",
     "salads": "סלטים",
     "pastries": "מאפים",
+    "pareve": "פרווה",
     "breakfast":" ארוחות בוקר",
     "backToHome": "חזרה לדף הבית",
     "subCategories": {
@@ -144,6 +145,11 @@
       "addGroup": "הוסף קבוצה",
       "groupTitlePlaceholder": "כותרת לקבוצה",
       "addToGroup": "הוסף שלב לקבוצה"
+    },
+    "tips": {
+      "title": "טיפים ודגשים",
+      "addTip": "הוסף טיפ",
+      "tipPlaceholder": " הוסף טיפ או דגש שיכול לעזור..."
     },
     "submit": {
       "creating": "יוצר מתכון...",

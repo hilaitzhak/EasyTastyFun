@@ -4,9 +4,11 @@ import ImageUploadSection from './ImageUploadSection';
 import IngredientsSection from './IngredientsSection';
 import InstructionsSection from './InstructionsSection';
 import SubmitButton from './SubmitButton';
+import TipsSection from './TipsSection';
 
 function RecipeForm({ onSubmit, loading, isEdit = false, initialData, ingredientGroups, setIngredientGroups,instructionGroups,
-    setInstructionGroups,images,setImages,onCancel,categories,subcategories,onCategoryChange,onSubCategoryChange, selectedCategory, selectedSubCategory }: RecipeFormProps) {
+    setInstructionGroups,images,setImages,onCancel,categories,subcategories,onCategoryChange,onSubCategoryChange, selectedCategory, selectedSubCategory, tips = [],
+    setTips }: RecipeFormProps) {
 
     return (
         <form onSubmit={onSubmit} className="space-y-8">
@@ -25,6 +27,11 @@ function RecipeForm({ onSubmit, loading, isEdit = false, initialData, ingredient
             <InstructionsSection
             instructionGroups={instructionGroups}
             setInstructionGroups={setInstructionGroups}
+            />
+
+            <TipsSection
+                tips={tips}
+                setTips={setTips}
             />
 
             <SubmitButton onCancel={onCancel} loading={false} isEdit={isEdit}/>

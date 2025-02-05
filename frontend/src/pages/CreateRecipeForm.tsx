@@ -29,6 +29,7 @@ function CreateRecipeForm() {
   const [instructionGroups, setInstructionGroups] = useState<InstructionGroup[]>([
     { title: '', instructions: [{ content: '' }] }
   ]);
+  const [tips, setTips] = useState<string[]>(['']);
 
 
   useEffect(() => {
@@ -114,7 +115,8 @@ function CreateRecipeForm() {
         images: images.map(img => ({
           data: img.data,
           description: ''
-        }))
+        })),
+        tips: tips.filter(tip => tip.trim())
       };
   
       const response = await recipeApi.createRecipe(recipeData);
@@ -167,6 +169,8 @@ function CreateRecipeForm() {
             onSubCategoryChange={handleSubCategoryChange}
             selectedCategory={selectedCategory}
             selectedSubCategory={selectedSubCategory}
+            tips={tips}
+            setTips={setTips}
           />
         </div>
       </div>

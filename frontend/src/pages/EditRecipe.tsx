@@ -17,8 +17,6 @@ const EditRecipe = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [recipe, setRecipe] = useState<any>(null);
-  // const [ingredients, setIngredients] = useState([{ name: '', amount: '', unit: '' }]);
-  // const [instructions, setInstructions] = useState(['']);
   const [images, setImages] = useState<{ data: string; file: File }[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<SubCategory[]>([]);
@@ -27,6 +25,7 @@ const EditRecipe = () => {
   const [filteredSubcategories, setFilteredSubcategories] = useState<SubCategory[]>([]);
   const [ingredientGroups, setIngredientGroups] = useState<IngredientGroup[]>([]);
   const [instructionGroups, setInstructionGroups] = useState<InstructionGroup[]>([]);
+  const [tips, setTips] = useState<string[]>(['']);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -49,6 +48,7 @@ const EditRecipe = () => {
         setImages(recipeData.images.map((img: any) => ({ data: img.data, file: new File([], "placeholder") })));
         setSelectedCategory(recipeData.category);
         setSelectedSubCategory(recipeData.subcategory);
+        setTips(recipeData.tips || []);
         console.log('recipeData: ', recipeData);
       } catch (error) {
         console.error('Error fetching recipe:', error);
@@ -118,7 +118,8 @@ const EditRecipe = () => {
         images: images.map(img => ({
           data: img.data,
           description: ''
-        }))
+        })),
+        tips: tips.filter(tip => tip.trim())
       };
 
       console.log('updatedRecipe:', updatedRecipe)
@@ -183,6 +184,8 @@ const EditRecipe = () => {
             onSubCategoryChange={handleSubCategoryChange}
             selectedCategory={selectedCategory}
             selectedSubCategory={selectedSubCategory}
+            tips={tips}
+            setTips={setTips} 
           />
         </div>
       </div>

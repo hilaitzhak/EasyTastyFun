@@ -26,6 +26,7 @@ export interface IRecipe {
   }[];
   categories: Category;
   subcategories: SubCategory;
+  tips?: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -95,6 +96,8 @@ export interface RecipeFormProps {
   onSubCategoryChange: (subCategoryId: string) => void;
   selectedCategory: string;
   selectedSubCategory: string;
+  tips?: string[];
+  setTips: (tips: string[]) => void;
 }
 
 export interface SubmitButtonProps {
@@ -145,4 +148,9 @@ export interface SortableListProps<T> {
   renderItem: (item: T, index: number) => React.ReactNode;
   groupId?: string;
   onDragEnd?: (event: DragEndEvent) => void;
+}
+
+export interface TipsSectionProps {
+  tips: string[];
+  setTips: (tips: string[]) => void;
 }

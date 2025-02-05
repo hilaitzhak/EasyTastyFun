@@ -34,6 +34,7 @@ const RecipeSchema: Schema = new Schema({
   }],
   category: { type: Types.ObjectId, ref: 'Category', required: true },
   subcategory: { type: Types.ObjectId, ref: 'SubCategory', required: true },
+  tips: [{ type: String }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

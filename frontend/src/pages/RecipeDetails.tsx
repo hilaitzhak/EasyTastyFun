@@ -264,6 +264,29 @@ function RecipeDetails() {
               </div>
             ))}
           </div>
+
+          {/* Tips Section */}
+          {recipe.tips && recipe.tips.length > 0 && (
+            <div className="bg-white rounded-xl shadow-md p-6 mt-8">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                {t('createRecipe.tips.title')}
+              </h2>
+              
+              <ul className="space-y-4">
+                {recipe.tips.map((tip: string, index: number) => (
+                  <li 
+                    key={index}
+                    className="flex gap-4 items-start"
+                  >
+                    <span className="flex-shrink-0 w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-semibold">
+                      {index + 1}
+                    </span>
+                    <p className="text-gray-700 leading-relaxed">{tip}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </div>
