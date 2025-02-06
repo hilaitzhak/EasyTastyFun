@@ -186,5 +186,28 @@
       "groupTitlePlaceholder": "כותרת לקבוצה",
       "addToGroup": "הוסף שלב לקבוצה"
     }
+  },
+  "auth": {
+    "welcome": "ברוכים השבים",
+    "loginPrompt": "התחבר לחשבון שלך",
+    "createAccount": "צור חשבון",
+    "registerPrompt": "התחל את מסע הבישול שלך",
+    "email": "אימייל",
+    "emailPlaceholder": "הכנס את האימייל שלך",
+    "password": "סיסמה",
+    "passwordPlaceholder": "הכנס את הסיסמה שלך", 
+    "confirmPassword": "אימות סיסמה",
+    "confirmPasswordPlaceholder": "אמת את הסיסמה שלך",
+    "name": "שם",
+    "namePlaceholder": "הכנס את השם שלך",
+    "login": "התחבר",
+    "register": "הרשם",
+    "noAccount": "?אין לך חשבון",
+    "haveAccount": "?כבר יש לך חשבון",
+    "loginError": "אימייל או סיסמה לא תקינים",
+    "registerError": "נכשל ביצירת החשבון",
+    "passwordMismatch": "הסיסמאות אינן תואמות",
+    "logout": "התנתק",
+    "profile": "פרופיל"
   }
 }

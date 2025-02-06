@@ -174,5 +174,28 @@
     "updateError": "Failed to update recipe",
     "loadError": "Failed to load recipe",
     "updateSuccess": "Recipe updated successfully"
+  },
+  "auth": {
+    "welcome": "Welcome Back",
+    "loginPrompt": "Sign in to your account",
+    "createAccount": "Create Account",
+    "registerPrompt": "Start your cooking journey",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "name": "Name",
+    "namePlaceholder": "Enter your name",
+    "login": "Sign In",
+    "register": "Sign Up",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "loginError": "Invalid email or password",
+    "registerError": "Failed to create account",
+    "passwordMismatch": "Passwords do not match",
+    "logout": "Logout",
+    "profile": "Profile"
   }
 }

@@ -8,22 +8,29 @@ import RecipeDetails from './pages/RecipeDetails';
 import i18n from './i18n/i18n';
 import RecipePage from './pages/RecipePage';
 import Layout from './components/Layout';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import { AuthProvider } from './context/AuthContext';
 
 
 const App = () => {
   return (
     <Router>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/recipes" element={<AllRecipes />} />
-          <Route path="/recipes/add-recipe" element={<CreateRecipeForm />} />
-          <Route path="/recipe/:id" element={<RecipeDetails />} />
-          <Route path="/recipe/edit/:id" element={<EditRecipe />} />
-          <Route path="/categories/:categoryPath" element={<RecipePage />} />
-          <Route path="/categories/:categoryPath/:subCategoryPath" element={<RecipePage />} />
-        </Route>
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route element={<Layout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/recipes" element={<AllRecipes />} />
+            <Route path="/recipes/add-recipe" element={<CreateRecipeForm />} />
+            <Route path="/recipe/:id" element={<RecipeDetails />} />
+            <Route path="/recipe/edit/:id" element={<EditRecipe />} />
+            <Route path="/categories/:categoryPath" element={<RecipePage />} />
+            <Route path="/categories/:categoryPath/:subCategoryPath" element={<RecipePage />} />
+          </Route>
+        </Routes>
+      </AuthProvider>
     </Router>
   );
 };

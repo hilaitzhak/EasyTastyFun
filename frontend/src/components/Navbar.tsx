@@ -1,33 +1,35 @@
-import React, { useEffect, useState } from 'react';
-import { Globe, Menu, X, ChevronDown } from 'lucide-react';
+import React, { useContext, useEffect, useState } from 'react';
+import { Globe, Menu, X, ChevronDown, UserCircle, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Category, SubCategory } from '../interfaces/Category';
 import { categoryApi } from '../api/category.api';
+import { AuthContext } from '../context/AuthContext';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const { t, i18n } = useTranslation();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const auth = useContext(AuthContext);
   const isRTL = i18n.language === 'he';
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.dir = isRTL ? 'rtl' : 'ltr';
   }, [isRTL]);
 
-  // useEffect(() => {
-  //   fetchCategories();
-  // }, []);
+  const handleLogout = () => {
+    localStorage.removeItem('categories');
+    localStorage.removeItem('recipes_cache');
+    // localStorage.removeItem('i18nextLng');
   
-  // const fetchCategories = async () => {
-  //   try {
-  //     const { data } = await categoryApi.getCategories();
-  //     setCategories(data);
-  //   } catch (error) {
-  //     console.error('Error fetching categories:', error);
-  //   }
-  // };
+    // Perform logout
+    auth?.logout();
+    setIsProfileOpen(false);
+    navigate('/login');
+  };
 
   // Function to get cached categories
   const getCachedCategories = () => {
@@ -125,7 +127,7 @@ function Navbar() {
 
           {/* Right Side Menu */}
           <div className="flex items-center gap-6">
-            <button
+          <button
               onClick={toggleLanguage}
               className="flex items-center gap-2 text-white px-4 py-2 rounded-full transition-all duration-200 hover:bg-white/15 hover:scale-105"
             >
@@ -135,6 +137,35 @@ function Navbar() {
               </span>
             </button>
 
+            {/* Profile Menu */}
+            {auth?.user && (
+              <div className="relative">
+                <button
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="flex items-center gap-2 text-white px-4 py-2 rounded-full transition-all duration-200 hover:bg-white/15 hover:scale-105"
+                >
+                  <UserCircle className="w-6 h-6" />
+                  <span className="text-sm font-medium">
+                    {auth.user.name}
+                  </span>
+                </button>
+
+                {/* Profile Dropdown */}
+                {isProfileOpen && (
+                  <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 w-48 bg-white rounded-xl shadow-lg py-2 z-50`}>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>{t('auth.logout')}</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Mobile menu button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="md:hidden p-2 rounded-full transition-all duration-200 hover:bg-white/15"
@@ -144,7 +175,6 @@ function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Menu - with smooth transition */}
         <div className={`md:hidden overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96' : 'max-h-0'}`}>
           <div className="py-4 space-y-2">
             <Link
@@ -179,6 +209,17 @@ function Navbar() {
                 )}
               </div>
             ))}
+            {auth?.user && (
+              <div className="border-t border-white/20 mt-2 pt-2">
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 w-full py-2 px-4 text-white hover:bg-white/15 rounded-xl transition-all duration-200"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>{t('auth.logout')}</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

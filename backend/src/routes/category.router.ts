@@ -30,7 +30,6 @@ export class CategoryRouter {
         this.router.get('/categories/:categoryPath/recipes', this.categoryController.getRecipesByCategory.bind(this.categoryController));
         this.router.get('/categories/:categoryPath/:subCategoryPath', this.categoryController.getSubCategoryByPath.bind(this.categoryController)); // Fetches a specific subcategory by its path within a category.
         this.router.get('/categories', this.categoryController.getCategories.bind(this.categoryController)); // Fetches all the categories.
-        // this.router.get('/categories/:categoryPath/subcategories', this.categoryController.getSubCategoriesByCategory.bind(this.categoryController)); // Fetches all the subcategories for a specific category.
         this.router.get('/subcategories/by-id/:id', this.categoryController.getSubcategoryById.bind(this.categoryController)); // Fetches all the categories.
         this.router.get('/subcategories', this.categoryController.getAllSubCategories.bind(this.categoryController)); // Fetches all the subcategories.
     }

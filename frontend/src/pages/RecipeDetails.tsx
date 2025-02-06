@@ -62,7 +62,7 @@ function RecipeDetails() {
   };
 
   const handleImageNavigation = (e: React.MouseEvent, direction: 'next' | 'prev') => {
-    e.stopPropagation(); // Prevent modal from opening when clicking navigation buttons
+    e.stopPropagation();
     if (direction === 'next') {
       nextImage();
     } else {

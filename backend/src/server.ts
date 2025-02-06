@@ -4,6 +4,7 @@ import { AppConfig } from './config/config';
 import { connectDB } from './config/db.config';
 import { RecipeRouter } from './routes/recipe.router';
 import { CategoryRouter } from './routes/category.router';
+import { AuthRouter } from './routes/auth.router';
 
 export class AppServer {
     public app: Express;
@@ -31,8 +32,10 @@ export class AppServer {
     private setRouters() {
         const recipeRouter = new RecipeRouter();
         const categoryRouter = new CategoryRouter();
+        const authRouter = new AuthRouter();
         this.app.use('/easy-tasty-fun', recipeRouter.getRouter());
         this.app.use('/easy-tasty-fun', categoryRouter.getRouter());
+        this.app.use('/easy-tasty-fun', authRouter.getRouter());
     }
 
     public listen() {
