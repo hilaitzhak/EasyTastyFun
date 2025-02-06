@@ -5,17 +5,32 @@ import { AuthContextProps } from "../interfaces/Auth";
 export const AuthContext = createContext<AuthContextProps | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken] = useState(localStorage.getItem("token"));
-  const [user, setUser] = useState<any>(token ? jwtDecode(token) : null);
+  const [token, setToken] = useState(sessionStorage.getItem("token"));
+  const [user, setUser] = useState<any>(() => {
+    const storedUser = sessionStorage.getItem("user");
+    if (storedUser) {
+      return JSON.parse(storedUser);
+    }
+    return token ? jwtDecode(token) : null;
+  });
 
-  const login = (newToken: string) => {
-    localStorage.setItem("token", newToken);
+  const login = (newToken: string, userName?: string) => {
+    sessionStorage.setItem("token", newToken);
     setToken(newToken);
-    setUser(jwtDecode(newToken));
+    
+    const decodedToken: any = jwtDecode(newToken);
+    const updatedUser = {
+      ...decodedToken,
+      name: userName || 'User'
+    };
+    
+    setUser(updatedUser);
+    sessionStorage.setItem("user", JSON.stringify(updatedUser));
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
     setToken(null);
     setUser(null);
   };

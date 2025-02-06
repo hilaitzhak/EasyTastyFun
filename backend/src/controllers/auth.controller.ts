@@ -6,20 +6,30 @@ export class AuthController {
     
     constructor(){}
 
-    async register(req: Request, res: Response) {
-        try {
-          const { name, email, password } = req.body;
-          const result = await this.authService.register(name, email, password);
-          res.json(result);
-        } catch (error: any) {
-          res.status(400).json({ message: error.message });
-        }
-    }
+    // async register(req: Request, res: Response) {
+    //     try {
+    //       const { name, email, password } = req.body;
+    //       const result = await this.authService.register(name, email, password);
+    //       res.json(result);
+    //     } catch (error: any) {
+    //       res.status(400).json({ message: error.message });
+    //     }
+    // }
     
-    async login(req: Request, res: Response) {
+    // async login(req: Request, res: Response) {
+    //     try {
+    //         const { email, password } = req.body;
+    //         const result = await this.authService.login(email, password);
+    //         res.json(result);
+    //     } catch (error: any) {
+    //         res.status(400).json({ message: error.message });
+    //     }
+    // }
+
+    async googleLogin(req: Request, res: Response) {
         try {
-            const { email, password } = req.body;
-            const result = await this.authService.login(email, password);
+            const { credential } = req.body;
+            const result = await this.authService.googleLogin(credential);
             res.json(result);
         } catch (error: any) {
             res.status(400).json({ message: error.message });

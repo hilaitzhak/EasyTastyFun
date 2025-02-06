@@ -1,37 +1,44 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import AllRecipes from './pages/AllRecipes';
 import CreateRecipeForm from './pages/CreateRecipeForm';
 import EditRecipe from './pages/EditRecipe';
 import RecipeDetails from './pages/RecipeDetails';
-import i18n from './i18n/i18n';
 import RecipePage from './pages/RecipePage';
 import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
 import { AuthProvider } from './context/AuthContext';
-
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const App = () => {
   return (
-    <Router>
-      <AuthProvider>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route element={<Layout />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/recipes" element={<AllRecipes />} />
-            <Route path="/recipes/add-recipe" element={<CreateRecipeForm />} />
-            <Route path="/recipe/:id" element={<RecipeDetails />} />
-            <Route path="/recipe/edit/:id" element={<EditRecipe />} />
-            <Route path="/categories/:categoryPath" element={<RecipePage />} />
-            <Route path="/categories/:categoryPath/:subCategoryPath" element={<RecipePage />} />
-          </Route>
-        </Routes>
-      </AuthProvider>
-    </Router>
+    <GoogleOAuthProvider clientId="1009677730362-r1ij07teaec85blr84pem0r1haud1i1p.apps.googleusercontent.com">
+      <Router>
+        <AuthProvider>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/login" element={<LoginPage />} />
+            {/* <Route path="/register" element={<RegisterPage />} /> */}
+
+            {/* Root route now redirects to /login if user is not authenticated */}
+            {/* <Route path="/" element={<Navigate to="/login" />} /> */}
+
+            {/* Protected Routes */}
+            <Route element={<Layout />}>
+              <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+              <Route path="/recipes" element={<ProtectedRoute><AllRecipes /></ProtectedRoute>} />
+              <Route path="/recipes/add-recipe" element={<ProtectedRoute><CreateRecipeForm /></ProtectedRoute>} />
+              <Route path="/recipe/:id" element={<ProtectedRoute><RecipeDetails /></ProtectedRoute>} />
+              <Route path="/recipe/edit/:id" element={<ProtectedRoute><EditRecipe /></ProtectedRoute>} />
+              <Route path="/categories/:categoryPath" element={<ProtectedRoute><RecipePage /></ProtectedRoute>} />
+              <Route path="/categories/:categoryPath/:subCategoryPath" element={<ProtectedRoute><RecipePage /></ProtectedRoute>} />
+            </Route>
+          </Routes>
+        </AuthProvider>
+      </Router>
+    </GoogleOAuthProvider>
   );
 };
 

@@ -8,5 +8,8 @@ export const authApi = {
     },
     loginUser: (data: { email: string; password: string }) => {
       return axios.post(`${API_URL}/login`, data);
+    },
+    googleLogin: (credential: string) => {
+      return axios.post(`${API_URL}/google`, { credential });
     }
 }

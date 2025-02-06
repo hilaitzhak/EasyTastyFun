@@ -196,6 +196,8 @@
     "registerError": "Failed to create account",
     "passwordMismatch": "Passwords do not match",
     "logout": "Logout",
-    "profile": "Profile"
+    "profile": "Profile",
+    "orContinueWith": "Or continue with",
+    "googleLoginError": "Error signing in with Google"
   }
 }

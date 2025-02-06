@@ -31,7 +31,7 @@ function AllRecipes() {
   };
 
   const [recipes, setRecipes] = useState<IRecipe[]>(() => {
-    const cached = localStorage.getItem(CACHE_KEY);
+    const cached = sessionStorage.getItem(CACHE_KEY);
     if (cached) {
       const { data, timestamp } = JSON.parse(cached);
       const isExpired = new Date().getTime() - timestamp > CACHE_DURATION;
@@ -47,7 +47,7 @@ function AllRecipes() {
         setLoading(true);
         
         // Check cache first
-        const cached = localStorage.getItem(CACHE_KEY);
+        const cached = sessionStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data, timestamp } = JSON.parse(cached);
           const isExpired = new Date().getTime() - timestamp > CACHE_DURATION;
@@ -70,7 +70,7 @@ function AllRecipes() {
           data: minimalData,
           timestamp: new Date().getTime()
         };
-        localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+        sessionStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
 
         setError(null);
       } catch (err) {
@@ -78,7 +78,7 @@ function AllRecipes() {
         setError(t('allRecipes.fetchError'));
         
         // Try to use cached data even if expired when API fails
-        const cached = localStorage.getItem(CACHE_KEY);
+        const cached = sessionStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data } = JSON.parse(cached);
           setRecipes(data);

@@ -21,9 +21,9 @@ function Navbar() {
   }, [isRTL]);
 
   const handleLogout = () => {
-    localStorage.removeItem('categories');
-    localStorage.removeItem('recipes_cache');
-    // localStorage.removeItem('i18nextLng');
+    sessionStorage.removeItem('categories');
+    sessionStorage.removeItem('recipes_cache');
+    // sessionStorage.removeItem('i18nextLng');
   
     // Perform logout
     auth?.logout();
@@ -33,7 +33,7 @@ function Navbar() {
 
   // Function to get cached categories
   const getCachedCategories = () => {
-    const cached = localStorage.getItem('categories');
+    const cached = sessionStorage.getItem('categories');
     if (cached) {
       return JSON.parse(cached);
     }
@@ -41,7 +41,7 @@ function Navbar() {
   };
 
   const setCachedCategories = (data: Category[]) => {
-    localStorage.setItem('categories', JSON.stringify(data));
+    sessionStorage.setItem('categories', JSON.stringify(data));
   };
 
   const fetchCategories = async () => {
@@ -146,7 +146,7 @@ function Navbar() {
                 >
                   <UserCircle className="w-6 h-6" />
                   <span className="text-sm font-medium">
-                    {auth.user.name}
+                    {auth?.user.name}
                   </span>
                 </button>
 

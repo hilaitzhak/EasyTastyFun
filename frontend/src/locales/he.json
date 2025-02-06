@@ -208,6 +208,8 @@
     "registerError": "נכשל ביצירת החשבון",
     "passwordMismatch": "הסיסמאות אינן תואמות",
     "logout": "התנתק",
-    "profile": "פרופיל"
+    "profile": "פרופיל",
+    "orContinueWith": "או להמשיך עם",
+    "googleLoginError": "שגיאה בהתחברות עם גוגל"
   }
 }

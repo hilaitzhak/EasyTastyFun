@@ -24,8 +24,9 @@ export class AuthRouter {
     }
 
     private setRoutes() {
-        this.router.post('/login', this.authController.login.bind(this.authController));
-        this.router.post('/register', this.authController.register.bind(this.authController));
+        // this.router.post('/login', this.authController.login.bind(this.authController));
+        // this.router.post('/register', this.authController.register.bind(this.authController));
+        this.router.post('/google', this.authController.googleLogin.bind(this.authController));
     }
 
     public getRouter(): Router {
