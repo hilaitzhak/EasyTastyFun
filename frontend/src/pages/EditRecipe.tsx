@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { recipeApi } from '../api/recipe.api';
@@ -8,6 +8,7 @@ import { IngredientGroup, InstructionGroup } from '../interfaces/Recipe';
 import { Category, SubCategory } from '../interfaces/Category';
 import { categoryApi } from '../api/category.api';
 import RecipeForm from '../components/RecipeForm';
+import { AuthContext } from '../context/AuthContext';
 
 const EditRecipe = () => {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ const EditRecipe = () => {
   const [ingredientGroups, setIngredientGroups] = useState<IngredientGroup[]>([]);
   const [instructionGroups, setInstructionGroups] = useState<InstructionGroup[]>([]);
   const [tips, setTips] = useState<string[]>(['']);
+  const auth = useContext(AuthContext);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -125,7 +127,11 @@ const EditRecipe = () => {
       };
 
       console.log('updatedRecipe:', updatedRecipe)
-      await recipeApi.update(id!, updatedRecipe);
+      await recipeApi.update(id!, updatedRecipe, {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      });
       navigate(`/recipe/${id}`);
     } catch (error) {
       console.error('Error updating recipe:', error);

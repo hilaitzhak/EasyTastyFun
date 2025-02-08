@@ -36,7 +36,6 @@ function RecipePage() {
           if (category) {
             setCategory(category);
             const recipeData = await categoryApi.getRecipesByCategoryPath(categoryPath);
-            console.log('recipeData: ', recipeData)
             setRecipes(recipeData || []);
           }
           setSubCategory(null);

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Globe, Menu, X, ChevronDown, UserCircle, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
@@ -117,7 +117,7 @@ function Navbar() {
                             {t(`${subCategory.nameKey}`)}
                           </Link>
                         ))}
-                      </div>
+                      </div> 
                     </div>
                   </div>
                 )}

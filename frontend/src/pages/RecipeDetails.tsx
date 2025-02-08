@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, Users, Edit, Trash2, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { recipeApi } from '../api/recipe.api';
@@ -8,6 +8,7 @@ import { Ingredient } from '../interfaces/Recipe';
 import ImageModal from '../components/ImageModal';
 import { Category, SubCategory } from '../interfaces/Category';
 import { categoryApi } from '../api/category.api';
+import { AuthContext } from '../context/AuthContext';
 
 function RecipeDetails() {
   const { t } = useTranslation();
@@ -20,13 +21,13 @@ function RecipeDetails() {
   const [category, setCategory] = useState<Category | null>(null);
   const [subcategory, setSubcategory] = useState<SubCategory | null>(null);
   const isRTL = i18n.language === 'he';
+  const auth = useContext(AuthContext);
 
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
         const response = await recipeApi.getById(id!);
         const recipeData = response.data;
-        console.log('Recipe Data:', recipeData); // Add this line to check
         setRecipe(recipeData);
         if (recipeData.category) {
           const categoryResponse = await categoryApi.getCategoryById(recipeData.category);
@@ -53,7 +54,11 @@ function RecipeDetails() {
     }
 
     try {
-      await recipeApi.delete(id!);
+      await recipeApi.delete(id!, {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      });
       navigate('/recipes');
     } catch (error) {
       console.error('Error deleting recipe:', error);
@@ -170,31 +175,51 @@ function RecipeDetails() {
             </div>
           )}
 
-          {recipe.images && recipe.images.length > 0 && (
-            <div className="relative mb-8 rounded-2xl overflow-hidden max-w-2xl mx-auto">
-              <div className="w-full h-[24rem] bg-gray-100 cursor-pointer" onClick={handleImageClick}>
-                <img
-                  src={recipe.images[currentImageIndex].data}
-                  alt={recipe.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+          {(recipe.images && recipe.images.length > 0 || recipe.video) && (
+            <div className={`mb-8 ${recipe.images && recipe.images.length > 0 && recipe.video ? 'grid grid-cols-2 gap-4' : 'max-w-2xl mx-auto'}`}>
+              {recipe.images && recipe.images.length > 0 && (
+                <div className="relative rounded-2xl overflow-hidden">
+                  <div className="w-full h-[24rem] bg-gray-100 cursor-pointer" onClick={handleImageClick}>
+                    <img
+                      src={recipe.images[currentImageIndex].data}
+                      alt={recipe.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
 
-              {recipe.images.length > 1 && (
-                <>
-                  <button
-                    onClick={(e) => handleImageNavigation(e, 'prev')}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors cursor-pointer"
-                  >
-                    <ChevronLeft className="w-6 h-6" />
-                  </button>
-                  <button
-                    onClick={(e) => handleImageNavigation(e, 'next')}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors cursor-pointer"
-                  >
-                    <ChevronRight className="w-6 h-6" />
-                  </button>
-                </>
+                  {recipe.images.length > 1 && (
+                    <>
+                      <button
+                        onClick={(e) => handleImageNavigation(e, 'prev')}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors cursor-pointer"
+                      >
+                        <ChevronLeft className="w-6 h-6" />
+                      </button>
+                      <button
+                        onClick={(e) => handleImageNavigation(e, 'next')}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors cursor-pointer"
+                      >
+                        <ChevronRight className="w-6 h-6" />
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {recipe.video && (
+                <div className="relative rounded-2xl overflow-hidden">
+                  <div className="w-full h-[24rem] bg-gray-100 cursor-pointer">
+                    <video 
+                      src={recipe.video} 
+                      controls
+                      className="w-full h-full rounded-xl"
+                      poster={recipe.images?.[0]?.data}
+                      controlsList="nodownload"
+                    >
+                      {t('createRecipe.video.videoNotSupported')}
+                    </video>
+                  </div>
+                </div>
               )}
             </div>
           )}
@@ -208,24 +233,6 @@ function RecipeDetails() {
           )}
 
 
-          {recipe.video && (
-            <div className="relative mb-8 rounded-2xl overflow-hidden max-w-2xl mx-auto">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                {t('createRecipe.video.title')}
-              </h2>
-              <div className="w-full h-[24rem] bg-gray-100 cursor-pointer">
-                <video 
-                  src={recipe.video} 
-                  controls
-                  className="w-full h-full rounded-xl"
-                  poster={recipe.images?.[0]?.data}
-                  controlsList="nodownload"
-                >
-                  {t('createRecipe.video.videoNotSupported')}
-                </video>
-              </div>
-            </div>
-          )}
 
           {/* Ingredients */}
           <div className="bg-white rounded-xl shadow-md p-6 mb-8">

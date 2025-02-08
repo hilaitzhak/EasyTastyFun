@@ -1,4 +1,4 @@
-  import { useEffect, useState } from "react";
+  import { useContext, useEffect, useState } from "react";
   import { useTranslation } from "react-i18next";
   import { useNavigate } from "react-router-dom";
   import { recipeApi } from "../api/recipe.api";
@@ -8,6 +8,7 @@
   import { ArrowLeft, ArrowRight } from "lucide-react";
   import i18n from "../i18n/i18n";
 import { Ingredient, IngredientGroup, InstructionGroup } from "../interfaces/Recipe";
+import { AuthContext } from "../context/AuthContext";
 
 function CreateRecipeForm() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ function CreateRecipeForm() {
     { title: '', instructions: [{ content: '' }] }
   ]);
   const [tips, setTips] = useState<string[]>(['']);
-
+  const auth = useContext(AuthContext);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -121,8 +122,12 @@ function CreateRecipeForm() {
         tips: tips.filter(tip => tip.trim())
       };
   
-      const response = await recipeApi.createRecipe(recipeData);
-      console.log('response:', response.data);
+      const response = await recipeApi.createRecipe(recipeData, {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      });
+      console.log('response: ', response);
       if (response.data) {
         navigate(`/recipe/${response.data._id}`);
       }

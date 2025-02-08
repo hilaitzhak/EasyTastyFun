@@ -24,7 +24,6 @@ function LoginPage() {
             
             const decoded = jwtDecode(credentialResponse.credential);
             const response = await authApi.googleLogin(credentialResponse.credential);
-            console.log('response:', response)
             if (response.data.token) {
                 auth.login(response.data.token, response?.data?.user?.name);
                 navigate('/');

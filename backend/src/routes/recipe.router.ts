@@ -27,6 +27,7 @@ export class RecipeRouter {
     private setRoutes() {
         this.router.get('/recipes', this.recipeController.getAllRecipes.bind(this.recipeController));
         this.router.post('/recipes/add-recipe', authMiddleware,this.recipeController.createRecipe.bind(this.recipeController));
+        // this.router.route('/recipes/add-recipe').get(authMiddleware, this.chatController.getChatById.bind(this.chatController)); // Get specific chat
         this.router.get('/recipes/recent', this.recipeController.getRecentRecipes.bind(this.recipeController));
         this.router.post('/recipes/check-similar', this.recipeController.checkSimilarRecipes.bind(this.recipeController));
         this.router.get('/recipes/:id', this.recipeController.getRecipeById.bind(this.recipeController));
