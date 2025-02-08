@@ -188,7 +188,8 @@
     }
   },
   "auth": {
-    "welcome": "ברוכים השבים",
+    "appName": "Easy Tasty Fun",
+    "welcome": "ברוכים הבאים",
     "loginPrompt": "התחבר לחשבון שלך",
     "createAccount": "צור חשבון",
     "registerPrompt": "התחל את מסע הבישול שלך",

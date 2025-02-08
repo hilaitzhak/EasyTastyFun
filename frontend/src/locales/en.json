@@ -176,7 +176,8 @@
     "updateSuccess": "Recipe updated successfully"
   },
   "auth": {
-    "welcome": "Welcome Back",
+    "appName": "Easy Tasty Fun",
+    "welcome": "Welcome to the",
     "loginPrompt": "Sign in to your account",
     "createAccount": "Create Account",
     "registerPrompt": "Start your cooking journey",
