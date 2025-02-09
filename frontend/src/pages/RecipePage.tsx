@@ -5,8 +5,13 @@ import { categoryApi } from '../api/category.api';
 import { IRecipe } from '../interfaces/Recipe';
 import { Category, SubCategory } from '../interfaces/Category';
 import RecipeCard from '../components/RecipeCard';
+import Pagination from '../components/Pagination';
 
 function RecipePage() {
+  const ITEMS_PER_PAGE = 20;
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalRecipes, setTotalRecipes] = useState(0);
   const { categoryPath = '', subCategoryPath = '' } = useParams<{ categoryPath: string; subCategoryPath?: string }>();
   const [category, setCategory] = useState<Category | null>(null);
   const [subCategory, setSubCategory] = useState<SubCategory | null>(null);
@@ -23,8 +28,14 @@ function RecipePage() {
 
           if (subCategory) {
             setSubCategory(subCategory);
-            const recipeData = await categoryApi.getRecipesByCategoryAndSubcategory(categoryPath, subCategoryPath);
-            setRecipes(recipeData || []);
+            const { recipes, total } = await categoryApi.getRecipesByCategoryAndSubcategory(
+              categoryPath, 
+              subCategoryPath,
+              currentPage,
+              ITEMS_PER_PAGE
+            );
+            setRecipes(recipes || []);
+            setTotalRecipes(total);
             
             // Also fetch parent category for breadcrumb
             const category = await categoryApi.getCategoryByPath(categoryPath);
@@ -35,8 +46,14 @@ function RecipePage() {
           const category = await categoryApi.getCategoryByPath(categoryPath);
           if (category) {
             setCategory(category);
-            const recipeData = await categoryApi.getRecipesByCategoryPath(categoryPath);
-            setRecipes(recipeData || []);
+            const { recipes, total } = await categoryApi.getRecipesByCategoryPath(
+              categoryPath,
+              currentPage,
+              ITEMS_PER_PAGE
+            );
+            setRecipes(recipes || []);
+            setTotalRecipes(total);
+
           }
           setSubCategory(null);
         }
@@ -49,6 +66,13 @@ function RecipePage() {
     };
   
     fetchData();
+  }, [categoryPath, subCategoryPath, currentPage]);
+
+  const totalPages = Math.ceil(totalRecipes / ITEMS_PER_PAGE);
+
+  // Reset to first page when category or subcategory changes
+  useEffect(() => {
+    setCurrentPage(1);
   }, [categoryPath, subCategoryPath]);
 
   if (loading) {
@@ -103,11 +127,24 @@ function RecipePage() {
 
         {/* Recipe Grid */}
         {recipes.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {recipes.map((recipe) => (
-              <RecipeCard key={recipe._id} recipe={recipe} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+              {recipes.map((recipe) => (
+                <RecipeCard key={recipe._id} recipe={recipe} />
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(page) => {
+                  setCurrentPage(page);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              />
+            )}
+          </>
         ) : (
           <div className="text-center py-12">
             <h2 className="text-2xl font-semibold text-gray-700 mb-4">

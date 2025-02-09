@@ -20,7 +20,9 @@ export class RecipeController {
 
     public async getAllRecipes(req: Request, res: Response): Promise<void> {
         try {
-            const allRecipes = await this.recipeService.getAllRecipes();
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 15;
+            const allRecipes = await this.recipeService.getAllRecipes(page, limit);
             res.status(200).json(allRecipes);
         } catch (error) {
             res.status(500).json({ message: "Error fetching recipes", error });

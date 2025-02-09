@@ -1,5 +1,5 @@
 import { ICategory, ISubCategory } from '../interfaces/category.interface';
-import { IRecipe } from '../interfaces/recipe.interface';
+import { IRecipe, RecipeResponse } from '../interfaces/recipe.interface';
 import Category from '../models/category.model';
 import SubCategory from '../models/subcategory.model';
 import Recipe from '../models/recipe.model';
@@ -58,28 +58,46 @@ export class CategoryService {
     }
   }
 
-  async getRecipesByCategory(categoryPath: string): Promise<IRecipe[]> {
+  async getRecipesByCategory(categoryPath: string, page: number, limit: number): Promise<RecipeResponse> {
     try {
-      if (!categoryPath) {
-        return [];
-      }
+      const skip = (page - 1) * limit;
+  
       const category = await Category.findOne({ 
         path: `/categories/${categoryPath}`
       });
   
       if (!category) {
         console.log('Category not found');
-        return [];
+        return {
+          recipes: [],
+          pagination: {
+            currentPage: page,
+            totalPages: 0,
+            totalRecipes: 0,
+            hasMore: false
+          }
+        };
       }
-      const recipes = await Recipe.find({
-        category: category._id,
-      }).sort({ createdAt: -1 });
+
+      const total = await Recipe.countDocuments({ category: category._id });
+      const recipes = await Recipe.find({ category: category._id })
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 });
   
-      return recipes;
+      return {
+        recipes,
+        pagination: {
+          currentPage: page,
+          totalPages: Math.ceil(total / limit),
+          totalRecipes: total,
+          hasMore: page * limit < total
+        }
+      };
 
     } catch (error) {
       console.error('Error fetching recipes by category:', error);
-      return [];
+      throw new Error('Error fetching recipes by category');
     }
   }
 
@@ -116,51 +134,96 @@ export class CategoryService {
     }
   }
 
-  async getRecipesByCategoryAndSubcategory(categoryPath: string, subCategoryPath: string): Promise<IRecipe[]> {
+  async getRecipesByCategoryAndSubcategory(categoryPath: string, subCategoryPath: string, page: number = 1, limit: number = 20): Promise<RecipeResponse> {
     try {
       if (!categoryPath || !subCategoryPath) {
-        return [];
+        return {
+          recipes: [],
+          pagination: {
+            currentPage: page,
+            totalPages: 0,
+            totalRecipes: 0,
+            hasMore: false
+          }
+        };
       }
-  
+
       const category = await Category.findOne({ 
         path: `/categories/${categoryPath}`
       });
   
       if (!category) {
         console.log('Category not found');
-        return [];
+        return {
+          recipes: [],
+          pagination: {
+            currentPage: page,
+            totalPages: 0,
+            totalRecipes: 0,
+            hasMore: false
+          }
+        };
       }
-
+  
       const subcategory = await SubCategory.findOne({
         path: `/categories/${categoryPath}/${subCategoryPath}`
       });
   
       if (!subcategory) {
         console.log('Subcategory not found');
-        return [];
+        return {
+          recipes: [],
+          pagination: {
+            currentPage: page,
+            totalPages: 0,
+            totalRecipes: 0,
+            hasMore: false
+          }
+        };
       }
+
+    const skip = (page - 1) * limit;
+
+    const totalRecipes = await Recipe.countDocuments({
+      category: category._id,
+      subcategory: subcategory._id
+    });
+
+    const recipes = await Recipe.find({
+      category: category._id,
+      subcategory: subcategory._id
+    })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean() as unknown as IRecipe[];
+
+    const totalPages = Math.ceil(totalRecipes / limit);
+    const hasMore = page * limit < totalRecipes;
+
+    return {
+      recipes,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalRecipes,
+        hasMore
+      }
+    };
   
-      // Find recipes that match both category and subcategory IDs
-      const recipes = await Recipe.find({
-        category: category._id,
-        subcategory: subcategory._id
-      }).sort({ createdAt: -1 });
-  
-      return recipes;
     } catch (error) {
       console.error('Error fetching recipes by category and subcategory:', error);
-      return [];
     }
   }
 
-  private async getRecipesForSubCategory(subCategoryId: string): Promise<IRecipe[]> {
-    try {
-      // Fetch recipes associated with the given subcategory
-      // You'll need to update this based on your recipe model and associations
-      return await Recipe.find({ subCategory: subCategoryId });
-    } catch (error) {
-      console.error('Error fetching recipes for subcategory:', error);
-      return [];
-    }
-  }
+  // private async getRecipesForSubCategory(subCategoryId: string): Promise<IRecipe[]> {
+  //   try {
+  //     // Fetch recipes associated with the given subcategory
+  //     // You'll need to update this based on your recipe model and associations
+  //     return await Recipe.find({ subCategory: subCategoryId });
+  //   } catch (error) {
+  //     console.error('Error fetching recipes for subcategory:', error);
+  //     return [];
+  //   }
+  // }
 }

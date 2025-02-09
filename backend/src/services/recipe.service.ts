@@ -1,4 +1,4 @@
-import { IRecipe } from '../interfaces/recipe.interface';
+import { IRecipe, RecipeResponse } from '../interfaces/recipe.interface';
 import Recipe from '../models/recipe.model';
 
 export class RecipeService {
@@ -12,9 +12,29 @@ export class RecipeService {
     }
   }
 
-  async getAllRecipes() {
+  async getAllRecipes(page: number = 1, limit: number = 15): Promise<RecipeResponse> {
     try {
-      return await Recipe.find().sort({ createdAt: -1 });
+      const skip = (page - 1) * limit;
+
+      const total = await Recipe.countDocuments();
+
+      const recipes = await Recipe.find()
+        .select('name images prepTime cookTime servings categories subcategories createdAt')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean()
+        .exec() as unknown as IRecipe[];
+
+      return {
+        recipes,
+        pagination: {
+          currentPage: page,
+          totalPages: Math.ceil(total / limit),
+          totalRecipes: total,
+          hasMore: page * limit < total
+        }
+      };
     } catch (error) {
       throw new Error('Error fetching recipes');
     }

@@ -6,96 +6,64 @@ import { recipeApi } from '../api/recipe.api';
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n/i18n';
 import RecipeCard from '../components/RecipeCard';
+import Pagination from '../components/Pagination';
 
 function AllRecipes() {
-  const CACHE_KEY = 'recipes_cache';
-  const CACHE_DURATION = 5 * 60 * 1000; 
+  const ITEMS_PER_PAGE = 15;
+
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [allRecipes, setAllRecipes] = useState<IRecipe[]>([]);
+  const [backendTotalPages, setBackendTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const isRTL = i18n.language === 'he';
-  const minimizeRecipeData = (recipes: IRecipe[]) => {
-    return recipes.map(recipe => ({
-      _id: recipe._id,
-      name: recipe.name,
-      images: recipe.images ? [recipe.images[0]] : [],
-      prepTime: recipe.prepTime,
-      cookTime: recipe.cookTime,
-      servings: recipe.servings,
-      category: recipe.categories,
-      subcategory: recipe.subcategories,
-      createdAt: recipe.createdAt
-    }));
-  };
 
-  const [recipes, setRecipes] = useState<IRecipe[]>(() => {
-    const cached = sessionStorage.getItem(CACHE_KEY);
-    if (cached) {
-      const { data, timestamp } = JSON.parse(cached);
-      const isExpired = new Date().getTime() - timestamp > CACHE_DURATION;
-      if (!isExpired) {
-        return data;
-      }
-    }
-    return [];
-  });
   useEffect(() => {
+    
     const fetchRecipes = async () => {
       try {
         setLoading(true);
-        
-        // Check cache first
-        const cached = sessionStorage.getItem(CACHE_KEY);
-        if (cached) {
-          const { data, timestamp } = JSON.parse(cached);
-          const isExpired = new Date().getTime() - timestamp > CACHE_DURATION;
-          
-          if (!isExpired) {
-            setRecipes(data);
-            setLoading(false);
-            return;
-          }
-        }
-
-        // Fetch fresh data if cache is expired or doesn't exist
-        const { data } = await recipeApi.getAll();
-        setRecipes(data);
-        
-        // Update cache with new timestamp
-        const minimalData = minimizeRecipeData(data);
-
-        const cacheData = {
-          data: minimalData,
-          timestamp: new Date().getTime()
-        };
-        sessionStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-
+  
+        const { data } = await recipeApi.getAll(currentPage, ITEMS_PER_PAGE);
+        setAllRecipes(data.recipes);
+  
+        setBackendTotalPages(data.pagination.totalPages);
         setError(null);
+  
       } catch (err) {
         console.error('Error details:', err);
         setError(t('allRecipes.fetchError'));
         
-        // Try to use cached data even if expired when API fails
-        const cached = sessionStorage.getItem(CACHE_KEY);
-        if (cached) {
-          const { data } = JSON.parse(cached);
-          setRecipes(data);
-          setError(null);
-        }
       } finally {
         setLoading(false);
       }
     };
-
     fetchRecipes();
-  }, [t]);
+  }, [currentPage, t]);
 
-  const filteredRecipes = recipes.filter(recipe =>
+  const filteredRecipes = allRecipes.filter(recipe =>
     recipe?.name?.toLowerCase().includes((searchTerm || '').toLowerCase())
   );
   
+  // Pagination calculations
+  const totalPages = searchTerm 
+    ? Math.ceil(filteredRecipes.length / ITEMS_PER_PAGE)
+    : backendTotalPages;  
+  // const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  // const endIndex = startIndex + ITEMS_PER_PAGE;
+  // const currentRecipes = filteredRecipes.slice(startIndex, endIndex);
+
+  const currentRecipes = searchTerm 
+  ? filteredRecipes.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+  : allRecipes;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 py-8">
       <div className="container mx-auto px-4">
@@ -186,15 +154,22 @@ function AllRecipes() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {filteredRecipes.map((recipe) => (
-              <RecipeCard
-                key={recipe._id}
-                recipe={recipe}
-                onClick={(id) => navigate(`/recipe/${id}`)}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+              {currentRecipes.map((recipe) => (
+                <RecipeCard
+                  key={recipe._id}
+                  recipe={recipe}
+                  onClick={(id) => navigate(`/recipe/${id}`)}
+                />
+              ))}
+            </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </>
         )}
       </div>
     </div>

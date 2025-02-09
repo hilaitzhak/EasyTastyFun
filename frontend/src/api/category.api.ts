@@ -16,11 +16,11 @@ export const categoryApi = {
   getSubCategoryByPath: (categoryPath: string, subCategoryPath: string) => {
     return axios.get(`${API_URL}/categories/${categoryPath}/${subCategoryPath}`).then((response) => response.data);
   },
-  getRecipesByCategoryPath: (categoryPath: string) => {
-    return axios.get(`${API_URL}/categories/${categoryPath}/recipes`).then((response) => response.data);
+  getRecipesByCategoryPath: (categoryPath: string, page: number = 1, limit: number = 20) => {
+    return axios.get(`${API_URL}/categories/${categoryPath}/recipes?page=${page}&limit=${limit}`).then((response) => response.data);
   },
-  getRecipesByCategoryAndSubcategory: (categoryPath: string, subCategoryPath: string) => {
-    return axios.get(`${API_URL}/categories/${categoryPath}/${subCategoryPath}/recipes`).then((response) => response.data);
+  getRecipesByCategoryAndSubcategory: (categoryPath: string, subCategoryPath: string, page: number = 1, limit: number = 20) => {
+    return axios.get(`${API_URL}/categories/${categoryPath}/${subCategoryPath}/recipes?page=${page}&limit=${limit}`).then((response) => response.data);
   },
   getAllSubCategories: () => {
     return axios.get(`${API_URL}/subcategories`).then((response) => response.data);

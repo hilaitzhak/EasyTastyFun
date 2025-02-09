@@ -40,4 +40,8 @@ const RecipeSchema: Schema = new Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
+RecipeSchema.index({ createdAt: -1 }); // For sorting by creation date
+RecipeSchema.index({ category: 1 });   // For filtering by category
+RecipeSchema.index({ subcategory: 1 }); // For filtering by subcategory
+
 export default mongoose.model<IRecipe>('Recipe', RecipeSchema);

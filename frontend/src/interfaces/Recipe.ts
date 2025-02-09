@@ -161,3 +161,9 @@ export interface VideoUploadSectionProps {
   video: string | null;
   setVideo: (video: string | null) => void;
 }
+
+export interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (pageNumber: number) => void;
+}

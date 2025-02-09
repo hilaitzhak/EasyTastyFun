@@ -47,3 +47,15 @@ export interface InstructionGroup {
   title: string;
   instructions: Instruction[];
 }
+
+export interface PaginationData {
+  currentPage: number;
+  totalPages: number;
+  totalRecipes: number;
+  hasMore: boolean;
+}
+
+export interface RecipeResponse {
+  recipes: IRecipe[];
+  pagination: PaginationData;
+}
