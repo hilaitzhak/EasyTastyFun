@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Globe, Menu, X, ChevronDown, UserCircle, LogOut } from 'lucide-react';
+import { Globe, Menu, X, ChevronDown, UserCircle, LogOut, Home } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { Category, SubCategory } from '../interfaces/Category';
@@ -80,6 +80,12 @@ function Navbar() {
       <div className="container mx-auto px-6 w-full">
         <div className="flex justify-between items-center h-16">
           <div className="hidden md:flex items-center space-x-1">
+          <Link
+            to="/"
+            className="flex items-center text-white px-4 py-2 rounded-full transition-all duration-200 hover:bg-white/15 hover:scale-105"
+          >
+            <Home className="w-5 h-5" />
+          </Link>
             <Link
               to="/recipes"
               className="flex items-center text-white px-4 py-2 rounded-full transition-all duration-200 hover:bg-white/15 hover:scale-105"

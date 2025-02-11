@@ -69,15 +69,6 @@ function AllRecipes() {
       <div className="container mx-auto px-4">
         {/* Header Section */}
         <div className="flex items-center justify-between w-full mb-8">
-          <div className="flex items-center">
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-colors p-2 rounded-lg hover:bg-purple-50"
-            >
-              { isRTL ? (<ArrowRight className="w-5 h-5" />) : (<ArrowLeft className="w-5 h-5" />) }
-              <span>{t('nav.backToHome')}</span>
-            </button>
-          </div>
 
           <div className="flex items-center">
             <button
