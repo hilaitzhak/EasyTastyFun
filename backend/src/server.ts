@@ -5,10 +5,13 @@ import { connectDB } from './config/db.config';
 import { RecipeRouter } from './routes/recipe.router';
 import { CategoryRouter } from './routes/category.router';
 import { AuthRouter } from './routes/auth.router';
+import Redis from 'ioredis';
+import { RedisService } from './services/redis.service';
 
 export class AppServer {
     public app: Express;
     private config: AppConfig;
+    private redisService: RedisService;
     
     constructor() {
         this.config = new AppConfig();
@@ -17,6 +20,7 @@ export class AppServer {
     public async init() {
         this.setApp();
         await connectDB(); 
+        this.initRedis();
         this.setMiddlewares();
         this.setRouters();
     }
@@ -31,10 +35,11 @@ export class AppServer {
             credentials: true,
             methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
           }));
-        this.app.use(express.json({ limit: '50mb' }));    }
+        this.app.use(express.json({ limit: '50mb' }));    
+    }
 
     private setRouters() {
-        const recipeRouter = new RecipeRouter();
+        const recipeRouter = new RecipeRouter(this.redisService);
         const categoryRouter = new CategoryRouter();
         const authRouter = new AuthRouter();
         this.app.use('/easy-tasty-fun', recipeRouter.getRouter());
@@ -42,6 +47,22 @@ export class AppServer {
         this.app.use('/easy-tasty-fun', authRouter.getRouter());
     }
 
+    private initRedis() {
+        const redisUrl = process.env.REDIS_URL || "redis://127.0.0.1:6379";
+    
+        const redisInstance = new Redis(redisUrl, {
+            lazyConnect: true, // Prevents excessive connections
+            enableReadyCheck: false, // Speeds up readiness detection
+            connectTimeout: 1000, // Fails quickly if Redis is unreachable
+            maxRetriesPerRequest: 2, // Reduces unnecessary retries
+        });
+    
+        this.redisService = new RedisService(redisInstance);
+    
+        redisInstance.on("connect", () => console.log("✅ Connected to Redis"));
+        redisInstance.on("error", (err) => console.error("❌ Redis error:", err));
+    }
+    
     public listen() {
         this.app.listen(this.config.port, () => {
             console.log(`Server is up on port ${this.config.port}!`);

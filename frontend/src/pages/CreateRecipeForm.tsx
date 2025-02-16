@@ -116,7 +116,6 @@ function CreateRecipeForm() {
         })),
         images: images.map(img => ({
           data: img.data,
-          description: ''
         })),
         video: video,
         tips: tips.filter(tip => tip.trim())
@@ -127,7 +126,6 @@ function CreateRecipeForm() {
           Authorization: `Bearer ${auth?.token}`,
         },
       });
-      console.log('response: ', response);
       if (response.data) {
         navigate(`/recipe/${response.data._id}`);
       }

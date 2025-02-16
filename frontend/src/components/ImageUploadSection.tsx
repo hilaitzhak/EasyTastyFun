@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 function ImageUploadSection({ images, setImages }: ImageUploadSectionProps) {
   const { t } = useTranslation();
   
+  
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files) return;

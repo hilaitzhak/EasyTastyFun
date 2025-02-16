@@ -3,7 +3,7 @@ import { Category, SubCategory } from "./Category";
 import { DragEndEvent } from '@dnd-kit/core';
 
 export interface IRecipe {
-  _id: string;
+  recipeId: string;
   name: string;
   prepTime?: number | undefined;
   cookTime?: number | undefined;
@@ -21,8 +21,13 @@ export interface IRecipe {
     instructions: string[];
   }[];
   images?: {
-    data: string;
-    description?: string;
+    id?: string;
+    data?: string;
+    link?: string,
+  }[];
+  videos?: {
+    id?: string;
+    link?: string,
   }[];
   categories: Category;
   subcategories: SubCategory;

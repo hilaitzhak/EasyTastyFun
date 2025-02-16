@@ -1,27 +1,30 @@
 import { Router } from 'express';
 import { RecipeController } from '../controllers/recipe.controller';
 import authMiddleware from '../middleware/authMiddleware';
+import { RedisService } from '../services/redis.service';
 
 export class RecipeRouter {
     private router: Router;
     private recipeController: RecipeController;
 
-    constructor() {
-        this.init();
-    }
-
-    private init() {
-        this.setRouter();
-        this.setRecipeController();
+    constructor(redisService: RedisService) {
+        this.router = Router();
+        this.recipeController = new RecipeController(redisService);
         this.setRoutes();
     }
+
+    // private init() {
+    //     this.setRouter();
+    //     this.setRecipeController(redisService);
+    //     this.setRoutes();
+    // }
 
     private setRouter() {
         this.router = Router();
     }
 
-    private setRecipeController() {
-        this.recipeController = new RecipeController();
+    private setRecipeController(redisService: RedisService) {
+        this.recipeController = new RecipeController(redisService);
     }
 
     private setRoutes() {

@@ -120,7 +120,6 @@ const EditRecipe = () => {
         instructionGroups,
         images: images.map(img => ({
           data: img.data,
-          description: ''
         })),
         video: video ,
         tips: tips.filter(tip => tip.trim())

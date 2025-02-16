@@ -2,6 +2,7 @@ import { Document, Types } from 'mongoose';
 import { ICategory, ISubCategory } from './category.interface';
 
 export interface IRecipe extends Document {
+  recipeId: string;
   name: string;
   prepTime?: number;
   cookTime?: number;
@@ -9,9 +10,15 @@ export interface IRecipe extends Document {
   ingredientGroups: IngredientGroup[];
   instructionGroups: InstructionGroup[];
   images?: {
-    data: string;
-    description?: string;
+    id?: string;
+    data?: string;
+    link?: string,
   }[];
+  videos?: {
+    videoId?: string;
+    link?: string,
+  }[];
+  tips?: string[];
   category: Types.ObjectId | ICategory;
   subcategory: Types.ObjectId | ISubCategory;
   createdAt: Date;

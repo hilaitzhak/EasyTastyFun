@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
 import { RecipeService } from "../services/recipe.service";
+import { RedisService } from "../services/redis.service";
 
 export class RecipeController {
-    private recipeService = new RecipeService();
+    private recipeService: RecipeService;
 
-    constructor() {
-        this.recipeService = new RecipeService();
+    constructor(redisService: RedisService) {
+        this.recipeService = new RecipeService(redisService);
     }
     
     async createRecipe(req: Request, res: Response): Promise<void> {
