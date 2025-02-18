@@ -11,13 +11,12 @@ export interface IRecipe extends Document {
   instructionGroups: InstructionGroup[];
   images?: {
     id?: string;
-    data?: string;
     link?: string,
   }[];
-  videos?: {
-    videoId?: string;
-    link?: string,
-  }[];
+  video?: {
+    id: string;
+    link: string;
+  };
   tips?: string[];
   category: Types.ObjectId | ICategory;
   subcategory: Types.ObjectId | ISubCategory;

@@ -30,15 +30,11 @@ const RecipeSchema: Schema = new Schema({
   servings: { type: Number },
   ingredientGroups: [IngredientGroupSchema],
   instructionGroups: [InstructionGroupSchema],
-  images: [{
-    id: { type: String },
-    data: { type: String},
-    link: { type: String },
-  }],
+  images: [{ id: { type: String }, link: { type: String }}],
+  video: { id: { type: String }, link: { type: String }},
   category: { type: Types.ObjectId, ref: 'Category', required: true },
   subcategory: { type: Types.ObjectId, ref: 'SubCategory', required: true },
   tips: [{ type: String }],
-  video: { type: String },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

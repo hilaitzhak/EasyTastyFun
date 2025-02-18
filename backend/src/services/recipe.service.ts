@@ -16,8 +16,12 @@ export class RecipeService {
     try {
       const recipeId = randomUUID();
       recipeData.id = recipeId;
-      recipeData.images = await this.processMedia(recipeData.images, recipeId, 'images');
-      recipeData.videos = await this.processMedia(recipeData.videos, recipeId, 'videos');
+      recipeData.images = await this.processMedia(recipeData.images, recipeId, 'images') as { id?: string; link?: string }[];
+      const video = await this.processMedia(recipeData.video, recipeId, 'videos') as { id: string; link: string };
+      if (Array.isArray(video)) {
+        throw new Error('Expected a single video object, but got an array');
+      }
+      recipeData.video = video;
 
       const recipe = new Recipe(recipeData);
       return await recipe.save();
@@ -26,11 +30,18 @@ export class RecipeService {
     }
   }
 
-  async processMedia(mediaData: any, recipeId: string, mediaType: 'images' | 'videos') {
-    if (!mediaData) return [];
+  async processMedia(mediaData: any, recipeId: string, mediaType: 'images' | 'videos'): Promise<{ id: string; link: string }[] | { id: string; link: string }> {
+    if (!mediaData) return mediaType === 'images' ? [] : { id: '', link: '' };
   
+    // Handle single media item for videos
+    if (mediaType === 'videos') {
+      const mediaId = randomUUID();
+      const mediaLink = await this.uploadFileToS3(mediaData.data, recipeId, mediaId, mediaType);
+      return { id: mediaId, link: mediaLink }; // Return single video object
+    }
+  
+    // Handle images as an array (since multiple images can exist)
     const mediaArray = Array.isArray(mediaData) ? mediaData : [mediaData];
-  
     return await Promise.all(
       mediaArray.map(async (media) => {
         const mediaId = randomUUID();
