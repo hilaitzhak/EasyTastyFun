@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { recipeApi } from '../api/recipe.api';
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n/i18n';
-import { IngredientGroup, InstructionGroup } from '../interfaces/Recipe';
+import { IngredientGroup, InstructionGroup, RecipeImage } from '../interfaces/Recipe';
 import { Category, SubCategory } from '../interfaces/Category';
 import { categoryApi } from '../api/category.api';
 import RecipeForm from '../components/RecipeForm';
@@ -18,8 +18,8 @@ const EditRecipe = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [recipe, setRecipe] = useState<any>(null);
-  const [images, setImages] = useState<{ data: string; file: File }[]>([]);
-  const [video, setVideo] = useState<string | null>(null);
+  const [images, setImages] = useState<RecipeImage[]>([]);
+  const [video, setVideo] = useState<{ id?: string; link: string } | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<SubCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -33,7 +33,7 @@ const EditRecipe = () => {
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const response = await recipeApi.getById(id!);
+        const response = await recipeApi.getRecipeById(id!);
         const recipeData = response.data;
         setRecipe(recipeData);
         setIngredientGroups(
@@ -48,11 +48,20 @@ const EditRecipe = () => {
             instructions: group.instructions,
           }))
         );
-        setImages(recipeData.images.map((img: any) => ({ data: img.data, file: new File([], "placeholder") })));
+        setImages(recipeData.images.map((img: any) => ({ 
+          id: img.id,
+          data: img.link,
+          link: img.link,
+          file: new File([], "placeholder")
+        })));
+        
+        setVideo(recipeData.video ? {
+          id: recipeData.video.id,
+          link: recipeData.video.link
+        } : null);
         setSelectedCategory(recipeData.category);
         setSelectedSubCategory(recipeData.subcategory);
         setTips(recipeData.tips || []);
-        setVideo(recipeData.video || null); 
       } catch (error) {
         console.error('Error fetching recipe:', error);
         alert(t('editRecipe.loadError'));
@@ -83,10 +92,8 @@ const EditRecipe = () => {
       
   useEffect(() => {
     if (selectedCategory) {
-      console.log('selectedCategory: ', selectedCategory)
       const filtered = subcategories.filter(sub => sub.categoryId === selectedCategory);
       setFilteredSubcategories(filtered);
-      console.log('filtered: ', filtered)
 
     } else {
       setFilteredSubcategories([]);
@@ -109,6 +116,46 @@ const EditRecipe = () => {
   
     try {
       const formData = new FormData(e.currentTarget);
+      const processedImages = images.map(img => {
+        // If image is a URL from S3 (existing image)
+        if (img.data && img.data.includes('amazonaws.com')) {
+          return {
+            id: img.id || crypto.randomUUID(),
+            link: img.data
+          };
+        }
+        // If it's a new image with base64 data
+        else if (img.data && img.data.startsWith('data:')) {
+          return {
+            data: img.data // Send only data for new images
+          };
+        }
+        // For images that already have the right structure
+        else if (img.link) {
+          return {
+            id: img.id,
+            link: img.link
+          };
+        }
+        // Fallback case
+        return img;
+      });
+      
+      let processedVideo = null;
+      if (video) {
+        // If it's a new video with base64 data
+        if (video.link && video.link.startsWith('data:')) {
+          processedVideo = { link: video.link };
+        }
+        // If it's an existing video from S3
+        else if (video.link && video.link.includes('amazonaws.com')) {
+          processedVideo = { 
+            id: video.id || crypto.randomUUID(), 
+            link: video.link 
+          };
+        }
+      }
+
       const updatedRecipe = {
         name: formData.get('name'),
         prepTime: Number(formData.get('prepTime')),
@@ -118,14 +165,11 @@ const EditRecipe = () => {
         subcategory: selectedSubCategory,
         ingredientGroups,
         instructionGroups,
-        images: images.map(img => ({
-          data: img.data,
-        })),
-        video: video ,
+        images: processedImages,
+        video: processedVideo,
         tips: tips.filter(tip => tip.trim())
       };
-
-      console.log('updatedRecipe:', updatedRecipe)
+      console.log('Updated Recipe:', updatedRecipe);
       await recipeApi.update(id!, updatedRecipe, {
         headers: {
           Authorization: `Bearer ${auth?.token}`,

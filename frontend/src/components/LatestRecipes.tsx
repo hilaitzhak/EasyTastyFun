@@ -49,9 +49,9 @@ function LatestRecipes() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {recipes.map((recipe) => (
               <RecipeCard
-                key={recipe._id}
+                key={recipe.recipeId}
                 recipe={recipe}
-                onClick={(id) => navigate(`/recipe/${id}`)}
+                onClick={(recipeId) => navigate(`/recipe/${recipeId}`)}
               />
             ))}
           </div>

@@ -3,6 +3,7 @@ import { Category, SubCategory } from "./Category";
 import { DragEndEvent } from '@dnd-kit/core';
 
 export interface IRecipe {
+  recipeId: string;
   name: string;
   prepTime?: number | undefined;
   cookTime?: number | undefined;
@@ -19,14 +20,11 @@ export interface IRecipe {
     title: string;
     instructions: string[];
   }[];
-  images?: {
-    id: string;
-    link: string,
-  }[];
-  videos?: {
-    id: string;
-    link: string,
-  }[];
+  images?: RecipeImage[];
+  video: {
+    id?: string;
+    link: string;
+  } | null;
   categories: Category;
   subcategories: SubCategory;
   tips?: string[];
@@ -41,7 +39,7 @@ export interface IngredientTitle {
 
 export interface RecipeCardProps {
   recipe: IRecipe;
-  onClick?: (id: string) => void;
+  onClick?: (recipeId: string) => void;
 }
 
 export interface IngredientGroup {
@@ -67,9 +65,12 @@ export interface InstructionGroup {
 export interface RecipeImage {
   data: string;
   file: File;
+  id?: string;
+  link?: string;
 }
 
 export interface RecipeFormData {
+  recipeId?: string;
   name: string;
   categories: Category[];
   subcategories: SubCategory[];
@@ -79,6 +80,11 @@ export interface RecipeFormData {
   ingredients: Ingredient[];
   instructions: string[];
   images?: RecipeImage[];
+  tips?: string[];
+  video: {
+    id?: string;
+    link: string;
+  } | null;
 }
 
 export interface RecipeFormProps {
@@ -90,8 +96,8 @@ export interface RecipeFormProps {
   setIngredientGroups: React.Dispatch<React.SetStateAction<IngredientGroup[]>>;
   instructionGroups: InstructionGroup[];
   setInstructionGroups: React.Dispatch<React.SetStateAction<InstructionGroup[]>>;
-  images: Array<{ data: string; file: File }>;
-  setImages: React.Dispatch<React.SetStateAction<Array<{ data: string; file: File }>>>;
+  images: Array<RecipeImage>;
+  setImages: React.Dispatch<React.SetStateAction<Array<RecipeImage>>>;
   onCancel?: () => void;
   categories: Category[];
   subcategories: SubCategory[];
@@ -101,8 +107,11 @@ export interface RecipeFormProps {
   selectedSubCategory: string;
   tips?: string[];
   setTips: (tips: string[]) => void;
-  video?: string | null;
-  setVideo: (video: string | null) => void;
+  video: {
+    id?: string;
+    link: string;
+  } | null;
+  setVideo: (video: { id?: string; link: string } | null) => void;
 }
 
 export interface SubmitButtonProps {
@@ -127,8 +136,8 @@ export interface BasicInfoSectionProps {
 }
 
 export interface ImageUploadSectionProps {
-  images: Array<{ data: string; file: File }>;
-  setImages: React.Dispatch<React.SetStateAction<Array<{ data: string; file: File }>>>;
+  images: Array<RecipeImage>;
+  setImages: React.Dispatch<React.SetStateAction<Array<RecipeImage>>>;
 }
 
 export interface IngredientsProps {
@@ -161,8 +170,11 @@ export interface TipsSectionProps {
 }
 
 export interface VideoUploadSectionProps {
-  video: string | null;
-  setVideo: (video: string | null) => void;
+  video: { 
+    id?: string;
+    link: string;
+   } | null;
+  setVideo: (video: { id?: string; link: string } | null) => void;
 }
 
 export interface PaginationProps {

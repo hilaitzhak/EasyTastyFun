@@ -1,5 +1,7 @@
+import { RecipeImage } from "./Recipe";
+
 export interface ImageModalProps {
-    images: { data: string }[];
+    images: RecipeImage[];
     currentIndex: number;
     onClose: () => void;
 }

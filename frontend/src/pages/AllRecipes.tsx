@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Loader, ArrowLeft, Plus, ArrowRight } from 'lucide-react';
+import { Search, Loader, Plus } from 'lucide-react';
 import { IRecipe } from '../interfaces/Recipe';
 import { recipeApi } from '../api/recipe.api';
 import { useTranslation } from 'react-i18next';
-import i18n from '../i18n/i18n';
 import RecipeCard from '../components/RecipeCard';
 import Pagination from '../components/Pagination';
 
@@ -19,7 +18,6 @@ function AllRecipes() {
   const [allRecipes, setAllRecipes] = useState<IRecipe[]>([]);
   const [backendTotalPages, setBackendTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const isRTL = i18n.language === 'he';
 
   useEffect(() => {
     
@@ -28,6 +26,7 @@ function AllRecipes() {
         setLoading(true);
   
         const { data } = await recipeApi.getAll(currentPage, ITEMS_PER_PAGE);
+        console.log('data: ',data);
         setAllRecipes(data.recipes);
   
         setBackendTotalPages(data.pagination.totalPages);
@@ -147,13 +146,16 @@ function AllRecipes() {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-              {currentRecipes.map((recipe) => (
+            {currentRecipes.map((recipe: IRecipe) => {
+              return (
                 <RecipeCard
-                  key={recipe._id}
+                  key={recipe.recipeId}
                   recipe={recipe}
-                  onClick={(id) => navigate(`/recipe/${id}`)}
+                  onClick={(id: string) => navigate(`/recipe/${id}`)}
                 />
-              ))}
+              );
+            })}
+
             </div>
             <Pagination
               currentPage={currentPage}

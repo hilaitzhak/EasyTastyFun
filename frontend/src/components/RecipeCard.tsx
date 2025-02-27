@@ -1,4 +1,4 @@
-import { Calendar, Clock, Heart, Users } from "lucide-react";
+import { Calendar, Clock, Users } from "lucide-react";
 import { RecipeCardProps } from "../interfaces/Recipe";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,7 @@ function RecipeCard({ recipe }: RecipeCardProps) {
   });  
 
   const handleClick = () => {
-    navigate(`/recipe/${recipe._id}`);
+    navigate(`/recipe/${recipe.recipeId}`);
   };
 
   return (
@@ -25,7 +25,7 @@ function RecipeCard({ recipe }: RecipeCardProps) {
       <div className="relative h-56">
         {recipe.images && recipe.images[0] ? (
           <img
-            src={recipe.images[0].data}
+            src={recipe.images[0].link}
             alt={recipe.name}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
@@ -34,11 +34,6 @@ function RecipeCard({ recipe }: RecipeCardProps) {
             <span className="text-gray-400">{t('common.noImage')}</span>
           </div>
         )}
-        {/* <div className="absolute top-4 right-4">
-          <button className="p-2 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-colors">
-            <Heart className="w-5 h-5 text-pink-500" />
-          </button>
-        </div> */}
       </div>
   
       <div className="p-6">

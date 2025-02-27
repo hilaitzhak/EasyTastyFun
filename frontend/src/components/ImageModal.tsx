@@ -17,7 +17,7 @@ function ImageModal({ images, currentIndex, onClose }: ImageModalProps) {
         <div className="fixed z-50 inset-0 flex items-center justify-center bg-black/75">
           <div className="relative w-full max-w-5xl mx-4 md:mx-auto">
             <img
-              src={images[activeIndex].data}
+              src={images[activeIndex].link}
               alt="Recipe"
               className="w-full h-auto max-h-[90vh] object-contain"
             />

@@ -16,7 +16,7 @@ function CreateRecipeForm() {
   const [loading, setLoading] = useState(false);
   const isRTL = i18n.language === 'he';
   const [images, setImages] = useState<{ data: string; file: File }[]>([]);
-  const [video, setVideo] = useState<string | null>(null);
+  const [video, setVideo] = useState<{ link: string } | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<SubCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -106,7 +106,7 @@ function CreateRecipeForm() {
         category: selectedCategory,
         subcategory: selectedSubCategory,
         ingredientGroups: ingredientGroups.filter(group => 
-          group.ingredients.some((ing: Ingredient) => ing.name && ing.amount)
+          group.ingredients.some((ing: Ingredient) => ing.name || ing.amount || ing.unit)
         ),
         instructionGroups: instructionGroups.map(group => ({
           title: group.title,
@@ -117,17 +117,17 @@ function CreateRecipeForm() {
         images: images.map(img => ({
           data: img.data,
         })),
-        video: video,
+        video: video || null,
         tips: tips.filter(tip => tip.trim())
       };
-  
+      console.log('Recipe Data:', recipeData);
       const response = await recipeApi.createRecipe(recipeData, {
         headers: {
           Authorization: `Bearer ${auth?.token}`,
         },
       });
       if (response.data) {
-        navigate(`/recipe/${response.data._id}`);
+        navigate(`/recipe/${response.data.recipeId}`);
       }
     } catch (error: any) {
       if (error.response) {

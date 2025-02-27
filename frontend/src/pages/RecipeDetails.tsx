@@ -26,7 +26,7 @@ function RecipeDetails() {
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const response = await recipeApi.getById(id!);
+        const response = await recipeApi.getRecipeById(id!);
         const recipeData = response.data;
         setRecipe(recipeData);
         if (recipeData.category) {
@@ -181,7 +181,7 @@ function RecipeDetails() {
                 <div className="relative rounded-2xl overflow-hidden">
                   <div className="w-full h-[24rem] bg-gray-100 cursor-pointer" onClick={handleImageClick}>
                     <img
-                      src={recipe.images[currentImageIndex].data}
+                      src={recipe.images[currentImageIndex]?.link}
                       alt={recipe.name}
                       className="w-full h-full object-cover"
                     />
@@ -210,7 +210,7 @@ function RecipeDetails() {
                 <div className="relative rounded-2xl overflow-hidden">
                   <div className="w-full h-[24rem] bg-gray-100 cursor-pointer">
                     <video 
-                      src={recipe.video} 
+                      src={recipe.video.link} 
                       controls
                       className="w-full h-full rounded-xl"
                       poster={recipe.images?.[0]?.data}
@@ -231,8 +231,6 @@ function RecipeDetails() {
               onClose={handleModalClose}
             />
           )}
-
-
 
           {/* Ingredients */}
           <div className="bg-white rounded-xl shadow-md p-6 mb-8">

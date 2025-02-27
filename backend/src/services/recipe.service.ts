@@ -1,4 +1,3 @@
-import Redis from 'ioredis';
 import { IRecipe, RecipeResponse } from '../interfaces/recipe.interface';
 import Recipe from '../models/recipe.model';
 import { RedisService } from './redis.service';
@@ -15,13 +14,22 @@ export class RecipeService {
   async createRecipe(recipeData: IRecipe) {
     try {
       const recipeId = randomUUID();
-      recipeData.id = recipeId;
-      recipeData.images = await this.processMedia(recipeData.images, recipeId, 'images') as { id?: string; link?: string }[];
-      const video = await this.processMedia(recipeData.video, recipeId, 'videos') as { id: string; link: string };
-      if (Array.isArray(video)) {
-        throw new Error('Expected a single video object, but got an array');
+      recipeData.recipeId = recipeId;
+      if(recipeData.images) {
+        const images = await this.processMedia(recipeData.images, recipeId, 'images');
+        if (Array.isArray(images)) {
+          recipeData.images = images;
+        } else {
+          throw new Error('Expected an array of images');
+        }
       }
-      recipeData.video = video;
+      if(recipeData.video) {
+        const video = await this.processMedia(recipeData.video, recipeId, 'videos') as { id: string; link: string };
+        if (Array.isArray(video)) {
+          throw new Error('Expected a single video object, but got an array');
+        }
+        recipeData.video = video;
+      }
 
       const recipe = new Recipe(recipeData);
       return await recipe.save();
@@ -33,14 +41,12 @@ export class RecipeService {
   async processMedia(mediaData: any, recipeId: string, mediaType: 'images' | 'videos'): Promise<{ id: string; link: string }[] | { id: string; link: string }> {
     if (!mediaData) return mediaType === 'images' ? [] : { id: '', link: '' };
   
-    // Handle single media item for videos
     if (mediaType === 'videos') {
       const mediaId = randomUUID();
-      const mediaLink = await this.uploadFileToS3(mediaData.data, recipeId, mediaId, mediaType);
+      const mediaLink = await this.uploadFileToS3(mediaData.link, recipeId, mediaId, mediaType);
       return { id: mediaId, link: mediaLink }; // Return single video object
     }
   
-    // Handle images as an array (since multiple images can exist)
     const mediaArray = Array.isArray(mediaData) ? mediaData : [mediaData];
     return await Promise.all(
       mediaArray.map(async (media) => {
@@ -53,22 +59,19 @@ export class RecipeService {
 
   async uploadFileToS3(base64Image: string, recipeId: string, fileId: string, fileType: 'images' | 'videos'): Promise<string> {
     try {
-      const matches = base64Image.match(/^data:image\/(\w+);base64,(.+)$/);
+      const matches = base64Image.match(/^data:(image|video)\/([a-zA-Z0-9]+);base64,(.+)$/);
       if (!matches) throw new Error('Invalid Base64 format');
   
-      const mimeType = matches[1];  // Extract file type (png, jpg, etc.)
-      const fileBuffer = Buffer.from(matches[2], 'base64'); // Convert base64 to buffer
-      // const extension = mimeType.split('/')[1]; // Extract file extension
-
-      // Define S3 bucket key
-      const key = `${recipeId}/${fileType}/${fileId}.${mimeType}`;
+      const mediaType = matches[1];
+      const extension = matches[2];
+      const fileBuffer = Buffer.from(matches[3], 'base64');  
+      const key = `${recipeId}/${fileType}/${fileId}.${extension}`;
   
-      // Upload params
       const uploadParams = {
         Bucket: process.env.AWS_S3_BUCKET_NAME!,
         Key: key,
         Body: fileBuffer,
-        ContentType: mimeType,
+        ContentType: `${mediaType}/${extension}`,
       };
   
       // Upload to S3
@@ -93,7 +96,7 @@ export class RecipeService {
               { $sort: { createdAt: -1 } },
               { $skip: skip },
               { $limit: limit },
-              { $project: { name: 1, images: 1, prepTime: 1, cookTime: 1, servings: 1, createdAt: 1 } }
+              { $project: { recipeId: 1 ,name: 1, images: 1, prepTime: 1, cookTime: 1, servings: 1, createdAt: 1 } }
             ],
             totalCount: [
               { $count: 'count' }
@@ -143,7 +146,7 @@ export class RecipeService {
         }
 
         // If not in cache, get from DB
-        const recipe = await Recipe.findById(id);
+        const recipe = await Recipe.findOne({ recipeId: id });
 
         if (!recipe) {
           throw new Error('Recipe not found');
@@ -156,51 +159,144 @@ export class RecipeService {
     }
   }
 
-  async updateRecipe(id: string, recipeData: IRecipe) {
+  async deleteMediaFromS3(recipeId: string): Promise<void> {
     try {
-      const formattedData = {
-        ...recipeData,
-        ingredientGroups: recipeData.ingredientGroups.map(group => ({
-          title: group.title,
-          ingredients: group.ingredients.map(ing => ({
-            ...ing,
-            amount: ing.amount.toString()
-          }))
-        })),
-        instructionGroups: recipeData.instructionGroups.map(group => ({
-          title: group.title,
-          instructions: group.instructions.map(inst => ({ 
-            content: inst.content 
-          }))
-        })),
-        updatedAt: new Date()
+      console.log(`Attempting to delete media for recipe ID: ${recipeId}`);
+      
+      if (!recipeId || recipeId.trim() === '') {
+        console.error('Invalid recipe ID provided for S3 deletion');
+        return;
+      }
+      
+      const folderPrefix = `${recipeId}/`;
+      console.log(`Looking for files with prefix: ${folderPrefix} in bucket: ${process.env.AWS_S3_BUCKET_NAME}`);
+      
+      const listParams = {
+        Bucket: process.env.AWS_S3_BUCKET_NAME!,
+        Prefix: folderPrefix,
       };
       
-      const recipe = await Recipe.findByIdAndUpdate(
-        id,
-        { $set: formattedData },
-        { 
-          new: true,
-          runValidators: true
-        }
-      );
+      const listedObjects = await s3.listObjectsV2(listParams).promise();
       
-      if (!recipe) {
-        throw new Error('Recipe not found');
+      if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
+        return;
       }
-
-      await this.redisService.del(`recipe:${id}`);
-
-      return recipe;
+      
+      listedObjects.Contents.forEach(file => {
+        console.log(`- ${file.Key}`);
+      });
+      
+      // S3 can only delete up to 1000 objects in a single call
+      // Split into batches if necessary
+      const chunks = [];
+      for (let i = 0; i < listedObjects.Contents.length; i += 1000) {
+        chunks.push(listedObjects.Contents.slice(i, i + 1000));
+      }
+      
+      let deletedCount = 0;
+      
+      // Delete files in batches
+      for (const chunk of chunks) {
+        const deleteParams = {
+          Bucket: process.env.AWS_S3_BUCKET_NAME!,
+          Delete: { Objects: chunk.map((file) => ({ Key: file.Key! })) },
+        };
+        
+        const deleteResult = await s3.deleteObjects(deleteParams).promise();
+        deletedCount += deleteResult.Deleted?.length || 0;
+        
+        if (deleteResult.Errors && deleteResult.Errors.length > 0) {
+          console.error('Some files could not be deleted:', deleteResult.Errors);
+        }
+      }
+      
+      console.log(`Successfully deleted ${deletedCount} files from S3 for recipe ${recipeId}`);
     } catch (error) {
-      console.error('Update error:', error);
-      throw new Error('Error updating recipe');
+      console.error(`Error deleting files in S3 folder for recipe ${recipeId}:`, error);
+      // We'll log the error but not throw, as this is typically called during cleanup
     }
   }
 
+  async updateRecipe(recipeId: string, recipeData: IRecipe) {
+    try {
+      const existingRecipe = await Recipe.findOne({ recipeId: recipeId });
+      
+      if (!existingRecipe) {
+        throw new Error('Recipe not found');
+      }
+      
+      let updatedRecipeData = { ...recipeData };
+      
+      const hasNewImages = recipeData.images && recipeData.images.some(img => 
+        typeof img.data === 'string' && img.data.startsWith('data:image')
+      );
+      
+      const hasNewVideo = recipeData.video && 
+        typeof recipeData.video.link === 'string' && 
+        recipeData.video.link.startsWith('data:video');
+      
+      if (hasNewImages || hasNewVideo) {
+        await this.deleteMediaFromS3(recipeId);
+        
+        if (hasNewImages) {
+          const newImages = recipeData.images.filter(img => 
+            typeof img.data === 'string' && img.data.startsWith('data:image')
+          );
+          
+          const existingImages = recipeData.images.filter(img => 
+            typeof img.link === 'string' && img.link.includes('amazonaws.com')
+          );
+          
+          if (newImages.length > 0) {
+            const processedNewImages = await this.processMedia(newImages, recipeId, 'images');
+            if (Array.isArray(processedNewImages)) {
+              updatedRecipeData.images = [...processedNewImages, ...existingImages];
+            } else {
+              throw new Error('Expected an array of images');
+            }
+          } else {
+            updatedRecipeData.images = existingImages;
+          }
+        }
+        
+        if (hasNewVideo) {
+          const processedVideo = await this.processMedia(recipeData.video, recipeId, 'videos') as { id: string; link: string };
+          if (Array.isArray(processedVideo)) {
+            throw new Error('Expected a single video object, but got an array');
+          }
+          updatedRecipeData.video = processedVideo;
+        }
+      } else {
+        updatedRecipeData.images = existingRecipe.images;
+        updatedRecipeData.video = existingRecipe.video;
+      }
+      
+      const updatedRecipe = await Recipe.findOneAndUpdate(
+        { recipeId: recipeId },
+        {
+          ...updatedRecipeData,
+          updatedAt: new Date()
+        },
+        { new: true }
+      );
+      
+      if (!updatedRecipe) {
+        throw new Error('Failed to update recipe');
+      }
+      
+      // Clear cache
+      await this.redisService.del(`recipe:${recipeId}`);
+      
+      return updatedRecipe;
+    } catch (error: any) {
+      console.error('Update error:', error);
+      throw new Error(`Error updating recipe: ${error.message}`);
+    }
+  }
+  
   async deleteRecipe(id: string) {
     try {
-      const recipe = await Recipe.findByIdAndDelete(id);
+      const recipe = await Recipe.findOneAndDelete({ recipeId: id });
       if (!recipe) {
         throw new Error('Recipe not found');
       }
@@ -208,6 +304,7 @@ export class RecipeService {
 
       return recipe;
     } catch (error) {
+      console.error('Error deleting recipe:', error);
       throw new Error('Error deleting recipe');
     }
   }

@@ -9,7 +9,7 @@ import VideoUploadSection from './VideoUploadSection';
 
 function RecipeForm({ onSubmit, loading, isEdit = false, initialData, ingredientGroups, setIngredientGroups,instructionGroups,
     setInstructionGroups,images,setImages,onCancel,categories,subcategories,onCategoryChange,onSubCategoryChange, selectedCategory, selectedSubCategory, tips = [],
-    setTips, video = null, setVideo, }: RecipeFormProps) {
+    setTips, video, setVideo, }: RecipeFormProps) {
 
     return (
         <form onSubmit={onSubmit} className="space-y-8">
@@ -21,7 +21,7 @@ function RecipeForm({ onSubmit, loading, isEdit = false, initialData, ingredient
             />
 
             <VideoUploadSection
-                video={video}
+                video={video || { link: '' }}
                 setVideo={setVideo}
             />
 

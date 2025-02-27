@@ -10,6 +10,7 @@ export interface IRecipe extends Document {
   ingredientGroups: IngredientGroup[];
   instructionGroups: InstructionGroup[];
   images?: {
+    data?: string;
     id?: string;
     link?: string,
   }[];

@@ -20,10 +20,7 @@ const App = () => {
           <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
-            {/* <Route path="/register" element={<RegisterPage />} /> */}
 
-            {/* Root route now redirects to /login if user is not authenticated */}
-            {/* <Route path="/" element={<Navigate to="/login" />} /> */}
 
             {/* Protected Routes */}
             <Route element={<Layout />}>
