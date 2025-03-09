@@ -220,7 +220,7 @@ const EditRecipe = () => {
           <RecipeForm
             onSubmit={handleSubmit}
             onCancel={handleCancel}
-            loading={loading}
+            loading={saving}
             isEdit={true}
             initialData={recipe}
             ingredientGroups={ingredientGroups}

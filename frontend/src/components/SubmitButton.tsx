@@ -33,7 +33,7 @@ function SubmitButton({ onCancel, loading, isEdit }: SubmitButtonProps) {
                 {loading ? (
                 <>
                     <Loader className="w-5 h-5 animate-spin" />
-                    {isEdit ? t('editRecipe.savingChanges') : t('createRecipe.submit.creating')}
+                    {/* {isEdit ? t('editRecipe.savingChanges') : t('createRecipe.submit.creating')} */}
                 </>
                 ) : (
                 isEdit ? t('editRecipe.saveChanges') : t('createRecipe.submit.create')

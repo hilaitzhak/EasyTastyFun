@@ -28,7 +28,9 @@ function ImageUploadSection({ images, setImages }: ImageUploadSectionProps) {
   
   const removeImage = (index: number) => {
     setImages(images.filter((_, i) => i !== index));
+    console.log('images: ', images);
   };
+
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-purple-100/50 p-8 space-y-6 transition-all hover:shadow-xl">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">

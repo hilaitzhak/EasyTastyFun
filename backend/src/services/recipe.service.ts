@@ -217,6 +217,7 @@ export class RecipeService {
     }
   }
 
+
   async updateRecipe(recipeId: string, recipeData: IRecipe) {
     try {
       const existingRecipe = await Recipe.findOne({ recipeId: recipeId });
@@ -227,6 +228,9 @@ export class RecipeService {
       
       let updatedRecipeData = { ...recipeData };
       
+      // MEDIA HANDLING LOGIC
+      
+      // 1. Check for new uploads
       const hasNewImages = recipeData.images && recipeData.images.some(img => 
         typeof img.data === 'string' && img.data.startsWith('data:image')
       );
@@ -235,14 +239,38 @@ export class RecipeService {
         typeof recipeData.video.link === 'string' && 
         recipeData.video.link.startsWith('data:video');
       
+      // 2. Check if media was deleted
+      const imagesWereDeleted = recipeData.images && 
+        existingRecipe.images && 
+        recipeData.images.length < existingRecipe.images.length;
+      
+      const videoWasDeleted = existingRecipe.video && recipeData.video === null;
+      
+      // 3. Process media changes
       if (hasNewImages || hasNewVideo) {
-        await this.deleteMediaFromS3(recipeId);
+        // If we have new media, we need to handle both the new uploads and existing media
         
+        // For new images, delete only the images folder if we're not uploading a new video
+        if (hasNewImages && !hasNewVideo) {
+          await this.deleteMediaFromS3Folder(recipeId, 'images');
+        } 
+        // For new video, delete only the videos folder if we're not uploading new images
+        else if (hasNewVideo && !hasNewImages) {
+          await this.deleteMediaFromS3Folder(recipeId, 'videos');
+        }
+        // If both are new, delete everything
+        else {
+          await this.deleteMediaFromS3(recipeId);
+        }
+        
+        // Process new images if there are any
         if (hasNewImages) {
+          // Filter out only the images that need processing (base64 ones)
           const newImages = recipeData.images.filter(img => 
             typeof img.data === 'string' && img.data.startsWith('data:image')
           );
           
+          // Keep images that are already processed (have URLs)
           const existingImages = recipeData.images.filter(img => 
             typeof img.link === 'string' && img.link.includes('amazonaws.com')
           );
@@ -250,15 +278,18 @@ export class RecipeService {
           if (newImages.length > 0) {
             const processedNewImages = await this.processMedia(newImages, recipeId, 'images');
             if (Array.isArray(processedNewImages)) {
+              // Combine processed new images with existing ones that weren't modified
               updatedRecipeData.images = [...processedNewImages, ...existingImages];
             } else {
               throw new Error('Expected an array of images');
             }
           } else {
+            // If no new images, just keep the existing ones
             updatedRecipeData.images = existingImages;
           }
         }
         
+        // Process new video if there is one
         if (hasNewVideo) {
           const processedVideo = await this.processMedia(recipeData.video, recipeId, 'videos') as { id: string; link: string };
           if (Array.isArray(processedVideo)) {
@@ -266,18 +297,63 @@ export class RecipeService {
           }
           updatedRecipeData.video = processedVideo;
         }
+      } else if (imagesWereDeleted || videoWasDeleted) {
+        // If no new media, but media was deleted, handle that
+        
+        // For images, keep what was sent from the frontend
+        if (imagesWereDeleted) {
+          // Delete S3 objects for removed images
+          const existingImageLinks = existingRecipe.images.map(img => img.link);
+          const remainingImageLinks = recipeData.images.map(img => img.link);
+          
+          const deletedImageLinks = existingImageLinks.filter(link => 
+            !remainingImageLinks.includes(link)
+          );
+          
+          // Delete each removed image individually from S3
+          for (const imageLink of deletedImageLinks) {
+            const key = this.getS3KeyFromUrl(imageLink);
+            if (key) {
+              await this.deleteMediaFromS3ByKey(key);
+            }
+          }
+          
+          // Keep only the images that were not deleted
+          updatedRecipeData.images = recipeData.images;
+        } else {
+          // Keep existing images if they weren't deleted
+          updatedRecipeData.images = existingRecipe.images;
+        }
+        
+        // For video, set to null if it was deleted
+        if (videoWasDeleted) {
+          // Delete the video file from S3
+          if (existingRecipe.video && existingRecipe.video.link) {
+            const key = this.getS3KeyFromUrl(existingRecipe.video.link);
+            if (key) {
+              await this.deleteMediaFromS3ByKey(key);
+            }
+          }
+          
+          updatedRecipeData.video = null;
+        } else {
+          // Keep existing video if it wasn't deleted
+          updatedRecipeData.video = existingRecipe.video;
+        }
       } else {
+        // No changes to media, keep existing
         updatedRecipeData.images = existingRecipe.images;
         updatedRecipeData.video = existingRecipe.video;
       }
       
+      // Update recipe in database
       const updatedRecipe = await Recipe.findOneAndUpdate(
         { recipeId: recipeId },
         {
           ...updatedRecipeData,
           updatedAt: new Date()
         },
-        { new: true }
+        { new: true } // Return the updated document
       );
       
       if (!updatedRecipe) {
@@ -291,6 +367,72 @@ export class RecipeService {
     } catch (error: any) {
       console.error('Update error:', error);
       throw new Error(`Error updating recipe: ${error.message}`);
+    }
+  }
+  
+  // Helper function to extract S3 key from a URL
+  private getS3KeyFromUrl(url: string): string | null {
+    try {
+      // Extract the key from an S3 URL
+      // Format: https://bucket-name.s3.region.amazonaws.com/key
+      const urlObj = new URL(url);
+      if (urlObj.hostname.includes('amazonaws.com')) {
+        // The pathname starts with a leading slash, so remove it
+        return urlObj.pathname.substring(1);
+      }
+      return null;
+    } catch (error) {
+      console.error('Error parsing S3 URL:', error);
+      return null;
+    }
+  }
+  
+  // Delete a specific file from S3 by key
+  async deleteMediaFromS3ByKey(key: string): Promise<void> {
+    try {
+      console.log(`Deleting S3 object with key: ${key}`);
+      
+      const deleteParams = {
+        Bucket: process.env.AWS_S3_BUCKET_NAME!,
+        Key: key
+      };
+      
+      await s3.deleteObject(deleteParams).promise();
+      console.log(`Successfully deleted S3 object: ${key}`);
+    } catch (error) {
+      console.error(`Error deleting S3 object: ${key}`, error);
+    }
+  }
+  
+  // Delete only a specific subfolder
+  async deleteMediaFromS3Folder(recipeId: string, folderType: 'images' | 'videos'): Promise<void> {
+    try {
+      const folderPrefix = `${recipeId}/${folderType}/`;
+      console.log(`Deleting S3 folder: ${folderPrefix}`);
+      
+      const listParams = {
+        Bucket: process.env.AWS_S3_BUCKET_NAME!,
+        Prefix: folderPrefix
+      };
+      
+      const listedObjects = await s3.listObjectsV2(listParams).promise();
+      
+      if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
+        console.log(`No files found in S3 folder: ${folderPrefix}`);
+        return;
+      }
+      
+      const deleteParams = {
+        Bucket: process.env.AWS_S3_BUCKET_NAME!,
+        Delete: { 
+          Objects: listedObjects.Contents.map(obj => ({ Key: obj.Key! }))
+        }
+      };
+      
+      const deleteResult = await s3.deleteObjects(deleteParams).promise();
+      console.log(`Deleted ${deleteResult.Deleted?.length || 0} files from S3 folder: ${folderPrefix}`);
+    } catch (error) {
+      console.error(`Error deleting S3 folder: ${recipeId}/${folderType}`, error);
     }
   }
   

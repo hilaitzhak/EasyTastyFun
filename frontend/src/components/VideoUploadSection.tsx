@@ -50,7 +50,7 @@ function VideoUploadSection({ video, setVideo }: VideoUploadSectionProps) {
             />
           </label>
         ) : (
-          <div className="relative group rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all">
+          <div className="relative group rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all w-64">
             <video
               src={video.link}
               controls
