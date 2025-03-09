@@ -20,7 +20,7 @@ function RecipeCard({ recipe }: RecipeCardProps) {
   return (
     <div 
       onClick={handleClick}
-      className="group bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+      className="group bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
     >
       <div className="relative h-56">
         {recipe.images && recipe.images[0] ? (
@@ -36,14 +36,13 @@ function RecipeCard({ recipe }: RecipeCardProps) {
         )}
       </div>
   
-      <div className="p-6">
+      <div className="p-6 flex flex-col flex-grow">
         <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-purple-600 transition-colors">
           {recipe.name}
         </h3>
         
-        {/* Only render the grid if there's data to show */}
         {(totalTime > 0 || (recipe?.servings ?? 0) > 0 || formattedDate) && (
-          <div className="grid grid-cols-2 gap-4 text-sm text-gray-500">
+          <div className="mt-auto grid grid-cols-2 gap-y-2 text-sm text-gray-500">
             {recipe && (
               <>
                 {totalTime > 0 && (
@@ -65,7 +64,7 @@ function RecipeCard({ recipe }: RecipeCardProps) {
                 )}
                 
                 {formattedDate && (
-                  <div className="flex items-center gap-2 col-span-2">
+                  <div className="flex items-center gap-2 col-span-2 mt-1">
                     <Calendar className="w-4 h-4 text-purple-500" />
                     <span>{t('recipe.createdAt', { date: formattedDate })}</span>
                   </div>
