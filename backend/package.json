@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "tsc && node build/app.js"
+    "start": "tsc && node build/app.js",
+    "build": "tsc",
+    "prod": "node build/app.js"
   },
   "author": "",
   "license": "ISC",
