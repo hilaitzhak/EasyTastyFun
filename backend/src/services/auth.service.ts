@@ -53,11 +53,19 @@ export class AuthService {
     }
  
     private async verifyGoogleToken(credential: string) {
-        const ticket = await client.verifyIdToken({
-            idToken: credential,
-            audience: process.env.GOOGLE_CLIENT_ID
-        });
-        return ticket.getPayload();
+        try {
+            console.log('verifyGoogleToken - start', credential);
+            const ticket = await client.verifyIdToken({
+                idToken: credential,
+                audience: process.env.GOOGLE_CLIENT_ID
+            });
+            const res = ticket.getPayload();
+            console.log('verifyGoogleToken - end', {ticket, res});
+            return res;
+        } catch(error: any) {
+            console.error('Error verifying Google token:', error);
+            return null;
+        }
     }
  
     private async findOrCreateGoogleUser(payload: any) {

@@ -38,10 +38,12 @@ export class AppServer {
         this.app.use(express.json({ limit: '50mb' }));
         this.app.use((req, res, next) => {
             const start = Date.now();
-            console.log(`Request [START]: ${req.method} ${req.url}`);
+            const request = {url: req.url, method: req.method, headers: req.headers, params: req.params, query: req.query};
+            console.log(`Request [START]: ${req.method} ${req.url}`, request);
             res.on("finish", () => {
                 const duration = Date.now() - start;
-                console.log(`Request [END]: ${req.method} ${req.url} - ${res.statusCode} (${duration}ms)`);
+                const response = {code: res.statusCode, headers: res.getHeaders(), duration};
+                console.log(`Request [END]: ${req.method} ${req.url} - ${res.statusCode} (${duration}ms)`, {request, response});
             });
             next();
         });  
