@@ -29,11 +29,12 @@ function RecipeDetails() {
         const response = await recipeApi.getRecipeById(id!);
         const recipeData = response.data;
         setRecipe(recipeData);
+        
         if (recipeData.category) {
           const categoryResponse = await categoryApi.getCategoryById(recipeData.category);
           setCategory(categoryResponse);
         }
-  
+
         if (recipeData.subcategory) {
           const subcategoryResponse = await categoryApi.getSubcategoryById(recipeData.subcategory);
           setSubcategory(subcategoryResponse);
@@ -49,15 +50,11 @@ function RecipeDetails() {
   }, [id]);
 
   const handleDelete = async () => {
-    if (!window.confirm(t('recipe.deleteConfirmation'))) {
-      return;
-    }
+    if (!window.confirm(t('recipe.deleteConfirmation'))) return;
 
     try {
       await recipeApi.delete(id!, {
-        headers: {
-          Authorization: `Bearer ${auth?.token}`,
-        },
+        headers: { Authorization: `Bearer ${auth?.token}` },
       });
       navigate('/recipes');
     } catch (error) {
@@ -69,53 +66,26 @@ function RecipeDetails() {
   const handleImageNavigation = (e: React.MouseEvent, direction: 'next' | 'prev') => {
     e.stopPropagation();
     if (direction === 'next') {
-      nextImage();
+      setCurrentImageIndex((prev) => prev === recipe.images.length - 1 ? 0 : prev + 1);
     } else {
-      previousImage();
+      setCurrentImageIndex((prev) => prev === 0 ? recipe.images.length - 1 : prev - 1);
     }
-  };
-
-  const nextImage = () => {
-    if (recipe?.images?.length > 0) {
-      setCurrentImageIndex((prev) => 
-        prev === recipe.images.length - 1 ? 0 : prev + 1
-      );
-    }
-  };
-
-  const previousImage = () => {
-    if (recipe?.images?.length > 0) {
-      setCurrentImageIndex((prev) => 
-        prev === 0 ? recipe.images.length - 1 : prev - 1
-      );
-    }
-  };
-
-  const handleImageClick = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-pink-50 to-yellow-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-400"></div>
       </div>
     );
   }
 
   if (!recipe) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-pink-50 to-yellow-50">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">{t('recipe.notFound')}</h2>
-          <button
-            onClick={() => navigate('/recipes')}
-            className="text-purple-600 hover:text-purple-700 transition-colors"
-          >
+          <h2 className="text-2xl font-bold text-gray-700 mb-4">{t('recipe.notFound')}</h2>
+          <button onClick={() => navigate('/recipes')} className="text-orange-500 hover:text-orange-600 transition-colors">
             {t('nav.backToRecipes')}
           </button>
         </div>
@@ -124,95 +94,135 @@ function RecipeDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-yellow-50 py-8">
       <div className="container mx-auto px-4">
-        {/* Navigation and Actions */}
-        <div className="flex justify-between items-center mb-8">
-          <button
-            onClick={() => navigate('/recipes')}
-            className="flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-colors"
-          >
-            { isRTL ? (<ArrowRight className="w-5 h-5" />) : (<ArrowLeft className="w-5 h-5" />) }
-            {t('nav.backToRecipes')}
-          </button>
-          
-          <div className="flex gap-4">
-            <button
-              onClick={() => navigate(`/recipe/edit/${id}`)}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-            >
-              <Edit className="w-4 h-4" />
-              {t('recipe.edit')}
-            </button>
-            <button
-              onClick={handleDelete}
-              className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-            >
-              <Trash2 className="w-4 h-4" />
-              {t('recipe.delete')}
-            </button>
+        {/* Hero Section */}
+        <div className="relative h-80 overflow-hidden mb-8 rounded-2xl">
+          <img
+            src={recipe.images?.[0]?.link || '/placeholder-recipe.jpg'}
+            alt={recipe.name}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-40" />
+          <div className="absolute inset-0 flex items-end">
+            <div className="max-w-7xl mx-auto px-6 pb-6 w-full">
+              <button
+                onClick={() => navigate('/recipes')}
+                className="mb-4 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg text-white hover:bg-white/30 transition-all flex items-center gap-2"
+              >
+                {isRTL ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
+                {t('nav.backToRecipes')}
+              </button>
+              
+              <div className="text-white">
+                <div className="mb-3 flex gap-2">
+                  {category && (
+                    <span className="inline-block bg-orange-600 px-3 py-1 rounded-full text-sm font-medium">
+                      {t(category.nameKey)}
+                    </span>
+                  )}
+                  {subcategory && (
+                    <span className="inline-block bg-orange-500 px-3 py-1 rounded-full text-sm font-medium">
+                      {t(subcategory.nameKey)}
+                    </span>
+                  )}
+                </div>
+                <h1 className="text-3xl md:text-4xl font-bold">{recipe.name}</h1>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">{recipe.name}</h1>
-          {category && subcategory && (
-            <p className="text-gray-600 mb-8">
-              {t(category.nameKey)} {'>'} {t(subcategory.nameKey)}
-            </p>
-          )}
-
-          {(recipe.prepTime > 0 || recipe?.cookTime > 0 || recipe.servings > 0) && (
-            <div className="flex gap-6 text-gray-600 mb-8">
-              <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5" />
-                <span>{t('recipe.totalTimeInMin', { time: recipe.prepTime + recipe.cookTime })}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="w-5 h-5" />
-                <span>{t('recipe.servingsCount', { count: recipe.servings })}</span>
-              </div>
+        <div className="max-w-6xl mx-auto">
+          {/* Recipe Info & Actions */}
+          <div className="flex justify-between items-start mb-8">
+            <div className="flex gap-6 text-gray-600">
+              {recipe.prepTime > 0 && (
+                <div className="flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-orange-500" />
+                  <span>{t('recipe.totalTimeInMin', { time: recipe.prepTime + recipe.cookTime })}</span>
+                </div>
+              )}
+              {recipe.servings > 0 && (
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-orange-500" />
+                  <span>{t('recipe.servingsCount', { count: recipe.servings })}</span>
+                </div>
+              )}
             </div>
-          )}
 
-          {(recipe.images && recipe.images.length > 0 || recipe.video) && (
-            <div className={`mb-8 ${recipe.images && recipe.images.length > 0 && recipe.video ? 'grid grid-cols-2 gap-4' : 'max-w-2xl mx-auto'}`}>
+            <div className="flex gap-3">
+              <button
+                onClick={() => navigate(`/recipe/edit/${id}`)}
+                className="relative group p-2 text-gray-600 hover:text-orange-500 transition-colors"
+                title={t('recipe.edit')}
+              >
+                <Edit className="w-5 h-5" />
+                <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  {t('recipe.edit')}
+                </span>
+              </button>
+              <button
+                onClick={handleDelete}
+                className="relative group p-2 text-gray-600 hover:text-red-500 transition-colors"
+                title={t('recipe.delete')}
+              >
+                <Trash2 className="w-5 h-5" />
+                <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  {t('recipe.delete')}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Images Gallery & Video */}
+          {(recipe.images && recipe.images.length > 0) || recipe.video ? (
+            <div className={`mb-8 ${recipe.images && recipe.images.length > 0 && recipe.video ? 'grid grid-cols-2 gap-6' : ''}`}>
+              {/* Images Gallery */}
               {recipe.images && recipe.images.length > 0 && (
-                <div className="relative rounded-2xl overflow-hidden">
-                  <div className="w-full h-[24rem] bg-gray-100 cursor-pointer" onClick={handleImageClick}>
-                    <img
-                      src={recipe.images[currentImageIndex]?.link}
-                      alt={recipe.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-700 mb-4">{t('createRecipe.images.title')}</h2>
+                  <div className="relative rounded-xl overflow-hidden">
+                    <div className="w-full h-64 bg-gray-100 cursor-pointer" onClick={() => setIsModalOpen(true)}>
+                      <img
+                        src={recipe.images[currentImageIndex]?.link}
+                        alt={recipe.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
 
-                  {recipe.images.length > 1 && (
-                    <>
-                      <button
-                        onClick={(e) => handleImageNavigation(e, 'prev')}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors cursor-pointer"
-                      >
-                        <ChevronLeft className="w-6 h-6" />
-                      </button>
-                      <button
-                        onClick={(e) => handleImageNavigation(e, 'next')}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors cursor-pointer"
-                      >
-                        <ChevronRight className="w-6 h-6" />
-                      </button>
-                    </>
-                  )}
+                    {recipe.images.length > 1 && (
+                      <>
+                        <button
+                          onClick={(e) => handleImageNavigation(e, 'prev')}
+                          className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                        >
+                          <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={(e) => handleImageNavigation(e, 'next')}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                        >
+                          <ChevronRight className="w-5 h-5" />
+                        </button>
+                        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-2 py-1 rounded text-sm">
+                          {currentImageIndex + 1} / {recipe.images.length}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
               )}
 
+              {/* Video */}
               {recipe.video && (
-                <div className="relative rounded-2xl overflow-hidden">
-                  <div className="w-full h-[24rem] bg-gray-100 cursor-pointer">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-700 mb-4">Video</h2>
+                  <div className="rounded-xl overflow-hidden">
                     <video 
                       src={recipe.video.link} 
                       controls
-                      className="w-full h-full rounded-xl"
+                      className="w-full h-64 rounded-xl"
                       poster={recipe.images?.[0]?.data}
                       controlsList="nodownload"
                     >
@@ -222,41 +232,27 @@ function RecipeDetails() {
                 </div>
               )}
             </div>
-          )}
-
-          {isModalOpen && (
-            <ImageModal
-              images={recipe.images}
-              currentIndex={currentImageIndex}
-              onClose={handleModalClose}
-            />
-          )}
+          ) : null}
 
           {/* Ingredients */}
-          <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">{t('recipe.ingredients')}</h2>
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200 p-6 mb-6">
+            <h2 className="text-xl font-semibold text-gray-700 mb-4">{t('recipe.ingredients')}</h2>
             
             {recipe.ingredientGroups.map((group: any, groupIndex: number) => (
-              <div key={groupIndex} className="mb-6">
+              <div key={groupIndex} className="mb-4 last:mb-0">
                 {group.title && (
-                  <h3 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
+                  <h3 className="text-md font-medium text-gray-600 mb-2 border-b pb-1">
                     {group.title}
                   </h3>
                 )}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="space-y-1">
                   {group.ingredients.map((ingredient: Ingredient, ingIndex: number) => (
-                    <li 
-                      key={`${groupIndex}-${ingIndex}`} 
-                      className="flex items-center gap-3 border-b border-gray-100 py-2 list-none"
-                    >
-                      <span className="text-gray-600">
-                        {t('recipe.ingredientAmount', { 
-                          amount: ingredient.amount, 
-                          unit: ingredient.unit 
-                        })}
+                    <div key={`${groupIndex}-${ingIndex}`} className="flex items-center gap-3 py-1">
+                      <span className="text-sm text-gray-500 min-w-20">
+                        {ingredient.amount} {ingredient.unit}
                       </span>
-                      <span className="text-gray-800">{ingredient.name}</span>
-                    </li>
+                      <span className="text-gray-700">{ingredient.name}</span>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -264,26 +260,23 @@ function RecipeDetails() {
           </div>
 
           {/* Instructions */}
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">{t('recipe.instructions')}</h2>
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200 p-6 mb-6">
+            <h2 className="text-xl font-semibold text-gray-700 mb-4">{t('recipe.instructions')}</h2>
             
             {recipe.instructionGroups.map((group: any, groupIndex: number) => (
-              <div key={groupIndex} className="mb-6">
+              <div key={groupIndex} className="mb-4 last:mb-0">
                 {group.title && (
-                  <h3 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
+                  <h3 className="text-md font-medium text-gray-600 mb-2 border-b pb-1">
                     {group.title}
                   </h3>
                 )}
-                <ol className="space-y-4">
+                <ol className="space-y-3">
                   {group.instructions.map((instruction: { content: string }, instIndex: number) => (
-                    <li 
-                      key={`${groupIndex}-${instIndex}`} 
-                      className="flex gap-4"
-                    >
-                      <span className="flex-shrink-0 w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-semibold">
+                    <li key={`${groupIndex}-${instIndex}`} className="flex gap-3">
+                      <span className="flex-shrink-0 w-6 h-6 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-sm font-semibold">
                         {instIndex + 1}
                       </span>
-                      <p className="text-gray-700 leading-relaxed">{instruction.content}</p>
+                      <p className="text-gray-600 leading-relaxed text-sm">{instruction.content}</p>
                     </li>
                   ))}
                 </ol>
@@ -291,29 +284,32 @@ function RecipeDetails() {
             ))}
           </div>
 
-          {/* Tips Section */}
+          {/* Tips */}
           {recipe.tips && recipe.tips.length > 0 && (
-            <div className="bg-white rounded-xl shadow-md p-6 mt-8">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                {t('createRecipe.tips.title')}
-              </h2>
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-gray-700 mb-4">{t('createRecipe.tips.title')}</h2>
               
-              <ul className="space-y-4">
+              <ul className="space-y-3">
                 {recipe.tips.map((tip: string, index: number) => (
-                  <li 
-                    key={index}
-                    className="flex gap-4 items-start"
-                  >
-                    <span className="flex-shrink-0 w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-semibold">
+                  <li key={index} className="flex gap-3 items-start">
+                    <span className="flex-shrink-0 w-6 h-6 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-sm font-semibold">
                       {index + 1}
                     </span>
-                    <p className="text-gray-700 leading-relaxed">{tip}</p>
+                    <p className="text-gray-600 leading-relaxed text-sm">{tip}</p>
                   </li>
                 ))}
               </ul>
             </div>
           )}
         </div>
+
+        {isModalOpen && (
+          <ImageModal
+            images={recipe.images}
+            currentIndex={currentImageIndex}
+            onClose={() => setIsModalOpen(false)}
+          />
+        )}
       </div>
     </div>
   );

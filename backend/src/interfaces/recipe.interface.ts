@@ -20,7 +20,7 @@ export interface IRecipe extends Document {
   };
   tips?: string[];
   category: Types.ObjectId | ICategory;
-  subcategory: Types.ObjectId | ISubCategory;
+  subcategory?: Types.ObjectId | ISubCategory;
   createdAt: Date;
   updatedAt: Date;
 }

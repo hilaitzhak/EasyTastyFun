@@ -1,3 +1,4 @@
+
 import { Plus, Minus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import SortableList from './SortableList';
@@ -15,7 +16,7 @@ function TipsSection({ tips, setTips }: TipsSectionProps) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-purple-100/50 p-8 transition-all hover:shadow-xl">
+    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-orange-100/50 p-8 transition-all hover:shadow-2xl">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-extrabold text-gray-900">
           {t('createRecipe.tips.title')}
@@ -23,7 +24,7 @@ function TipsSection({ tips, setTips }: TipsSectionProps) {
         <button
           type="button"
           onClick={addTip}
-          className="flex items-center gap-2 text-purple-600 hover:text-purple-800 transition-colors"
+          className="flex items-center gap-2 text-orange-600 hover:text-orange-800 transition-colors"
         >
           <Plus className="w-4 h-4" />
           {t('createRecipe.tips.addTip')}
@@ -46,7 +47,8 @@ function TipsSection({ tips, setTips }: TipsSectionProps) {
                     setTips(newTips);
                   }}
                   placeholder={t('createRecipe.tips.tipPlaceholder')}
-                  className="w-full min-w-[400px] px-6 py-3 rounded-xl border-2 border-purple-200 focus:border-purple-400 focus:outline-none transition-colors"                  />
+                  className="w-full min-w-[400px] px-6 py-3 rounded-xl border-2 border-orange-200 focus:border-orange-400 focus:outline-none transition-colors"
+                />
               </div>
               {tips.length > 1 && (
                 <button

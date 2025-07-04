@@ -1,12 +1,12 @@
-  import { useContext, useEffect, useState } from "react";
-  import { useTranslation } from "react-i18next";
-  import { useNavigate } from "react-router-dom";
-  import { recipeApi } from "../api/recipe.api";
-  import RecipeForm from "../components/RecipeForm";
-  import { Category, SubCategory } from "../interfaces/Category";
-  import { categoryApi } from "../api/category.api";
-  import { ArrowLeft, ArrowRight } from "lucide-react";
-  import i18n from "../i18n/i18n";
+import { useContext, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { recipeApi } from "../api/recipe.api";
+import RecipeForm from "../components/RecipeForm";
+import { Category, SubCategory } from "../interfaces/Category";
+import { categoryApi } from "../api/category.api";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import i18n from "../i18n/i18n";
 import { Ingredient, IngredientGroup, InstructionGroup } from "../interfaces/Recipe";
 import { AuthContext } from "../context/AuthContext";
 
@@ -49,7 +49,7 @@ function CreateRecipeForm() {
 
     fetchData();
   }, []);
-    
+
   useEffect(() => {
     if (selectedCategory) {
       // Filter subcategories where categoryId matches the selected category
@@ -63,7 +63,7 @@ function CreateRecipeForm() {
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId);
   };
-    
+
   const handleSubCategoryChange = (subCategoryId: string) => {
     setSelectedSubCategory(subCategoryId);
   };
@@ -71,15 +71,16 @@ function CreateRecipeForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-  
+
     try {
       const formData = new FormData(e.currentTarget);
-  
+
       // Extract all ingredients for similarity check
       const allIngredients = ingredientGroups
         .flatMap(group => group.ingredients)
         .map(ing => ing.name)
         .filter(name => name.trim()); // Filter out empty ingredients
+
       // Check for similar recipes first
       const similarRecipesResponse = await recipeApi.checkSimilarRecipes(allIngredients);
 
@@ -90,22 +91,21 @@ function CreateRecipeForm() {
             recipes: similarRecipesResponse.data.map((r: any) => r.name).join(', ')
           })
         );
-  
+
         if (!confirmed) {
           setLoading(false);
           return;
         }
       }
-  
+
       // If confirmed or no similar recipes, proceed with recipe creation
-      const recipeData = {
+      const recipeDataBase = {
         name: formData.get('name'),
         prepTime: Number(formData.get('prepTime')),
         cookTime: Number(formData.get('cookTime')),
         servings: Number(formData.get('servings')),
         category: selectedCategory,
-        subcategory: selectedSubCategory,
-        ingredientGroups: ingredientGroups.filter(group => 
+        ingredientGroups: ingredientGroups.filter(group =>
           group.ingredients.some((ing: Ingredient) => ing.name || ing.amount || ing.unit)
         ),
         instructionGroups: instructionGroups.map(group => ({
@@ -120,19 +120,31 @@ function CreateRecipeForm() {
         video: video || null,
         tips: tips.filter(tip => tip.trim())
       };
-      console.log('Recipe Data:', recipeData);
+
+      const recipeData = {
+        ...recipeDataBase,
+        ...(selectedSubCategory && selectedSubCategory !== '' ? { subcategory: selectedSubCategory } : {})
+      };
+
+
+      if (!recipeData.subcategory || recipeData.subcategory === '') {
+        delete recipeData.subcategory;
+      }
+
       const response = await recipeApi.createRecipe(recipeData, {
         headers: {
           Authorization: `Bearer ${auth?.token}`,
         },
       });
+
+      console.log('response.data:', response.data);
       if (response.data) {
         navigate(`/recipe/${response.data.recipeId}`);
       }
     } catch (error: any) {
       if (error.response) {
-        alert(t('createRecipe.errors.serverError', { 
-          message: error.response.data.message || error.response.statusText 
+        alert(t('createRecipe.errors.serverError', {
+          message: error.response.data.message || error.response.statusText
         }));
       } else if (error.request) {
         alert(t('createRecipe.errors.connectionError'));
@@ -177,7 +189,7 @@ function CreateRecipeForm() {
             tips={tips}
             setTips={setTips}
             video={video}
-            setVideo={setVideo} 
+            setVideo={setVideo}
           />
         </div>
       </div>

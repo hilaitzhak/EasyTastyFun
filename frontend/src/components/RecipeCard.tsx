@@ -37,12 +37,12 @@ function RecipeCard({ recipe }: RecipeCardProps) {
       </div>
   
       <div className="p-6 flex flex-col flex-grow">
-        <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-purple-600 transition-colors">
+        <h3 className="text-md font-bold mb-2 text-gray-800 group-hover:text-purple-600 transition-colors">
           {recipe.name}
         </h3>
         
         {(totalTime > 0 || (recipe?.servings ?? 0) > 0 || formattedDate) && (
-          <div className="mt-auto grid grid-cols-2 gap-y-2 text-sm text-gray-500">
+          <div className="mt-auto grid grid-cols-2 gap-y-2 text-xs text-gray-500">
             {recipe && (
               <>
                 {totalTime > 0 && (

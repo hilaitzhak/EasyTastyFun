@@ -1,3 +1,4 @@
+
 import { Minus, Video } from "lucide-react";
 import { VideoUploadSectionProps } from "../interfaces/Recipe";
 import { useTranslation } from "react-i18next";
@@ -27,16 +28,16 @@ function VideoUploadSection({ video, setVideo }: VideoUploadSectionProps) {
   };
   
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-purple-100/50 p-8 space-y-6 transition-all hover:shadow-xl">
+    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-orange-100/50 p-8 space-y-6 transition-all hover:shadow-2xl">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">
         {t('createRecipe.video.title')}
       </h2>
       
       <div className="grid gap-6 items-center">
         {!video?.link ? (
-          <label className="border-2 border-dashed border-purple-200 rounded-xl p-8 flex flex-col items-center justify-center hover:bg-purple-50 transition-colors cursor-pointer group">
-            <Video className="w-10 h-10 text-purple-400 group-hover:text-purple-600 transition-colors" />
-            <span className="mt-4 text-sm font-medium text-gray-600 group-hover:text-purple-700">
+          <label className="border-2 border-dashed border-orange-200 rounded-xl p-8 flex flex-col items-center justify-center hover:bg-orange-50 transition-colors cursor-pointer group">
+            <Video className="w-10 h-10 text-orange-400 group-hover:text-orange-600 transition-colors" />
+            <span className="mt-4 text-sm font-medium text-gray-600 group-hover:text-orange-700">
               {t('createRecipe.video.upload')}
             </span>
             <span className="mt-2 text-xs text-gray-500">

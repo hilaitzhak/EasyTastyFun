@@ -1,3 +1,4 @@
+
 import { Loader } from "lucide-react";
 import { SubmitButtonProps } from "../interfaces/Recipe";
 import { useTranslation } from "react-i18next";
@@ -21,19 +22,19 @@ function SubmitButton({ onCancel, loading, isEdit }: SubmitButtonProps) {
                 type="submit"
                 disabled={loading}
                 className={`
-                    bg-gradient-to-r from-purple-600 to-pink-500 
+                    bg-gradient-to-r from-orange-500 to-pink-500 
                     text-white px-8 py-3 rounded-full 
-                    hover:from-purple-700 hover:to-pink-600 
+                    hover:from-orange-600 hover:to-pink-600 
                     transition-all transform 
                     shadow-lg 
                     disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none
                     flex items-center justify-center gap-2 min-w-[160px]
                     ${!loading && 'hover:scale-105'}
-                `}            >
+                `}
+            >
                 {loading ? (
                 <>
                     <Loader className="w-5 h-5 animate-spin" />
-                    {/* {isEdit ? t('editRecipe.savingChanges') : t('createRecipe.submit.creating')} */}
                 </>
                 ) : (
                 isEdit ? t('editRecipe.saveChanges') : t('createRecipe.submit.create')

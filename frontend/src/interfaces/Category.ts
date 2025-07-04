@@ -1,5 +1,5 @@
 export interface Category {
-    _id: string;
+    id: string;
     nameKey: string;
     path: string;
     isActive: boolean;
@@ -8,7 +8,7 @@ export interface Category {
 }
 
 export interface SubCategory {
-    _id: string;
+    id: string;
     categoryId: string;
     nameKey: string;
     path: string;

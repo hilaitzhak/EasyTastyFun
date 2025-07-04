@@ -33,7 +33,7 @@ const RecipeSchema: Schema = new Schema({
   images: [{ id: { type: String }, link: { type: String }}],
   video: { id: { type: String }, link: { type: String }},
   category: { type: Types.ObjectId, ref: 'Category', required: true },
-  subcategory: { type: Types.ObjectId, ref: 'SubCategory', required: true },
+  subcategory: { type: Types.ObjectId, ref: 'SubCategory', required: false },
   tips: [{ type: String }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }

@@ -20,7 +20,7 @@ export class AppServer {
     public async init() {
         this.setApp();
         await connectDB(); 
-        this.initRedis();
+        await this.initRedis();
         this.setMiddlewares();
         this.setRouters();
     }
@@ -35,7 +35,16 @@ export class AppServer {
             credentials: true,
             methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
           }));
-        this.app.use(express.json({ limit: '50mb' }));    
+        this.app.use(express.json({ limit: '50mb' }));
+        this.app.use((req, res, next) => {
+            const start = Date.now();
+            console.log(`Request [START]: ${req.method} ${req.url}`);
+            res.on("finish", () => {
+                const duration = Date.now() - start;
+                console.log(`Request [END]: ${req.method} ${req.url} - ${res.statusCode} (${duration}ms)`);
+            });
+            next();
+        });  
     }
 
     private setRouters() {
@@ -47,7 +56,7 @@ export class AppServer {
         this.app.use('/easy-tasty-fun', authRouter.getRouter());
     }
 
-    private initRedis() {
+    private async initRedis() {
         const redisUrl = process.env.REDIS_URL || "redis://127.0.0.1:6379";
     
         const redisInstance = new Redis(redisUrl, {
@@ -55,12 +64,23 @@ export class AppServer {
             enableReadyCheck: false, // Speeds up readiness detection
             connectTimeout: 1000, // Fails quickly if Redis is unreachable
             maxRetriesPerRequest: 2, // Reduces unnecessary retries
+            keepAlive: 1,
+            socketTimeout: 10_000,
+            commandTimeout: 10_000,
+            disconnectTimeout: 10_000,
+            sentinelCommandTimeout: 10_000,
+            reconnectOnError: (err) => {
+                console.log('Redis error:', err);
+                return 1;
+            }
         });
     
         this.redisService = new RedisService(redisInstance);
     
         redisInstance.on("connect", () => console.log("✅ Connected to Redis"));
         redisInstance.on("error", (err) => console.error("❌ Redis error:", err));
+
+        await redisInstance.connect();
     }
     
     public listen() {

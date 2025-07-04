@@ -13,9 +13,9 @@ export class CategoryService {
       const categories = await Category.find({ isActive: true })
         .sort({ order: 1 })
         .populate({
-          path: 'subCategories',         // Field to populate
-          match: { isActive: true },     // Only include active subcategories
-          select: 'nameKey path isActive -_id' // Select specific fields to return
+          path: 'subCategories',
+          match: { isActive: true },
+          select: 'id nameKey path isActive'
         });
 
       return categories;
@@ -27,8 +27,7 @@ export class CategoryService {
 
   async getCategoryId(categoryId: string) {
     try {
-      const category = await Category.findById(categoryId);
-
+      const category = await Category.findOne({ id: categoryId });
       return category;
     } catch (error) {
       console.error('Error in CategoryService.getCategoryId:', error);
@@ -38,8 +37,7 @@ export class CategoryService {
 
   async getSubcategoryById(subcategoryId: string) {
     try {
-      const subcategory = await SubCategory.findById(subcategoryId);
-
+      const subcategory = await SubCategory.findOne({ id: subcategoryId });
       return subcategory;
     } catch (error) {
       console.error('Error in CategoryService.getSubcategoryById:', error);
@@ -61,11 +59,11 @@ export class CategoryService {
   async getRecipesByCategory(categoryPath: string, page: number, limit: number): Promise<RecipeResponse> {
     try {
       const skip = (page - 1) * limit;
-  
-      const category = await Category.findOne({ 
+
+      const category = await Category.findOne({
         path: `/categories/${categoryPath}`
       });
-  
+
       if (!category) {
         console.log('Category not found');
         return {
@@ -79,12 +77,12 @@ export class CategoryService {
         };
       }
 
-      const total = await Recipe.countDocuments({ category: category._id });
-      const recipes = await Recipe.find({ category: category._id })
+      const total = await Recipe.countDocuments({ category: category.id });
+      const recipes = await Recipe.find({ category: category.id })
         .skip(skip)
         .limit(limit)
         .sort({ createdAt: -1 });
-  
+
       return {
         recipes,
         pagination: {
@@ -109,7 +107,7 @@ export class CategoryService {
       return [];
     }
   }
-  
+
   async getSubCategoriesByCategory(categoryPath: string): Promise<ISubCategory[]> {
     try {
       const category = await Category.findOne({ path: categoryPath }).populate('subCategories');
@@ -124,8 +122,11 @@ export class CategoryService {
     try {
       const category = await Category.findOne({ path: categoryPath }).populate('subCategories');
       if (category) {
-        const subCategory = await SubCategory.findOne({ path: subCategoryPath, _id: { $in: category.subCategories.map(sc => sc._id) } });
-        return subCategory || null;
+        const subCategoryIds = category.subCategories.map((sc: any) => sc.id);
+        return await SubCategory.findOne({
+          path: subCategoryPath,
+          id: { $in: subCategoryIds }
+        });
       }
       return null;
     } catch (error) {
@@ -148,10 +149,10 @@ export class CategoryService {
         };
       }
 
-      const category = await Category.findOne({ 
+      const category = await Category.findOne({
         path: `/categories/${categoryPath}`
       });
-  
+
       if (!category) {
         console.log('Category not found');
         return {
@@ -164,11 +165,11 @@ export class CategoryService {
           }
         };
       }
-  
+
       const subcategory = await SubCategory.findOne({
         path: `/categories/${categoryPath}/${subCategoryPath}`
       });
-  
+
       if (!subcategory) {
         console.log('Subcategory not found');
         return {
@@ -182,37 +183,38 @@ export class CategoryService {
         };
       }
 
-    const skip = (page - 1) * limit;
+      const skip = (page - 1) * limit;
 
-    const totalRecipes = await Recipe.countDocuments({
-      category: category._id,
-      subcategory: subcategory._id
-    });
+      const totalRecipes = await Recipe.countDocuments({
+        category: category.id,
+        subcategory: subcategory.id
+      });
 
-    const recipes = await Recipe.find({
-      category: category._id,
-      subcategory: subcategory._id
-    })
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean() as unknown as IRecipe[];
+      const recipes = await Recipe.find({
+        category: category.id,
+        subcategory: subcategory.id
+      })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean() as unknown as IRecipe[];
 
-    const totalPages = Math.ceil(totalRecipes / limit);
-    const hasMore = page * limit < totalRecipes;
+      const totalPages = Math.ceil(totalRecipes / limit);
+      const hasMore = page * limit < totalRecipes;
 
-    return {
-      recipes,
-      pagination: {
-        currentPage: page,
-        totalPages,
-        totalRecipes,
-        hasMore
-      }
-    };
-  
+      return {
+        recipes,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalRecipes,
+          hasMore
+        }
+      };
+
     } catch (error) {
       console.error('Error fetching recipes by category and subcategory:', error);
+      throw new Error('Error fetching recipes by category and subcategory');
     }
   }
 

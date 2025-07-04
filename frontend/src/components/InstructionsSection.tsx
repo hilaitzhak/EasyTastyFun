@@ -1,3 +1,4 @@
+
 import { useTranslation } from "react-i18next";
 import { InstructionGroup, InstructionsSectionProps } from "../interfaces/Recipe";
 import { Minus, Plus } from "lucide-react";
@@ -29,13 +30,13 @@ function InstructionsSection({ instructionGroups, setInstructionGroups }: Instru
   };
   
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-purple-100/50 p-8 transition-all hover:shadow-xl">
+    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-orange-100/50 p-8 transition-all hover:shadow-2xl">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-extrabold text-gray-900">{t('editRecipe.instructions.title')}</h2>
         <button
           type="button"
           onClick={addInstructionGroup}
-          className="flex items-center gap-2 text-purple-600 hover:text-purple-800 transition-colors"
+          className="flex items-center gap-2 text-orange-600 hover:text-orange-800 transition-colors"
         >
           <Plus className="w-4 h-4" />
           {t('editRecipe.instructions.addGroup')}
@@ -44,7 +45,7 @@ function InstructionsSection({ instructionGroups, setInstructionGroups }: Instru
 
       <div className="space-y-6">
         {instructionGroups.map((group: InstructionGroup, groupIndex: number) => (
-          <div key={groupIndex} className="bg-purple-50 rounded-xl p-6 space-y-4">
+          <div key={groupIndex} className="bg-orange-50 rounded-xl p-6 space-y-4">
             <div className="flex items-center justify-between">
               <input
                 type="text"
@@ -55,7 +56,7 @@ function InstructionsSection({ instructionGroups, setInstructionGroups }: Instru
                   setInstructionGroups(newGroups);
                 }}
                 placeholder={t('editRecipe.instructions.groupTitlePlaceholder')}
-                className="font-semibold text-lg px-4 py-2 rounded-xl border-2 border-purple-200 focus:border-purple-400 focus:outline-none transition-colors"
+                className="font-semibold text-lg px-4 py-2 rounded-xl border-2 border-orange-200 focus:border-orange-400 focus:outline-none transition-colors"
               />
               {instructionGroups.length > 1 && (
                 <button
@@ -89,7 +90,7 @@ function InstructionsSection({ instructionGroups, setInstructionGroups }: Instru
                       }}
                       placeholder={t('editRecipe.instructions.stepPlaceholder', { number: instructionIndex + 1 })}
                       rows={2}
-                      className="w-full px-3 py-2 rounded-lg border-2 border-purple-200 focus:border-purple-400 focus:outline-none transition-colors"
+                      className="w-full px-3 py-2 rounded-lg border-2 border-orange-200 focus:border-orange-400 focus:outline-none transition-colors"
                     />
                   </div>
                   {group.instructions.length > 1 && (
@@ -107,7 +108,7 @@ function InstructionsSection({ instructionGroups, setInstructionGroups }: Instru
             <button
               type="button"
               onClick={() => addInstructionToGroup(groupIndex)}
-              className="flex items-center gap-2 text-purple-600 hover:text-purple-800 transition-colors"
+              className="flex items-center gap-2 text-orange-600 hover:text-orange-800 transition-colors"
             >
               <Plus className="w-4 h-4" />
               {t('editRecipe.instructions.addToGroup')}

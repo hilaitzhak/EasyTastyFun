@@ -2,6 +2,7 @@
   "nav": {
     "home": "דף הבית",
     "allRecipes": "כל המתכונים",
+    "all": "הכל",
     "createRecipe": "צור מתכון",
     "backToRecipes": "חזור למתכונים",
     "cakes": "עוגות",
@@ -13,16 +14,16 @@
     "salads": "סלטים",
     "pastries": "מאפים",
     "pareve": "פרווה",
-    "breakfast":" ארוחות בוקר",
+    "breakfast": " ארוחות בוקר",
     "backToHome": "חזרה לדף הבית",
     "subCategories": {
-      "chocolateCakes":"עוגות שוקולד",
-      "cheesecakes":"עוגות גבינה",
-      "torteCakes":"עוגות טורט",
+      "chocolateCakes": "עוגות שוקולד",
+      "cheesecakes": "עוגות גבינה",
+      "torteCakes": "עוגות טורט",
       "yeastCakes": "עוגות שמרים",
       "sweetPie": "פאי",
-      "sweetDesserts":"קינוחים מתוקים",
-      "savoryDesserts":"קינוחים מלוחים",
+      "sweetDesserts": "קינוחים מתוקים",
+      "savoryDesserts": "קינוחים מלוחים",
       "sweetCookies": "עוגיות מתוקות",
       "savoryCookies": "עוגיות מלוחות",
       "meatStews": "תבשילי בשר",
@@ -58,30 +59,30 @@
     "ingredientAmount": "{{amount}} {{unit}}"
   },
   "common": {
-      "loading": "טוען...",
-      "tryAgain": "נסה שוב",
-      "error": "שגיאה",
-      "save": "שמור",
-      "cancel": "בטל",
-      "confirmation": "האם אתה בטוח?",
-      "yes": "כן",
-      "no": "לא",
-      "noImage": "אין תמונה זמינה"
+    "loading": "טוען...",
+    "tryAgain": "נסה שוב",
+    "error": "שגיאה",
+    "save": "שמור",
+    "cancel": "בטל",
+    "confirmation": "האם אתה בטוח?",
+    "yes": "כן",
+    "no": "לא",
+    "noImage": "אין תמונה זמינה"
   },
   "hero": {
-      "discoverTitle": "גלה את אומנות",
-      "cookingTitle": "הבישול",
-      "description": "חקור עולם של טעמים, שתף את היצירות הקולינריות שלך והצטרף לקהילת חובבי האוכל שלנו.",
-      "shareRecipe": "שתף את המתכון שלך",
-      "browseRecipes": "עיין במתכונים"
+    "discoverTitle": "גלה את אומנות",
+    "cookingTitle": "הבישול",
+    "description": "חקור עולם של טעמים, שתף את היצירות הקולינריות שלך והצטרף לקהילת חובבי האוכל שלנו.",
+    "shareRecipe": "שתף את המתכון שלך",
+    "browseRecipes": "עיין במתכונים"
   },
   "latestRecipes": {
-      "title": "מתכונים אחרונים שנוצרו",
-      "subtitle": "גלה את ההרפתקאות הקולינריות האחרונות של הקהילה שלנו",
-      "addRecipe": "הוסף מתכון",
-      "noRecipes": "אין מתכונים שנוצרו לאחרונה",
-      "beFirst": "היה הראשון לשתף את המתכון המדהים שלך!",
-      "createRecipe": "צור מתכון"
+    "title": "מתכונים אחרונים שנוצרו",
+    "subtitle": "גלה את ההרפתקאות הקולינריות האחרונות של הקהילה שלנו",
+    "addRecipe": "הוסף מתכון",
+    "noRecipes": "אין מתכונים שנוצרו לאחרונה",
+    "beFirst": "היה הראשון לשתף את המתכון המדהים שלך!",
+    "createRecipe": "צור מתכון"
   },
   "allRecipes": {
     "title": "כל המתכונים",
@@ -92,7 +93,13 @@
     "noRecipes": "אין מתכונים זמינים",
     "startAdding": "התחל על ידי הוספת המתכון הראשון שלך!",
     "fetchError": "שגיאה בטעינת המתכונים. אנא נסה שוב מאוחר יותר.",
-    "loading": "טוען מתכונים..."
+    "loading": "טוען מתכונים...",
+    "clearFilters": "נקה סינון קטגוריה",
+    "adjustSearch": "נסה להתאים את החיפוש או את קריטריוני הסינון שלך",
+    "recipe": "מתכון",
+    "recipe_other": "מתכונים",
+    "inCategory": "בקטגוריה",
+    "matching": "התואמים ל"
   },
   "createRecipe": {
     "title": "יצירת מתכון חדש",
@@ -108,11 +115,11 @@
       },
       "category": {
         "label": "קטגוריה",
-        "placeholder":"בחר קטגוריה"
+        "placeholder": "בחר קטגוריה"
       },
       "subcategory": {
         "label": "תת-קטגוריה",
-        "placeholder":"בחר תת-קטגוריה"
+        "placeholder": "בחר תת-קטגוריה"
       },
       "prepTime": {
         "label": "זמן הכנה (דקות)"
@@ -125,7 +132,7 @@
       }
     },
     "images": {
-      "title": "תמונות של המתכון",
+      "title": "גלריית תמונות",
       "upload": "העלאת תמונות",
       "dragDrop": "לחץ להעלאת תמונות"
     },
@@ -197,7 +204,7 @@
     "email": "אימייל",
     "emailPlaceholder": "הכנס את האימייל שלך",
     "password": "סיסמה",
-    "passwordPlaceholder": "הכנס את הסיסמה שלך", 
+    "passwordPlaceholder": "הכנס את הסיסמה שלך",
     "confirmPassword": "אימות סיסמה",
     "confirmPasswordPlaceholder": "אמת את הסיסמה שלך",
     "name": "שם",

@@ -76,19 +76,19 @@ function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-purple-600 via-fuchsia-500 to-pink-500 shadow-lg backdrop-blur-sm bg-opacity-90 w-full">
+    <nav className="fixed top-0 left-0 w-full z-50 bg-white/95 shadow-sm border-b border-gray-100 backdrop-blur-md">
       <div className="container mx-auto px-6 w-full">
         <div className="flex justify-between items-center h-16">
           <div className="hidden md:flex items-center space-x-1">
-          <Link
-            to="/"
-            className="flex items-center text-white px-4 py-2 rounded-full transition-all duration-200 hover:bg-white/15 hover:scale-105"
-          >
-            <Home className="w-5 h-5" />
-          </Link>
+            <Link
+              to="/"
+              className="flex items-center text-gray-600 text-sm px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
+            >
+              <Home className="w-5 h-5" />
+            </Link>
             <Link
               to="/recipes"
-              className="flex items-center text-white px-4 py-2 rounded-full transition-all duration-200 hover:bg-white/15 hover:scale-105"
+              className="flex items-center text-gray-600 text-sm px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
             >
               {t('nav.allRecipes')}
             </Link>
@@ -102,7 +102,7 @@ function Navbar() {
               >
                 <Link
                   to={category.path}
-                  className="flex items-center text-white px-4 py-2 rounded-full transition-all duration-200 hover:bg-white/15 hover:scale-105"
+                  className="flex items-center text-gray-600 text-sm px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
                 >
                   <span>{t(`${category.nameKey}`)}</span>
                   {category.subCategories && category.subCategories.length > 0 && (
@@ -112,13 +112,13 @@ function Navbar() {
 
                 {category.subCategories && category.subCategories.length > 0 && activeCategory === category._id && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-max z-50">
-                    <div className="bg-white rounded-2xl shadow-xl p-4 border border-gray-100">
+                    <div className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
                       <div className="grid grid-cols-2 gap-2">
                         {category.subCategories.map((subCategory: SubCategory) => (
                           <Link
                             key={subCategory._id}
                             to={subCategory.path}
-                            className="px-4 py-3 text-gray-700 hover:text-purple-600 rounded-xl transition-all duration-200 hover:bg-purple-50 whitespace-nowrap"
+                            className="px-4 py-3 text-gray-600 hover:text-orange-500 rounded-xl transition-all duration-200 hover:bg-orange-50 whitespace-nowrap"
                           >
                             {t(`${subCategory.nameKey}`)}
                           </Link>
@@ -133,12 +133,12 @@ function Navbar() {
 
           {/* Right Side Menu */}
           <div className="flex items-center gap-6">
-          <button
+            <button
               onClick={toggleLanguage}
-              className="flex items-center gap-2 text-white px-4 py-2 rounded-full transition-all duration-200 hover:bg-white/15 hover:scale-105"
+              className="flex items-center gap-2 text-gray-600 px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
             >
               <Globe className="w-5 h-5" />
-              <span className="text-sm font-medium">
+              <span className="text-xs font-medium">
                 {i18n.language === 'en' ? 'עברית' : 'English'}
               </span>
             </button>
@@ -148,20 +148,20 @@ function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="flex items-center gap-2 text-white px-4 py-2 rounded-full transition-all duration-200 hover:bg-white/15 hover:scale-105"
+                  className="flex items-center gap-2 text-gray-600 px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
                 >
                   <UserCircle className="w-6 h-6" />
-                  <span className="text-sm font-medium">
+                  <span className="text-xs font-medium">
                     {auth?.user.name}
                   </span>
                 </button>
 
                 {/* Profile Dropdown */}
                 {isProfileOpen && (
-                  <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 w-48 bg-white rounded-xl shadow-lg py-2 z-50`}>
+                  <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 w-48 bg-white rounded-xl shadow-lg py-2 z-50 border border-gray-100`}>
                     <button
                       onClick={handleLogout}
-                      className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+                      className="flex items-center gap-2 w-full px-4 py-2 text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>{t('auth.logout')}</span>
@@ -174,7 +174,7 @@ function Navbar() {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden p-2 rounded-full transition-all duration-200 hover:bg-white/15"
+              className="md:hidden p-2 rounded-full transition-all duration-200 hover:bg-gray-50 text-gray-600"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -185,7 +185,7 @@ function Navbar() {
           <div className="py-4 space-y-2">
             <Link
               to="/recipes"
-              className="block py-2 px-4 text-white hover:bg-white/15 rounded-xl transition-all duration-200"
+              className="block py-2 px-4 text-gray-600 hover:bg-gray-50 hover:text-gray-800 rounded-xl transition-all duration-200"
               onClick={() => setIsOpen(false)}
             >
               {t('nav.allRecipes')}
@@ -194,18 +194,18 @@ function Navbar() {
               <div key={category._id} className="space-y-1">
                 <Link
                   to={category.path}
-                  className="block py-2 px-4 text-white hover:bg-white/15 rounded-xl transition-all duration-200"
+                  className="block py-2 px-4 text-gray-600 hover:bg-gray-50 hover:text-gray-800 rounded-xl transition-all duration-200"
                   onClick={() => setIsOpen(false)}
                 >
                   {t(`${category.nameKey}`)}
                 </Link>
                 {category.subCategories && category.subCategories.length > 0 && (
-                  <div className="pl-4 space-y-1 border-l border-white/20">
+                  <div className="pl-4 space-y-1 border-l border-gray-200">
                     {category.subCategories.map((subCategory: SubCategory) => (
                       <Link
                         key={subCategory._id}
                         to={subCategory.path}
-                        className="block py-2 px-4 text-white/80 hover:bg-white/15 rounded-xl transition-all duration-200"
+                        className="block py-2 px-4 text-gray-500 hover:bg-gray-50 hover:text-gray-700 rounded-xl transition-all duration-200"
                         onClick={() => setIsOpen(false)}
                       >
                         {t(`${subCategory.nameKey}`)}
@@ -216,10 +216,10 @@ function Navbar() {
               </div>
             ))}
             {auth?.user && (
-              <div className="border-t border-white/20 mt-2 pt-2">
+              <div className="border-t border-gray-200 mt-2 pt-2">
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 w-full py-2 px-4 text-white hover:bg-white/15 rounded-xl transition-all duration-200"
+                  className="flex items-center gap-2 w-full py-2 px-4 text-gray-600 hover:bg-gray-50 hover:text-gray-800 rounded-xl transition-all duration-200"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>{t('auth.logout')}</span>

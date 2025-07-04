@@ -8,14 +8,15 @@ export class RecipeController {
     constructor(redisService: RedisService) {
         this.recipeService = new RecipeService(redisService);
     }
-    
+
     async createRecipe(req: Request, res: Response): Promise<void> {
         try {
             const recipe = await this.recipeService.createRecipe(req.body);
             res.status(201).json(recipe);
         } catch (error) {
-          res.status(500).json({ 
-            message: "Error creating recipe", error });
+            res.status(500).json({
+                message: "Error creating recipe", error
+            });
         }
     }
 
@@ -23,7 +24,9 @@ export class RecipeController {
         try {
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 15;
-            const allRecipes = await this.recipeService.getAllRecipes(page, limit);
+            const category = req.query.category as string | undefined;
+            const search = req.query.search as string | undefined;
+            const allRecipes = await this.recipeService.getAllRecipes(page, limit, category, search);
             res.status(200).json(allRecipes);
         } catch (error) {
             res.status(500).json({ message: "Error fetching recipes", error });
@@ -83,11 +86,11 @@ export class RecipeController {
 
     async checkSimilarRecipes(req: Request, res: Response) {
         try {
-        const ingredients = req.body;
-        const similarRecipes = await this.recipeService.checkSimilarRecipes(ingredients);
-        res.json(similarRecipes);
+            const ingredients = req.body;
+            const similarRecipes = await this.recipeService.checkSimilarRecipes(ingredients);
+            res.json(similarRecipes);
         } catch (error) {
-        res.status(500).json({ error: 'Error checking similar recipes' });
+            res.status(500).json({ error: 'Error checking similar recipes' });
         }
     }
 }

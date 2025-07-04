@@ -29,14 +29,14 @@ function RecipePage() {
           if (subCategory) {
             setSubCategory(subCategory);
             const { recipes, total } = await categoryApi.getRecipesByCategoryAndSubcategory(
-              categoryPath, 
+              categoryPath,
               subCategoryPath,
               currentPage,
               ITEMS_PER_PAGE
             );
             setRecipes(recipes || []);
             setTotalRecipes(total);
-            
+
             // Also fetch parent category for breadcrumb
             const category = await categoryApi.getCategoryByPath(categoryPath);
             setCategory(category);
@@ -64,7 +64,7 @@ function RecipePage() {
         setLoading(false);
       }
     };
-  
+
     fetchData();
   }, [categoryPath, subCategoryPath, currentPage]);
 
@@ -82,10 +82,46 @@ function RecipePage() {
       </div>
     );
   }
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 py-8">
       <div className="container mx-auto px-4">
+        {/* Hero Section */}
+        {recipes.length > 0 && (
+          <div className="relative h-96 overflow-hidden mb-12">
+            <img
+              src={recipes[0].images?.[0]?.link}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black bg-opacity-40" />
+            <div className="absolute inset-0 flex items-end">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 w-full">
+                <button
+                  onClick={() => window.history.back()}
+                  className="mb-4 text-white hover:underline flex items-center gap-2"
+                >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                  {t('nav.back')}
+                </button>
+                {/* <div className="text-white">
+                  <h1 className="text-4xl md:text-5xl font-bold mb-2">
+                    {t(subCategory?.nameKey || category?.nameKey)}
+                  </h1>
+                  {subCategory?.description || category?.description ? (
+                    <p className="text-xl text-gray-200 max-w-3xl">
+                      {t(subCategory?.description || category?.description)}
+                    </p>
+                  ) : null}
+                </div> */}
+              </div>
+            </div>
+          </div>
+        )}
+
+
+
         {/* Breadcrumb Navigation */}
         <nav className="text-sm mb-8">
           <ol className="flex items-center space-x-2">

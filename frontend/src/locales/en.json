@@ -2,6 +2,7 @@
   "nav": {
     "home": "Home",
     "allRecipes": "All Recipes",
+    "all": "All",
     "createRecipe": "Create Recipe",
     "backToRecipes": "Back to Recipes",
     "cakes": "Cakes",
@@ -15,13 +16,13 @@
     "pareve": "Pareve",
     "backToHome": "Back to Home",
     "subCategories": {
-      "chocolateCakes":"Chocolate cakes",
-      "cheesecakes":"Cheesecakes",
-      "torteCakes":"Torte cakes",
+      "chocolateCakes": "Chocolate cakes",
+      "cheesecakes": "Cheesecakes",
+      "torteCakes": "Torte cakes",
       "yeastCakes": "Yeast cakes",
       "sweetPie": "Sweet Pie",
-      "sweetDesserts":"Sweet desserts",
-      "savoryDesserts":"Savory desserts",
+      "sweetDesserts": "Sweet desserts",
+      "savoryDesserts": "Savory desserts",
       "sweetCookies": "Sweet cookies",
       "savoryCookies": "Savory cookies",
       "meatStews": "Meat Stews",
@@ -86,13 +87,20 @@
     "title": "All Recipes",
     "subtitle": "Discover our complete collection of amazing recipes",
     "searchPlaceholder": "Search recipes...",
-    "noSearchResults": "No recipes found for \"{{searchTerm}}\"",
+    "noResults": "No recipes found",
     "clearSearch": "Clear search",
     "noRecipes": "No recipes available",
     "startAdding": "Start by adding your first recipe!",
     "fetchError": "Failed to fetch recipes. Please try again later.",
-    "loading": "Loading recipes..."
-  },
+    "loading": "Loading recipes...",
+    "clearFilters": "Clear Category Filter",
+    "adjustSearch": "Try adjusting your search or filter criteria",
+    "showing": "Showing",
+    "recipe": "recipe",
+    "recipe_other": "recipes",
+    "inCategory": "in",
+    "matching": "matching"
+    },
   "createRecipe": {
     "title": "Create New Recipe",
     "imageSizeError": "Image size should be less than 5MB",
@@ -124,7 +132,7 @@
       }
     },
     "images": {
-      "title": "Recipe Images",
+      "title": "Images Gallery",
       "upload": "Upload Images",
       "dragDrop": "Click to upload images"
     },

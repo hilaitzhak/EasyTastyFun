@@ -25,8 +25,8 @@ export interface IRecipe {
     id?: string;
     link: string;
   } | null;
-  categories: Category;
-  subcategories: SubCategory;
+  category: Category | string;
+  subcategory?: SubCategory;
   tips?: string[];
   createdAt: Date;
   updatedAt: Date;
