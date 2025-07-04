@@ -1,9 +1,7 @@
 import axios from 'axios';
-
-const API_URL = 'http://localhost:4000/easy-tasty-fun';
-
+import { API_BACKEND_URL } from '../config';
 export const recipeApi = {
-    createRecipe: (recipeData: any, config = {}) => axios.post(`${API_URL}/recipes/add-recipe`, recipeData, config),
+    createRecipe: (recipeData: any, config = {}) => axios.post(`${API_BACKEND_URL}/recipes/add-recipe`, recipeData, config),
     getAll(page: number, limit: number, filters?: { search?: string; category?: string }) {
         const params = new URLSearchParams({
             page: page.toString(),
@@ -12,11 +10,11 @@ export const recipeApi = {
         if (filters?.search) params.append('search', filters.search);
         if (filters?.category) params.append('category', filters.category);
         console.log('Fetching recipes with params:', params.toString());
-        return axios.get(`${API_URL}/recipes?${params.toString()}`);
+        return axios.get(`${API_BACKEND_URL}/recipes?${params.toString()}`);
     },
-    getRecentRecipes: () => axios.get(`${API_URL}/recipes/recent`),
-    getRecipeById: (recipeId: string) => axios.get(`${API_URL}/recipes/${recipeId}`),
-    update: (id: string, data: any, config = {}) => axios.put(`${API_URL}/recipes/${id}`, data, config),
-    delete: (id: string, config = {}) => axios.delete(`${API_URL}/recipes/${id}`, config),
-    checkSimilarRecipes: (ingredients: string[]) => axios.post(`${API_URL}/recipes/check-similar`, ingredients)
+    getRecentRecipes: () => axios.get(`${API_BACKEND_URL}/recipes/recent`),
+    getRecipeById: (recipeId: string) => axios.get(`${API_BACKEND_URL}/recipes/${recipeId}`),
+    update: (id: string, data: any, config = {}) => axios.put(`${API_BACKEND_URL}/recipes/${id}`, data, config),
+    delete: (id: string, config = {}) => axios.delete(`${API_BACKEND_URL}/recipes/${id}`, config),
+    checkSimilarRecipes: (ingredients: string[]) => axios.post(`${API_BACKEND_URL}/recipes/check-similar`, ingredients)
 };

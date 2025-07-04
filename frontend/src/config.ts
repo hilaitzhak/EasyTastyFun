@@ -1,0 +1,1 @@
+export const API_BACKEND_URL: string = import.meta.env.VITE_API_BACKEND_URL || 'http://localhost:4000/easy-tasty-fun';

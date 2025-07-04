@@ -1,15 +1,14 @@
 import axios from "axios";
-
-const API_URL = 'http://localhost:4000/easy-tasty-fun';
+import { API_BACKEND_URL } from "../config";
 
 export const authApi = {
     registerUser: (data: { name: string; email: string; password: string }) => {
-      return axios.post(`${API_URL}/register`, data);
+      return axios.post(`${API_BACKEND_URL}/register`, data);
     },
     loginUser: (data: { email: string; password: string }) => {
-      return axios.post(`${API_URL}/login`, data);
+      return axios.post(`${API_BACKEND_URL}/login`, data);
     },
     googleLogin: (credential: string) => {
-      return axios.post(`${API_URL}/google`, { credential });
+      return axios.post(`${API_BACKEND_URL}/google`, { credential });
     }
 }
