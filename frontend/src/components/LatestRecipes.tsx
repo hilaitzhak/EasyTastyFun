@@ -20,7 +20,12 @@ function LatestRecipes() {
           </div>
           <button
             onClick={() => navigate('/recipes/add-recipe')}
-            className="flex items-center gap-2 bg-gradient-to-r from-orange-400 to-pink-400 text-white px-6 py-3 rounded-full hover:from-orange-500 hover:to-pink-500 transition-all transform hover:scale-105 shadow-md hover:shadow-lg"
+            className="bg-gradient-to-r from-orange-500 to-pink-500 
+                text-white px-3 py-2 rounded-xl flex items-center gap-2 bg-gradient-to-r from-orange-400 to-pink-400 text-white px-6 py-3 rounded-full hover:from-orange-500 hover:to-pink-500 transition-all transform hover:scale-105 shadow-md hover:shadow-lg
+                hover:from-orange-600 hover:to-pink-600 
+                transition-transform shadow 
+                disabled:opacity-50 disabled:cursor-not-allowed 
+                flex items-center justify-center gap-2 min-w-[100px] text-sm font-semibold"
           >
             <span>{t('latestRecipes.addRecipe')}</span>
             <PlusCircle className="w-5 h-5" />

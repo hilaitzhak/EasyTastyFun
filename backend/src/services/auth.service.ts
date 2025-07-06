@@ -8,40 +8,29 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export class AuthService {
-    constructor() {}
-
-    // async register(name: string, email: string, password: string) {
-    //     const existingUser = await User.findOne({ email });
-    //     if (existingUser) throw new Error("User already exists");
-
-    //     const hashedPassword = await bcrypt.hash(password, 10);
-    //     const user = new User({ name, email, password: hashedPassword });
-    //     await user.save();
-
-    //     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
-    //     return { token, user };
-    // }
-
-    // async login(email: string, password: string) {
-    //     const user = await User.findOne({ email });
-    //     if (!user) throw new Error("Invalid credentials");
-
-    //     const isMatch = await bcrypt.compare(password, user.password);
-    //     if (!isMatch) throw new Error("Invalid credentials");
-
-    //     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
-    //     return { token, user };
-    // }
+    constructor() { }
 
     async googleLogin(credential: string) {
         const payload = await this.verifyGoogleToken(credential);
         if (!payload) {
             throw new Error('Invalid token');
         }
- 
+
+        // Whitelist check
+        const allowedEmails = [
+            'hila87219@gmail.com',
+            'yoram2121961@gmail.com',
+            'kokhiy1803@gmail.com',
+            'tomerzaidler@gmail.com'
+        ];
+
+        if (!allowedEmails.includes(payload.email || '')) {
+            throw new Error('Unauthorized: This email is not allowed to login.');
+        }
+
         const user = await this.findOrCreateGoogleUser(payload);
-        const token = this.generateToken(user?._id);
- 
+        const token = this.generateToken(user._id);
+
         return {
             token,
             user: {
@@ -51,7 +40,7 @@ export class AuthService {
             }
         };
     }
- 
+
     private async verifyGoogleToken(credential: string) {
         try {
             console.log('verifyGoogleToken - start', credential);
@@ -60,14 +49,14 @@ export class AuthService {
                 audience: process.env.GOOGLE_CLIENT_ID
             });
             const res = ticket.getPayload();
-            console.log('verifyGoogleToken - end', {ticket, res});
+            console.log('verifyGoogleToken - end', { ticket, res });
             return res;
-        } catch(error: any) {
+        } catch (error: any) {
             console.error('Error verifying Google token:', error);
             return null;
         }
     }
- 
+
     private async findOrCreateGoogleUser(payload: any) {
         let user = await User.findOne({ email: payload.email });
         if (!user) {
@@ -79,7 +68,7 @@ export class AuthService {
         }
         return user;
     }
- 
+
     private generateToken(userId: string | any) {
         return jwt.sign(
             { userId: userId.toString() },

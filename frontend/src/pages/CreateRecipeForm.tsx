@@ -5,7 +5,7 @@ import { recipeApi } from "../api/recipe.api";
 import RecipeForm from "../components/RecipeForm";
 import { Category, SubCategory } from "../interfaces/Category";
 import { categoryApi } from "../api/category.api";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChefHat } from "lucide-react";
 import i18n from "../i18n/i18n";
 import { Ingredient, IngredientGroup, InstructionGroup } from "../interfaces/Recipe";
 import { AuthContext } from "../context/AuthContext";
@@ -126,7 +126,6 @@ function CreateRecipeForm() {
         ...(selectedSubCategory && selectedSubCategory !== '' ? { subcategory: selectedSubCategory } : {})
       };
 
-
       if (!recipeData.subcategory || recipeData.subcategory === '') {
         delete recipeData.subcategory;
       }
@@ -157,40 +156,72 @@ function CreateRecipeForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 py-12">
-      <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto">
-          <div className="mb-4">
-            <button
-              onClick={() => navigate('/recipes')}
-              className="flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-colors p-2 rounded-lg hover:bg-purple-50"
-            >
-              {isRTL ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
-              <span>{t('nav.backToRecipes')}</span>
-            </button>
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-yellow-50">
+      {/* Modern Header with Glass Effect */}
+      <div className="sticky top-0 z-10 backdrop-blur-md bg-white/80 border-b border-orange-100/50 shadow-sm">
+        <div className="container mx-auto px-4 py-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={() => navigate('/recipes')}
+                  className="group flex items-center gap-3 px-4 py-2 rounded-xl bg-white/70 hover:bg-white shadow-sm hover:shadow-md transition-all duration-200 border border-orange-100"
+                >
+                  {isRTL ? (
+                    <ArrowRight className="w-5 h-5 text-orange-500 group-hover:translate-x-1 transition-transform duration-200" />
+                  ) : (
+                    <ArrowLeft className="w-5 h-5 text-orange-500 group-hover:-translate-x-1 transition-transform duration-200" />
+                  )}
+                  <span className="font-medium text-gray-700">{t('nav.backToRecipes')}</span>
+                </button>
+                
+                <div className="hidden sm:block w-px h-8 bg-orange-200"></div>
+                
+                <div className="flex items-center space-x-3 gap-4">
+                  <div className="p-2 rounded-xl bg-gradient-to-br from-orange-400 to-pink-400 shadow-md">
+                    <ChefHat className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">
+                      {t('createRecipe.title')}
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <h1 className="text-center text-4xl font-bold text-gray-800 mb-8">{t('createRecipe.title')}</h1>
-          <RecipeForm
-            onSubmit={handleSubmit}
-            loading={loading}
-            isEdit={false}
-            ingredientGroups={ingredientGroups}
-            setIngredientGroups={setIngredientGroups}
-            instructionGroups={instructionGroups}
-            setInstructionGroups={setInstructionGroups}
-            images={images}
-            setImages={setImages}
-            categories={categories}
-            subcategories={filteredSubcategories}
-            onCategoryChange={handleCategoryChange}
-            onSubCategoryChange={handleSubCategoryChange}
-            selectedCategory={selectedCategory}
-            selectedSubCategory={selectedSubCategory}
-            tips={tips}
-            setTips={setTips}
-            video={video}
-            setVideo={setVideo}
-          />
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto">
+          {/* Modern Card Container */}
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 overflow-hidden">
+            <div className="p-8">
+              <RecipeForm
+                onSubmit={handleSubmit}
+                loading={loading}
+                isEdit={false}
+                ingredientGroups={ingredientGroups}
+                setIngredientGroups={setIngredientGroups}
+                instructionGroups={instructionGroups}
+                setInstructionGroups={setInstructionGroups}
+                images={images}
+                setImages={setImages}
+                categories={categories}
+                subcategories={filteredSubcategories}
+                onCategoryChange={handleCategoryChange}
+                onSubCategoryChange={handleSubCategoryChange}
+                selectedCategory={selectedCategory}
+                selectedSubCategory={selectedSubCategory}
+                tips={tips}
+                setTips={setTips}
+                video={video}
+                setVideo={setVideo}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

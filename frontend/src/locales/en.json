@@ -100,7 +100,7 @@
     "recipe_other": "recipes",
     "inCategory": "in",
     "matching": "matching"
-    },
+  },
   "createRecipe": {
     "title": "Create New Recipe",
     "imageSizeError": "Image size should be less than 5MB",
@@ -177,12 +177,20 @@
   "editRecipe": {
     "title": "Edit Recipe",
     "backToRecipe": "Back to Recipe",
-    "addMoreImages": "Add more images",
+    "addMoreImages": "Add More Images",
     "saveChanges": "Save Changes",
     "savingChanges": "Saving Changes...",
-    "updateError": "Failed to update recipe",
-    "loadError": "Failed to load recipe",
-    "updateSuccess": "Recipe updated successfully"
+    "updateError": "Failed to update the recipe",
+    "loadError": "Failed to load the recipe",
+    "updateSuccess": "Recipe updated successfully",
+    "instructions": {
+      "title": "Preparation Instructions",
+      "addStep": "Add Step",
+      "stepPlaceholder": "Step {{number}}",
+      "addGroup": "Add Group",
+      "groupTitlePlaceholder": "Group Title",
+      "addToGroup": "Add Step to Group"
+    }
   },
   "auth": {
     "appName": "Easy Tasty Fun",

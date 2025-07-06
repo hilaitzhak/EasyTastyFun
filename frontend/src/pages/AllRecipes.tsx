@@ -86,19 +86,14 @@ function AllRecipes() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50/30 via-white to-pink-50/20 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-700 mb-4">{t('allRecipes.title')}</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            {t('allRecipes.subtitle')}
-          </p>
         </div>
 
-        {/* Add Recipe Button */}
         <div className="flex justify-center mb-8">
           <button
             onClick={() => navigate('/recipes/add-recipe')}
-            className="flex items-center gap-2 bg-gradient-to-r from-orange-400 to-pink-400 text-white px-6 py-3 rounded-full hover:from-orange-500 hover:to-pink-500 transition-all transform hover:scale-105 shadow-md hover:shadow-lg"
+            className="bg-gradient-to-r from-orange-400 to-pink-400 text-white flex items-center gap-3 px-4 py-2 rounded-xl hover:from-orange-500 hover:to-pink-500 hover:bg-white shadow-sm hover:shadow-md transition-all duration-200 border border-orange-100"
           >
             <Plus className="w-5 h-5" />
             <span>{t('recipe.create')}</span>

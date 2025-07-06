@@ -214,7 +214,7 @@ const EditRecipe = () => {
                 
                 <div className="hidden sm:block w-px h-8 bg-orange-200"></div>
                 
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3 gap-4">
                   <div className="p-2 rounded-xl bg-gradient-to-br from-orange-400 to-pink-400 shadow-md">
                     <ChefHat className="w-6 h-6 text-white" />
                   </div>
