@@ -29,12 +29,12 @@ export class AuthService {
         }
 
         const user = await this.findOrCreateGoogleUser(payload);
-        const token = this.generateToken(user._id);
+        const token = this.generateToken(user.id);
 
         return {
             token,
             user: {
-                id: user._id,
+                id: user.id,
                 name: user.name,
                 email: user.email
             }

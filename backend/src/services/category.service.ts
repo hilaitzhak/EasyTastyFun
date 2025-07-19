@@ -12,32 +12,51 @@ export class CategoryService {
     try {
       const categories = await Category.find({ isActive: true })
         .sort({ order: 1 })
-        .populate({
-          path: 'subCategories',
-          match: { isActive: true },
-          select: 'id nameKey path isActive'
-        });
+        .lean();
 
-      return categories;
+      const categoriesWithSubcategories = await Promise.all(
+        categories.map(async (category) => {
+          if (category.subCategories && category.subCategories.length > 0) {
+            const subcategories = await SubCategory.find({
+              id: { $in: category.subCategories },
+              isActive: true
+            })
+            .select('id nameKey path isActive')
+            .lean();
+
+            return {
+              ...category,
+              subCategories: subcategories
+            };
+          } else {
+            return {
+              ...category,
+              subCategories: []
+            };
+          }
+        })
+      );
+
+      return categoriesWithSubcategories;
     } catch (error) {
       console.error('Error in CategoryService.getCategories:', error);
       throw new Error('Service error fetching categories');
     }
   }
 
-  async getCategoryId(categoryId: string) {
+  async getCategoryById(categoryId: string) {
     try {
-      const category = await Category.findOne({ id: categoryId });
+      const category = await Category.findOne({ id: categoryId, isActive: true });
       return category;
     } catch (error) {
-      console.error('Error in CategoryService.getCategoryId:', error);
+      console.error('Error in CategoryService.getCategoryById:', error);
       throw new Error('Service error fetching category');
     }
   }
 
   async getSubcategoryById(subcategoryId: string) {
     try {
-      const subcategory = await SubCategory.findOne({ id: subcategoryId });
+      const subcategory = await SubCategory.findOne({ id: subcategoryId, isActive: true });
       return subcategory;
     } catch (error) {
       console.error('Error in CategoryService.getSubcategoryById:', error);
@@ -48,7 +67,8 @@ export class CategoryService {
   async getCategoryByPath(categoryPath: string): Promise<ICategory | null> {
     try {
       return await Category.findOne({
-        path: `/categories/${categoryPath}`
+        path: `/categories/${categoryPath}`,
+        isActive: true
       });
     } catch (error) {
       console.error('Error fetching category by path:', error);
@@ -61,7 +81,8 @@ export class CategoryService {
       const skip = (page - 1) * limit;
 
       const category = await Category.findOne({
-        path: `/categories/${categoryPath}`
+        path: `/categories/${categoryPath}`,
+        isActive: true
       });
 
       if (!category) {
@@ -77,6 +98,7 @@ export class CategoryService {
         };
       }
 
+      // Use custom id field for recipe queries
       const total = await Recipe.countDocuments({ category: category.id });
       const recipes = await Recipe.find({ category: category.id })
         .skip(skip)
@@ -101,34 +123,60 @@ export class CategoryService {
 
   async getAllSubCategories(): Promise<ISubCategory[]> {
     try {
-      return await SubCategory.find();
+      return await SubCategory.find({ isActive: true })
+        .select('id nameKey path categoryId isActive')
+        .lean();
     } catch (error) {
       console.error('Error fetching all subcategories:', error);
       return [];
     }
   }
 
+  // Fixed to work with string-based references
   async getSubCategoriesByCategory(categoryPath: string): Promise<ISubCategory[]> {
     try {
-      const category = await Category.findOne({ path: categoryPath }).populate('subCategories');
-      return category ? category.subCategories : [];
+      const category = await Category.findOne({ 
+        path: categoryPath,
+        isActive: true 
+      });
+
+      if (!category) {
+        return [];
+      }
+
+      // Find subcategories using custom id references
+      const subcategories = await SubCategory.find({
+        id: { $in: category.subCategories || [] },
+        isActive: true
+      });
+
+      return subcategories;
     } catch (error) {
       console.error('Error fetching subcategories by category:', error);
       return [];
     }
   }
 
+  // Fixed to work with string-based references
   async getSubCategoryByPath(categoryPath: string, subCategoryPath: string): Promise<ISubCategory | null> {
     try {
-      const category = await Category.findOne({ path: categoryPath }).populate('subCategories');
-      if (category) {
-        const subCategoryIds = category.subCategories.map((sc: any) => sc.id);
-        return await SubCategory.findOne({
-          path: subCategoryPath,
-          id: { $in: subCategoryIds }
-        });
+      const category = await Category.findOne({ 
+        path: categoryPath,
+        isActive: true 
+      });
+
+      if (!category) {
+        return null;
       }
-      return null;
+
+      // Find subcategory by path and ensure it belongs to the category
+      const subcategory = await SubCategory.findOne({
+        path: subCategoryPath,
+        id: { $in: category.subCategories || [] },
+        isActive: true
+      });
+
+      return subcategory;
     } catch (error) {
       console.error('Service error fetching subcategory by path:', error);
       return null;
@@ -150,7 +198,8 @@ export class CategoryService {
       }
 
       const category = await Category.findOne({
-        path: `/categories/${categoryPath}`
+        path: `/categories/${categoryPath}`,
+        isActive: true
       });
 
       if (!category) {
@@ -167,7 +216,8 @@ export class CategoryService {
       }
 
       const subcategory = await SubCategory.findOne({
-        path: `/categories/${categoryPath}/${subCategoryPath}`
+        path: `/categories/${categoryPath}/${subCategoryPath}`,
+        isActive: true
       });
 
       if (!subcategory) {
@@ -185,6 +235,7 @@ export class CategoryService {
 
       const skip = (page - 1) * limit;
 
+      // Use custom id fields for recipe queries
       const totalRecipes = await Recipe.countDocuments({
         category: category.id,
         subcategory: subcategory.id
@@ -218,14 +269,49 @@ export class CategoryService {
     }
   }
 
-  // private async getRecipesForSubCategory(subCategoryId: string): Promise<IRecipe[]> {
-  //   try {
-  //     // Fetch recipes associated with the given subcategory
-  //     // You'll need to update this based on your recipe model and associations
-  //     return await Recipe.find({ subCategory: subCategoryId });
-  //   } catch (error) {
-  //     console.error('Error fetching recipes for subcategory:', error);
-  //     return [];
-  //   }
-  // }
+  // Additional helper method to get subcategories by category id
+  async getSubcategoriesByCategoryId(categoryId: string): Promise<ISubCategory[]> {
+    try {
+      const subcategories = await SubCategory.find({ 
+        categoryId: categoryId,
+        isActive: true 
+      })
+      .select('id nameKey path categoryId isActive')
+      .lean();
+      
+      return subcategories;
+    } catch (error) {
+      console.error('Error in CategoryService.getSubcategoriesByCategoryId:', error);
+      throw new Error('Service error fetching subcategories by category id');
+    }
+  }
+
+  // Method to validate if a category and subcategory combination is valid
+  async validateCategorySubcategory(categoryId?: string, subcategoryId?: string): Promise<boolean> {
+    try {
+      if (categoryId) {
+        const category = await Category.findOne({ id: categoryId, isActive: true });
+        if (!category) {
+          throw new Error(`Category with id ${categoryId} not found`);
+        }
+
+        if (subcategoryId) {
+          const subcategory = await SubCategory.findOne({ id: subcategoryId, isActive: true });
+          if (!subcategory) {
+            throw new Error(`Subcategory with id ${subcategoryId} not found`);
+          }
+
+          // Check if subcategory belongs to the category
+          if (subcategory.categoryId !== categoryId) {
+            throw new Error(`Subcategory ${subcategoryId} does not belong to category ${categoryId}`);
+          }
+        }
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error in CategoryService.validateCategorySubcategory:', error);
+      throw error;
+    }
+  }
 }

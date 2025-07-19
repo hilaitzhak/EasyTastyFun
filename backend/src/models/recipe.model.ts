@@ -32,8 +32,8 @@ const RecipeSchema: Schema = new Schema({
   instructionGroups: [InstructionGroupSchema],
   images: [{ id: { type: String }, link: { type: String }}],
   video: { id: { type: String }, link: { type: String }},
-  category: { type: Types.ObjectId, ref: 'Category', required: true },
-  subcategory: { type: Types.ObjectId, ref: 'SubCategory', required: false },
+  category: { type: String, ref: 'Category', required: true },
+  subcategory: { type: String, ref: 'SubCategory' },
   tips: [{ type: String }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }

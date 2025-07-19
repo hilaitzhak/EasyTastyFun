@@ -133,7 +133,7 @@ function RecipeDetails() {
           </div>
         </div>
 
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-8xl mx-auto">
           {/* Recipe Info & Actions */}
           <div className="flex justify-between items-start mb-8">
             <div className="flex gap-6 text-gray-600">

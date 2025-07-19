@@ -159,8 +159,8 @@ function CreateRecipeForm() {
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-yellow-50">
       {/* Modern Header with Glass Effect */}
       <div className="sticky top-0 z-10 backdrop-blur-md bg-white/80 border-b border-orange-100/50 shadow-sm">
-        <div className="container mx-auto px-4 py-6">
-          <div className="max-w-6xl mx-auto">
+      <div className="max-w-8xl mx-auto px-6 w-full py-6">
+          <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <button
@@ -194,8 +194,8 @@ function CreateRecipeForm() {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
+      <div className="max-w-8xl mx-auto px-6 w-full">
+        <div className="max-w-7xl mx-auto py-4">
           {/* Modern Card Container */}
           <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 overflow-hidden">
             <div className="p-8">

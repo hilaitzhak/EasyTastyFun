@@ -13,7 +13,8 @@
     "pasta": "פסטה",
     "salads": "סלטים",
     "pastries": "מאפים",
-    "pareve": "פרווה",
+    "parve": "פרווה",
+    "soups": "מרקים",
     "breakfast": " ארוחות בוקר",
     "backToHome": "חזרה לדף הבית",
     "subCategories": {
@@ -21,7 +22,15 @@
       "cheesecakes": "עוגות גבינה",
       "torteCakes": "עוגות טורט",
       "yeastCakes": "עוגות שמרים",
+      "orangeCake": "עוגות תפוזים",
+      "carrotCake": "עוגות גזר",
+      "appleCake": "עוגות תפוחים",
+      "lemonCake": "עוגות לימון",
+      "poppySeedCake": "עוגות פרג",
+      "shortcrustPastryCakes": "עוגות בשילוב בצק פריך",
       "sweetPie": "פאי",
+      "dairyPies": "פשטידות חלבי",
+      "parvePies": "פשטידות פרווה",
       "sweetDesserts": "קינוחים מתוקים",
       "savoryDesserts": "קינוחים מלוחים",
       "sweetCookies": "עוגיות מתוקות",
@@ -30,6 +39,7 @@
       "cheesePastries": "מאפי גבינה",
       "chocolatePastries": "מאפי שוקולד",
       "meatPastries": "מאפי בשר",
+      "parvePastries": "מאפים פרווה",
       "pizza": "פיצה"
     }
   },

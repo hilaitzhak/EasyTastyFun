@@ -29,7 +29,7 @@ function InstructionsSection({ instructionGroups, setInstructionGroups }: Instru
     setInstructionGroups(newGroups);
   };
   
-  return (
+return (
     <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-orange-100/50 p-8 transition-all hover:shadow-2xl">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-extrabold text-gray-900">{t('editRecipe.instructions.title')}</h2>
@@ -78,7 +78,7 @@ function InstructionsSection({ instructionGroups, setInstructionGroups }: Instru
               }}
               groupId={`instruction-group-${groupIndex}`}
               renderItem={(instruction, instructionIndex) => (
-                <div className="flex gap-4 items-start">
+                <div className="flex gap-4 items-start w-full">
                   <span className="mt-3 text-gray-500 font-medium">{instructionIndex + 1}.</span>
                   <div className="flex-1">
                     <textarea
@@ -89,8 +89,8 @@ function InstructionsSection({ instructionGroups, setInstructionGroups }: Instru
                         setInstructionGroups(newGroups);
                       }}
                       placeholder={t('editRecipe.instructions.stepPlaceholder', { number: instructionIndex + 1 })}
-                      rows={2}
-                      className="w-full px-3 py-2 rounded-lg border-2 border-orange-200 focus:border-orange-400 focus:outline-none transition-colors"
+                      rows={4}
+                      className="w-full px-4 py-3 rounded-lg border-2 border-orange-200 focus:border-orange-400 focus:outline-none transition-colors resize-vertical min-h-[100px]"
                     />
                   </div>
                   {group.instructions.length > 1 && (

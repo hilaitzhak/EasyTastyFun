@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 
 const SubCategorySchema: Schema<ISubCategory> = new Schema({
     id: { type: String, unique: true, index: true, default: function () { return randomUUID(); } },
-    categoryId: { type: Schema.Types.ObjectId, ref: 'Category' },
+    categoryId: { type: String, ref: 'Category' },
     nameKey: { type: String, required: true },
     path: { type: String, required: true },
     isActive: { type: Boolean, default: true }

@@ -18,7 +18,7 @@ export class CategoryController {
   async getCategoryById(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const category = await this.categoryService.getCategoryId(id);
+      const category = await this.categoryService.getCategoryById(id);
       res.status(200).json(category);
     } catch (error) {
       res.status(500).json({ message: 'Controller error fetching category' });

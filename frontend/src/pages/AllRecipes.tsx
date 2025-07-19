@@ -21,6 +21,7 @@ function AllRecipes() {
   const [allRecipes, setAllRecipes] = useState<IRecipe[]>([]);
   const [categories, setCategories] = useState<Array<{ id: string, label: string }>>([{ id: 'all', label: t('nav.all') }]);
   const [backendTotalPages, setBackendTotalPages] = useState<number>(0);
+  const [totalRecipesCount, setTotalRecipesCount] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   useEffect(() => {
@@ -41,7 +42,7 @@ function AllRecipes() {
         setCategories([
           { id: 'all', label: t('nav.all') },
           ...categoryData.map((cat) => ({
-            id: cat._id,
+            id: cat.id,
             label: cat.name || cat.nameKey
           }))
         ]);
@@ -65,8 +66,10 @@ function AllRecipes() {
         search: debouncedSearchTerm,
         category: selectedCategory.id !== 'all' ? selectedCategory.id : undefined
       });
+      
       setAllRecipes(data.recipes);
       setBackendTotalPages(data.pagination.totalPages);
+      setTotalRecipesCount(data.pagination.totalRecipes);
       setError(null);
     } catch (err) {
       console.error('Error details:', err);
@@ -85,7 +88,7 @@ function AllRecipes() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50/30 via-white to-pink-50/20 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-700 mb-4">{t('allRecipes.title')}</h1>
         </div>
@@ -133,9 +136,7 @@ function AllRecipes() {
         {/* Results Info */}
         <div className="mb-6">
           <p className="text-gray-600 text-center">
-            {currentRecipes.length} {t('allRecipes.recipe', { count: currentRecipes.length })}
-            {selectedCategory.id !== 'all' && ` ${t('allRecipes.inCategory')} ${t(selectedCategory.label)}`}
-            {debouncedSearchTerm && ` ${t('allRecipes.matching')} "${debouncedSearchTerm}"`}
+           {totalRecipesCount} {t('allRecipes.recipe', { count: totalRecipesCount })}
           </p>
         </div>
 

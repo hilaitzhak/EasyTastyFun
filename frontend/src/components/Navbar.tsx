@@ -76,33 +76,33 @@ function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-white/95 shadow-sm border-b border-gray-100 backdrop-blur-md">
-      <div className="container mx-auto px-6 w-full">
+<nav className="fixed top-0 left-0 w-full z-50 bg-white/95 shadow-sm border-b border-gray-100 backdrop-blur-md">
+      <div className="max-w-8xl mx-auto px-6 w-full">
         <div className="flex justify-between items-center h-16">
           <div className="hidden md:flex items-center space-x-1">
             <Link
               to="/"
-              className="flex items-center text-gray-600 text-sm px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
+              className="flex items-center font-bold text-gray-600 text-sm px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
             >
               <Home className="w-5 h-5" />
             </Link>
             <Link
               to="/recipes"
-              className="flex items-center text-gray-600 text-sm px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
+              className="flex items-center font-bold text-gray-600 text-sm px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
             >
               {t('nav.allRecipes')}
             </Link>
             
             {categories.length > 0 && categories.map((category) => (
               <div
-                key={category._id}
+                key={category.id}
                 className="relative group"
-                onMouseEnter={() => setActiveCategory(category._id)}
+                onMouseEnter={() => setActiveCategory(category.id)}
                 onMouseLeave={() => setActiveCategory(null)}
               >
                 <Link
                   to={category.path}
-                  className="flex items-center text-gray-600 text-sm px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
+                  className="flex items-center text-gray-600 font-bold text-sm px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
                 >
                   <span>{t(`${category.nameKey}`)}</span>
                   {category.subCategories && category.subCategories.length > 0 && (
@@ -110,15 +110,15 @@ function Navbar() {
                   )}
                 </Link>
 
-                {category.subCategories && category.subCategories.length > 0 && activeCategory === category._id && (
+                {category.subCategories && category.subCategories.length > 0 && activeCategory === category.id && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-max z-50">
                     <div className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-3 gap-1">
                         {category.subCategories.map((subCategory: SubCategory) => (
                           <Link
-                            key={subCategory._id}
+                            key={subCategory.id}
                             to={subCategory.path}
-                            className="px-4 py-3 text-gray-600 hover:text-orange-500 rounded-xl transition-all duration-200 hover:bg-orange-50 whitespace-nowrap"
+                            className="px-4 py-3 text-gray-600 text-xs hover:text-orange-500 rounded-xl transition-all duration-200 hover:bg-orange-50 whitespace-nowrap"
                           >
                             {t(`${subCategory.nameKey}`)}
                           </Link>
@@ -191,7 +191,7 @@ function Navbar() {
               {t('nav.allRecipes')}
             </Link>
             {categories.map((category) => (
-              <div key={category._id} className="space-y-1">
+              <div key={category.id} className="space-y-1">
                 <Link
                   to={category.path}
                   className="block py-2 px-4 text-gray-600 hover:bg-gray-50 hover:text-gray-800 rounded-xl transition-all duration-200"
@@ -203,7 +203,7 @@ function Navbar() {
                   <div className="pl-4 space-y-1 border-l border-gray-200">
                     {category.subCategories.map((subCategory: SubCategory) => (
                       <Link
-                        key={subCategory._id}
+                        key={subCategory.id}
                         to={subCategory.path}
                         className="block py-2 px-4 text-gray-500 hover:bg-gray-50 hover:text-gray-700 rounded-xl transition-all duration-200"
                         onClick={() => setIsOpen(false)}

@@ -11,7 +11,7 @@ export interface ICategory {
   
 export interface ISubCategory {
     id: string;
-    categoryId: Types.ObjectId;
+    categoryId: string;
     nameKey: string;
     path: string;
     isActive: boolean;
