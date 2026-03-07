@@ -1,6 +1,7 @@
 {
   "nav": {
     "home": "Home",
+    "back": "Back",
     "allRecipes": "All Recipes",
     "all": "All",
     "createRecipe": "Create Recipe",

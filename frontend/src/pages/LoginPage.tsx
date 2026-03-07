@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { authApi } from '../api/auth.api';
 import { AuthContext } from '../context/AuthContext';
-import { jwtDecode } from 'jwt-decode';
 import { GoogleLogin } from '@react-oauth/google';
 import girlChefIcon from '../assets/girl-chef.png';
 
@@ -22,7 +21,6 @@ function LoginPage() {
         return;
       }
 
-      const decoded = jwtDecode(credentialResponse.credential);
       const response = await authApi.googleLogin(credentialResponse.credential);
       if (response.data.token) {
         auth.login(response.data.token, response?.data?.user?.name);
@@ -38,27 +36,24 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white shadow-2xl rounded-2xl p-10 border border-purple-100">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-surface-muted to-accent-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white shadow-xl rounded-3xl p-10 border border-primary-100">
         <div className="text-center">
           <div className="mb-6 flex justify-center">
             <div className="w-24 h-24 flex items-center justify-center">
               <img
                 src={girlChefIcon}
                 alt="Chef Icon"
-                className="w-24 h-24 rounded-full object-cover"
+                className="w-24 h-24 rounded-full object-cover ring-4 ring-primary-100"
               />
             </div>
-
           </div>
           <div className="text-center">
-            <h2 className="text-4xl font-extrabold text-purple-600 mb-4">
+            <h2 className="text-4xl font-bold text-primary-600 mb-2">
               {t('auth.appName')}
             </h2>
-            {/* <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              {t('auth.welcome')}
-            </h2> */}
-            <p className="text-gray-600 mb-6">
+            <div className="w-10 h-0.5 rounded-full bg-gradient-to-r from-primary-400 to-accent-400 mx-auto mb-4" />
+            <p className="text-gray-500 mb-6">
               {t('auth.loginPrompt')}
             </p>
           </div>

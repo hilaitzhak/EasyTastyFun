@@ -82,9 +82,10 @@ function Navbar() {
           <div className="hidden md:flex items-center space-x-1">
             <Link
               to="/"
-              className="flex items-center font-bold text-gray-600 text-sm px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
+              className="flex items-center gap-2 mr-3 px-3 py-2 rounded-full transition-all duration-200 hover:bg-primary-50 hover:scale-105"
             >
-              <Home className="w-5 h-5" />
+              <Home className="w-4 h-4 text-primary-500" />
+              <span className="font-display font-bold text-primary-600 text-base tracking-tight">EasyTastyFun</span>
             </Link>
             <Link
               to="/recipes"
@@ -118,7 +119,7 @@ function Navbar() {
                           <Link
                             key={subCategory.id}
                             to={subCategory.path}
-                            className="px-4 py-3 text-gray-600 text-xs hover:text-orange-500 rounded-xl transition-all duration-200 hover:bg-orange-50 whitespace-nowrap"
+                            className="px-4 py-3 text-gray-600 text-xs hover:text-primary-500 rounded-xl transition-all duration-200 hover:bg-primary-50 whitespace-nowrap"
                           >
                             {t(`${subCategory.nameKey}`)}
                           </Link>
@@ -161,7 +162,7 @@ function Navbar() {
                   <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 w-48 bg-white rounded-xl shadow-lg py-2 z-50 border border-gray-100`}>
                     <button
                       onClick={handleLogout}
-                      className="flex items-center gap-2 w-full px-4 py-2 text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                      className="flex items-center gap-2 w-full px-4 py-2 text-gray-600 hover:bg-primary-50 hover:text-primary-600 transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>{t('auth.logout')}</span>

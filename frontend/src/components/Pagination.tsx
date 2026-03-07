@@ -44,37 +44,37 @@ function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) 
         return null;
     }
     return (
-        <div className="flex justify-center items-center gap-2 mt-8">
+        <div className="flex justify-center items-center gap-1.5 mt-10">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-4 py-2 rounded-lg bg-white border border-orange-200 text-orange-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-orange-50 transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-gray-200 text-gray-500 disabled:opacity-40 disabled:cursor-not-allowed hover:border-primary-300 hover:text-primary-600 transition-colors"
           >
-            {isRTL ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
+            {isRTL ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
           </button>
-    
-          <div className="flex gap-2">
+
+          <div className="flex gap-1.5">
             {getPageNumbers().map((pageNumber) => (
               <button
                 key={pageNumber}
                 onClick={() => handlePageChange(pageNumber)}
-                className={`px-4 py-2 rounded-lg border ${
+                className={`w-9 h-9 rounded-xl text-sm font-medium border transition-all ${
                   currentPage === pageNumber
-                    ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white border-orange-500'
-                    : 'bg-white border-orange-200 text-orange-600 hover:bg-orange-50'
-                } transition-colors`}
+                    ? 'bg-gradient-to-r from-primary-500 to-accent-500 text-white border-transparent shadow-sm'
+                    : 'bg-white border-gray-200 text-gray-600 hover:border-primary-300 hover:text-primary-600'
+                }`}
               >
                 {pageNumber}
               </button>
             ))}
           </div>
-    
+
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 rounded-lg bg-white border border-orange-200 text-orange-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-orange-50 transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-gray-200 text-gray-500 disabled:opacity-40 disabled:cursor-not-allowed hover:border-primary-300 hover:text-primary-600 transition-colors"
           >
-            {isRTL ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
+            {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
           </button>
         </div>
     );

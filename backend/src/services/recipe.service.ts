@@ -3,7 +3,7 @@ import Recipe from '../models/recipe.model';
 import { RedisService } from './redis.service';
 import { randomUUID } from 'node:crypto';
 import { s3 } from '../config/s3.config';
-import mongoose, { PipelineStage } from 'mongoose';
+import { PipelineStage } from 'mongoose';
 
 export class RecipeService {
   private redisService: RedisService;
@@ -86,7 +86,6 @@ export class RecipeService {
     }
   }
 
-
   async getAllRecipes(
     page: number = 1,
     limit: number = 15,
@@ -98,7 +97,7 @@ export class RecipeService {
       const matchStage: Record<string, any> = {};
 
       if (category) {
-        matchStage.category = new mongoose.Types.ObjectId(category);
+        matchStage.category = category;
       }
 
       if (search && search.trim()) {

@@ -11,24 +11,19 @@ function LatestRecipes() {
   const { t } = useTranslation();
 
   return (
-    <div className="py-20 bg-gradient-to-b from-white to-orange-50/30">
+    <div className="py-20 bg-gradient-to-b from-surface to-surface-muted">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-12">
           <div>
-            <h2 className="text-4xl font-bold text-gray-700 mb-2">{t('latestRecipes.title')}</h2>
-            {/* <p className="text-gray-600">{t('latestRecipes.subtitle')}</p> */}
+            <h2 className="text-4xl font-bold text-gray-800 mb-1">{t('latestRecipes.title')}</h2>
+            <div className="w-12 h-1 rounded-full bg-gradient-to-r from-primary-400 to-accent-400" />
           </div>
           <button
             onClick={() => navigate('/recipes/add-recipe')}
-            className="bg-gradient-to-r from-orange-500 to-pink-500 
-                text-white px-3 py-2 rounded-xl flex items-center gap-2 bg-gradient-to-r from-orange-400 to-pink-400 text-white px-6 py-3 rounded-full hover:from-orange-500 hover:to-pink-500 transition-all transform hover:scale-105 shadow-md hover:shadow-lg
-                hover:from-orange-600 hover:to-pink-600 
-                transition-transform shadow 
-                disabled:opacity-50 disabled:cursor-not-allowed 
-                flex items-center justify-center gap-2 min-w-[100px] text-sm font-semibold"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-sm text-white bg-gradient-to-r from-primary-500 to-accent-500 shadow-md hover:shadow-lg hover:from-primary-600 hover:to-accent-600 transition-all duration-200 hover:scale-105"
           >
             <span>{t('latestRecipes.addRecipe')}</span>
-            <PlusCircle className="w-5 h-5" />
+            <PlusCircle className="w-4 h-4" />
           </button>
         </div>
         

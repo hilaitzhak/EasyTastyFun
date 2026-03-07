@@ -1,7 +1,7 @@
 
 import { useTranslation } from "react-i18next";
 import { InstructionGroup, InstructionsSectionProps } from "../interfaces/Recipe";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, ListOrdered, Trash2 } from "lucide-react";
 import SortableList from "./SortableList";
 
 function InstructionsSection({ instructionGroups, setInstructionGroups }: InstructionsSectionProps) {
@@ -29,24 +29,29 @@ function InstructionsSection({ instructionGroups, setInstructionGroups }: Instru
     setInstructionGroups(newGroups);
   };
   
-return (
-    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-orange-100/50 p-8 transition-all hover:shadow-2xl">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-extrabold text-gray-900">{t('editRecipe.instructions.title')}</h2>
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-accent-50 flex items-center justify-center">
+            <ListOrdered className="w-4 h-4 text-accent-500" />
+          </div>
+          <h2 className="text-lg font-semibold text-gray-800">{t('editRecipe.instructions.title')}</h2>
+        </div>
         <button
           type="button"
           onClick={addInstructionGroup}
-          className="flex items-center gap-2 text-orange-600 hover:text-orange-800 transition-colors"
+          className="flex items-center gap-1.5 text-sm text-primary-600 hover:text-primary-800 font-medium transition-colors"
         >
           <Plus className="w-4 h-4" />
           {t('editRecipe.instructions.addGroup')}
         </button>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {instructionGroups.map((group: InstructionGroup, groupIndex: number) => (
-          <div key={groupIndex} className="bg-orange-50 rounded-xl p-6 space-y-4">
-            <div className="flex items-center justify-between">
+          <div key={groupIndex} className="bg-surface-muted rounded-xl p-5 space-y-3">
+            <div className="flex items-center gap-3">
               <input
                 type="text"
                 value={group.title}
@@ -56,15 +61,15 @@ return (
                   setInstructionGroups(newGroups);
                 }}
                 placeholder={t('editRecipe.instructions.groupTitlePlaceholder')}
-                className="font-semibold text-lg px-4 py-2 rounded-xl border-2 border-orange-200 focus:border-orange-400 focus:outline-none transition-colors"
+                className="flex-1 px-3 py-2 rounded-xl border border-gray-200 bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-400 transition-colors"
               />
               {instructionGroups.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removeInstructionGroup(groupIndex)}
-                  className="p-2 text-red-500 hover:text-red-600 transition-colors"
+                  className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                 >
-                  <Minus className="w-4 h-4" />
+                  <Trash2 className="w-4 h-4" />
                 </button>
               )}
             </div>
@@ -78,8 +83,10 @@ return (
               }}
               groupId={`instruction-group-${groupIndex}`}
               renderItem={(instruction, instructionIndex) => (
-                <div className="flex gap-4 items-start w-full">
-                  <span className="mt-3 text-gray-500 font-medium">{instructionIndex + 1}.</span>
+                <div className="flex gap-3 items-start w-full">
+                  <span className="mt-2.5 w-6 h-6 flex-shrink-0 rounded-full bg-primary-100 text-primary-600 text-xs font-bold flex items-center justify-center">
+                    {instructionIndex + 1}
+                  </span>
                   <div className="flex-1">
                     <textarea
                       value={instruction.content}
@@ -89,28 +96,29 @@ return (
                         setInstructionGroups(newGroups);
                       }}
                       placeholder={t('editRecipe.instructions.stepPlaceholder', { number: instructionIndex + 1 })}
-                      rows={4}
-                      className="w-full px-4 py-3 rounded-lg border-2 border-orange-200 focus:border-orange-400 focus:outline-none transition-colors resize-vertical min-h-[100px]"
+                      rows={3}
+                      className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-400 transition-colors resize-none"
                     />
                   </div>
                   {group.instructions.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeInstructionFromGroup(groupIndex, instructionIndex)}
-                      className="p-2 text-red-500 hover:text-red-600 transition-colors"
+                      className="mt-2 p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                     >
-                      <Minus className="w-4 h-4" />
+                      <Minus className="w-3.5 h-3.5" />
                     </button>
                   )}
                 </div>
               )}
             />
+
             <button
               type="button"
               onClick={() => addInstructionToGroup(groupIndex)}
-              className="flex items-center gap-2 text-orange-600 hover:text-orange-800 transition-colors"
+              className="flex items-center gap-1.5 text-sm text-primary-600 hover:text-primary-800 font-medium transition-colors pt-1"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-3.5 h-3.5" />
               {t('editRecipe.instructions.addToGroup')}
             </button>
           </div>

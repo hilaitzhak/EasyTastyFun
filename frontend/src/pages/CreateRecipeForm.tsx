@@ -156,73 +156,57 @@ function CreateRecipeForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-yellow-50">
-      {/* Modern Header with Glass Effect */}
-      <div className="sticky top-0 z-10 backdrop-blur-md bg-white/80 border-b border-orange-100/50 shadow-sm">
-      <div className="max-w-8xl mx-auto px-6 w-full py-6">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <button
-                  onClick={() => navigate('/recipes')}
-                  className="group flex items-center gap-3 px-4 py-2 rounded-xl bg-white/70 hover:bg-white shadow-sm hover:shadow-md transition-all duration-200 border border-orange-100"
-                >
-                  {isRTL ? (
-                    <ArrowRight className="w-5 h-5 text-orange-500 group-hover:translate-x-1 transition-transform duration-200" />
-                  ) : (
-                    <ArrowLeft className="w-5 h-5 text-orange-500 group-hover:-translate-x-1 transition-transform duration-200" />
-                  )}
-                  <span className="font-medium text-gray-700">{t('nav.backToRecipes')}</span>
-                </button>
-                
-                <div className="hidden sm:block w-px h-8 bg-orange-200"></div>
-                
-                <div className="flex items-center space-x-3 gap-4">
-                  <div className="p-2 rounded-xl bg-gradient-to-br from-orange-400 to-pink-400 shadow-md">
-                    <ChefHat className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">
-                      {t('createRecipe.title')}
-                    </h1>
-                  </div>
-                </div>
+    <div className="min-h-screen bg-surface">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
+        <div className="max-w-4xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center shadow-sm">
+                <ChefHat className="w-4 h-4 text-white" />
               </div>
+              <h1 className="text-xl font-bold text-gray-800">
+                {t('createRecipe.title')}
+              </h1>
             </div>
+            <button
+              onClick={() => navigate('/recipes')}
+              className="group flex items-center gap-2 text-sm text-gray-500 hover:text-primary-600 transition-colors duration-200"
+            >
+              {isRTL ? (
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              ) : (
+                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+              )}
+              <span>{t('nav.backToRecipes')}</span>
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-8xl mx-auto px-6 w-full">
-        <div className="max-w-7xl mx-auto py-4">
-          {/* Modern Card Container */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 overflow-hidden">
-            <div className="p-8">
-              <RecipeForm
-                onSubmit={handleSubmit}
-                loading={loading}
-                isEdit={false}
-                ingredientGroups={ingredientGroups}
-                setIngredientGroups={setIngredientGroups}
-                instructionGroups={instructionGroups}
-                setInstructionGroups={setInstructionGroups}
-                images={images}
-                setImages={setImages}
-                categories={categories}
-                subcategories={filteredSubcategories}
-                onCategoryChange={handleCategoryChange}
-                onSubCategoryChange={handleSubCategoryChange}
-                selectedCategory={selectedCategory}
-                selectedSubCategory={selectedSubCategory}
-                tips={tips}
-                setTips={setTips}
-                video={video}
-                setVideo={setVideo}
-              />
-            </div>
-          </div>
-        </div>
+      {/* Form Content */}
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        <RecipeForm
+          onSubmit={handleSubmit}
+          loading={loading}
+          isEdit={false}
+          ingredientGroups={ingredientGroups}
+          setIngredientGroups={setIngredientGroups}
+          instructionGroups={instructionGroups}
+          setInstructionGroups={setInstructionGroups}
+          images={images}
+          setImages={setImages}
+          categories={categories}
+          subcategories={filteredSubcategories}
+          onCategoryChange={handleCategoryChange}
+          onSubCategoryChange={handleSubCategoryChange}
+          selectedCategory={selectedCategory}
+          selectedSubCategory={selectedSubCategory}
+          tips={tips}
+          setTips={setTips}
+          video={video}
+          setVideo={setVideo}
+        />
       </div>
     </div>
   );
