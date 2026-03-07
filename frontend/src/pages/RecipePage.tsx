@@ -5,6 +5,7 @@ import { categoryApi } from '../api/category.api';
 import { IRecipe } from '../interfaces/Recipe';
 import { Category, SubCategory } from '../interfaces/Category';
 import RecipeCard from '../components/RecipeCard';
+import RecipeCardSkeleton from '../components/RecipeCardSkeleton';
 import Pagination from '../components/Pagination';
 import { ChevronRight, UtensilsCrossed } from 'lucide-react';
 
@@ -38,14 +39,14 @@ function RecipePage() {
           const sub = await categoryApi.getSubCategoryByPath(categoryPath, subCategoryPath);
           if (sub) {
             setSubCategory(sub);
-            const { recipes, total } = await categoryApi.getRecipesByCategoryAndSubcategory(
+            const { recipes, pagination } = await categoryApi.getRecipesByCategoryAndSubcategory(
               categoryPath,
               subCategoryPath,
               currentPage,
               ITEMS_PER_PAGE
             );
             setRecipes(recipes || []);
-            setTotalRecipes(total);
+            setTotalRecipes(pagination?.totalRecipes ?? 0);
             const cat = await categoryApi.getCategoryByPath(categoryPath);
             setCategory(cat);
           }
@@ -53,13 +54,13 @@ function RecipePage() {
           const cat = await categoryApi.getCategoryByPath(categoryPath);
           if (cat) {
             setCategory(cat);
-            const { recipes, total } = await categoryApi.getRecipesByCategoryPath(
+            const { recipes, pagination } = await categoryApi.getRecipesByCategoryPath(
               categoryPath,
               currentPage,
               ITEMS_PER_PAGE
             );
             setRecipes(recipes || []);
-            setTotalRecipes(total);
+            setTotalRecipes(pagination?.totalRecipes ?? 0);
           }
           setSubCategory(null);
         }
@@ -90,8 +91,13 @@ function RecipePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface">
-        <div className="animate-spin rounded-full h-10 w-10 border-2 border-primary-400 border-t-transparent"></div>
+      <div className="min-h-screen bg-surface">
+        <div className="h-56 md:h-72 bg-gray-200 animate-pulse" />
+        <div className="max-w-6xl mx-auto px-6 py-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+            {Array.from({ length: 10 }).map((_, i) => <RecipeCardSkeleton key={i} />)}
+          </div>
+        </div>
       </div>
     );
   }

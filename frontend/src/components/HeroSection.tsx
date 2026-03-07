@@ -33,7 +33,7 @@ function HeroSection() {
           <div className="flex gap-4 pt-2">
             <Link
               to="/recipes"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold text-white bg-gradient-to-r from-primary-500 to-accent-500 shadow-lg hover:shadow-xl hover:from-primary-600 hover:to-accent-600 transition-all duration-200 hover:scale-105"
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-orange-400 to-pink-400 shadow-sm hover:shadow-md hover:from-orange-500 hover:to-pink-500 transition-all duration-200"
             >
               {t('hero.browseRecipes')}
             </Link>

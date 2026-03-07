@@ -4,6 +4,7 @@ import { RedisService } from './redis.service';
 import { randomUUID } from 'node:crypto';
 import { s3 } from '../config/s3.config';
 import { PipelineStage } from 'mongoose';
+import Anthropic from '@anthropic-ai/sdk';
 
 export class RecipeService {
   private redisService: RedisService;
@@ -503,5 +504,66 @@ export class RecipeService {
       console.error('Error checking similar recipes:', error);
       throw error;
     }
+  }
+
+  async extractRecipeFromImage(base64Image: string): Promise<any> {
+    const matches = base64Image.match(/^data:(image\/[a-zA-Z0-9+]+);base64,(.+)$/);
+    if (!matches) throw new Error('Invalid image format');
+
+    const mediaType = matches[1] as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp';
+    const imageData = matches[2];
+
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 4096,
+      messages: [{
+        role: 'user',
+        content: [
+          {
+            type: 'image',
+            source: { type: 'base64', media_type: mediaType, data: imageData }
+          },
+          {
+            type: 'text',
+            text: `Extract the recipe from this image and return ONLY a JSON object with this exact structure (no extra text, no markdown):
+{
+  "name": "Recipe name",
+  "prepTime": 30,
+  "cookTime": 45,
+  "servings": 4,
+  "ingredientGroups": [
+    {
+      "title": "",
+      "ingredients": [
+        { "name": "flour", "amount": "2", "unit": "cups" }
+      ]
+    }
+  ],
+  "instructionGroups": [
+    {
+      "title": "",
+      "instructions": [
+        { "content": "Step description" }
+      ]
+    }
+  ],
+  "tips": ["Optional tip"]
+}
+
+Rules:
+- prepTime, cookTime, servings must be numbers (time in minutes), or null if not mentioned
+- ingredientGroups and instructionGroups must each have at least one group (title can be empty string "")
+- tips is an array of strings, empty array if none
+- Return ONLY the raw JSON, no code block, no explanation`
+          }
+        ]
+      }]
+    });
+
+    const text = response.content[0].type === 'text' ? response.content[0].text : '';
+    const cleaned = text.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+    return JSON.parse(cleaned);
   }
 }

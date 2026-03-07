@@ -8,13 +8,13 @@ import SubmitButton from './SubmitButton';
 import TipsSection from './TipsSection';
 import VideoUploadSection from './VideoUploadSection';
 
-function RecipeForm({ onSubmit, loading, isEdit = false, initialData, ingredientGroups, setIngredientGroups,instructionGroups,
+function RecipeForm({ onSubmit, loading, isEdit = false, initialData, basicInfoKey, ingredientGroups, setIngredientGroups,instructionGroups,
     setInstructionGroups,images,setImages,onCancel,categories,subcategories,onCategoryChange,onSubCategoryChange, selectedCategory, selectedSubCategory, tips = [],
     setTips, video, setVideo, }: RecipeFormProps) {
 
     return (
         <form onSubmit={onSubmit} className="space-y-8">
-            <BasicInfoSection initialData={initialData} categories={categories} subcategories={subcategories} onCategoryChange={onCategoryChange} onSubCategoryChange={onSubCategoryChange} selectedCategory={selectedCategory} selectedSubCategory={selectedSubCategory} />
+            <BasicInfoSection key={basicInfoKey} initialData={initialData} categories={categories} subcategories={subcategories} onCategoryChange={onCategoryChange} onSubCategoryChange={onSubCategoryChange} selectedCategory={selectedCategory} selectedSubCategory={selectedSubCategory} />
             
             <ImageUploadSection
             images={images}

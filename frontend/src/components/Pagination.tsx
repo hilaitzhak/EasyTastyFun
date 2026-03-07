@@ -40,7 +40,6 @@ function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) 
     };
 
     if (totalPages <= 1) {
-        console.log('Pagination hidden because totalPages <= 1');
         return null;
     }
     return (

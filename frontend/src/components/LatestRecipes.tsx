@@ -1,9 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecipes } from '../hooks/useRecipes';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, UtensilsCrossed } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import RecipeCard from './RecipeCard';
+import RecipeCardSkeleton from './RecipeCardSkeleton';
 
 function LatestRecipes() {
   const { recipes, loading, error } = useRecipes(true);
@@ -20,7 +21,7 @@ function LatestRecipes() {
           </div>
           <button
             onClick={() => navigate('/recipes/add-recipe')}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-sm text-white bg-gradient-to-r from-primary-500 to-accent-500 shadow-md hover:shadow-lg hover:from-primary-600 hover:to-accent-600 transition-all duration-200 hover:scale-105"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-orange-400 to-pink-400 shadow-sm hover:shadow-md hover:from-orange-500 hover:to-pink-500 transition-all duration-200"
           >
             <span>{t('latestRecipes.addRecipe')}</span>
             <PlusCircle className="w-4 h-4" />
@@ -28,13 +29,13 @@ function LatestRecipes() {
         </div>
         
         {loading ? (
-          <div className="flex justify-center items-center min-h-[300px]">
-            <div className="w-16 h-16 border-4 border-orange-400 border-t-transparent rounded-full animate-spin"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {Array.from({ length: 4 }).map((_, i) => <RecipeCardSkeleton key={i} />)}
           </div>
         ) : error ? (
           <div className="text-center py-12 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm">
             <p className="text-red-400 mb-4">{error}</p>
-            <button 
+            <button
               onClick={() => window.location.reload()}
               className="text-orange-500 hover:text-orange-600 font-medium underline"
             >
@@ -42,8 +43,21 @@ function LatestRecipes() {
             </button>
           </div>
         ) : recipes.length === 0 ? (
-          <div className="text-center py-16 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm">
-            <h3 className="text-2xl font-semibold text-gray-600 mb-4">{t('latestRecipes.noRecipes')}</h3>
+          <div className="flex flex-col items-center justify-center py-16 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm gap-4">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-100 to-pink-100 flex items-center justify-center">
+              <UtensilsCrossed className="w-8 h-8 text-orange-400" />
+            </div>
+            <div className="text-center">
+              <h3 className="text-xl font-semibold text-gray-700 mb-1">{t('latestRecipes.noRecipes')}</h3>
+              <p className="text-gray-500 text-sm mb-5">{t('latestRecipes.beFirst')}</p>
+              <button
+                onClick={() => navigate('/recipes/add-recipe')}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-orange-400 to-pink-400 shadow-sm hover:shadow-md hover:from-orange-500 hover:to-pink-500 transition-all duration-200"
+              >
+                <PlusCircle className="w-4 h-4" />
+                {t('latestRecipes.createRecipe')}
+              </button>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

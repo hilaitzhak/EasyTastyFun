@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import HomePage from './pages/HomePage';
 import AllRecipes from './pages/AllRecipes';
 import CreateRecipeForm from './pages/CreateRecipeForm';
@@ -17,6 +18,7 @@ const App = () => {
     <GoogleOAuthProvider clientId="1009677730362-r1ij07teaec85blr84pem0r1haud1i1p.apps.googleusercontent.com">
       <Router>
         <AuthProvider>
+          <Toaster position="top-center" toastOptions={{ duration: 4000, style: { borderRadius: '12px', fontSize: '14px' } }} />
           <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />

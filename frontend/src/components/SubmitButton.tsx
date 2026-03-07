@@ -20,7 +20,7 @@ function SubmitButton({ onCancel, loading, isEdit }: SubmitButtonProps) {
             <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex items-center justify-center gap-2 px-7 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-primary-500 to-accent-500 shadow-md hover:shadow-lg hover:from-primary-600 hover:to-accent-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px]"
+                className="inline-flex items-center justify-center gap-2 px-7 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-orange-400 to-pink-400 shadow-sm hover:shadow-md hover:from-orange-500 hover:to-pink-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px]"
             >
                 {loading ? (
                     <Loader className="w-4 h-4 animate-spin" />

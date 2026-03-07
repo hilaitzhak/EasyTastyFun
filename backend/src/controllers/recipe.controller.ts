@@ -93,4 +93,19 @@ export class RecipeController {
             res.status(500).json({ error: 'Error checking similar recipes' });
         }
     }
+
+    async extractFromImage(req: Request, res: Response): Promise<void> {
+        try {
+            const { image } = req.body;
+            if (!image) {
+                res.status(400).json({ message: 'No image provided' });
+                return;
+            }
+            const recipeData = await this.recipeService.extractRecipeFromImage(image);
+            res.status(200).json(recipeData);
+        } catch (error) {
+            console.error('Error extracting recipe from image:', error);
+            res.status(500).json({ message: 'Failed to extract recipe from image' });
+        }
+    }
 }

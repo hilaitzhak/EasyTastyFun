@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from 'react';
-import { Globe, Menu, X, ChevronDown, UserCircle, LogOut, Home } from 'lucide-react';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { Globe, Menu, X, ChevronDown, UserCircle, LogOut, Home, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { Category, SubCategory } from '../interfaces/Category';
@@ -12,6 +12,9 @@ function Navbar() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const { t, i18n } = useTranslation();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const auth = useContext(AuthContext);
   const isRTL = i18n.language === 'he';
   const navigate = useNavigate();
@@ -75,6 +78,20 @@ function Navbar() {
     document.dir = newLang === 'he' ? 'rtl' : 'ltr';
   };
 
+  const openSearch = () => {
+    setIsSearchOpen(true);
+    setTimeout(() => searchInputRef.current?.focus(), 50);
+  };
+
+  const submitSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/recipes?search=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery('');
+    }
+  };
+
   return (
 <nav className="fixed top-0 left-0 w-full z-50 bg-white/95 shadow-sm border-b border-gray-100 backdrop-blur-md">
       <div className="max-w-8xl mx-auto px-6 w-full">
@@ -134,6 +151,34 @@ function Navbar() {
 
           {/* Right Side Menu */}
           <div className="flex items-center gap-6">
+            {/* Search */}
+            <div className="flex items-center">
+              {isSearchOpen ? (
+                <form onSubmit={submitSearch} className="flex items-center gap-2">
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={t('allRecipes.searchPlaceholder')}
+                    className="w-44 px-3 py-1.5 text-sm rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-transparent bg-white"
+                    onBlur={() => { if (!searchQuery) setIsSearchOpen(false); }}
+                    onKeyDown={(e) => { if (e.key === 'Escape') { setIsSearchOpen(false); setSearchQuery(''); } }}
+                  />
+                  <button type="submit" className="p-2 rounded-full hover:bg-gray-50 text-gray-600">
+                    <Search className="w-4 h-4" />
+                  </button>
+                </form>
+              ) : (
+                <button
+                  onClick={openSearch}
+                  className="flex items-center gap-2 text-gray-600 px-3 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
+                >
+                  <Search className="w-5 h-5" />
+                </button>
+              )}
+            </div>
+
             <button
               onClick={toggleLanguage}
               className="flex items-center gap-2 text-gray-600 px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
