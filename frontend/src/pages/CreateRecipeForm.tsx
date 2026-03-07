@@ -129,7 +129,22 @@ function CreateRecipeForm() {
         setTips(data.tips);
       }
 
-      toast.success(t('createRecipe.scan.success'), { id: toastId });
+      // Detect missing fields and alert the user
+      const missing: string[] = [];
+      if (!data.name) missing.push(t('createRecipe.scan.fields.name'));
+      if (data.prepTime == null) missing.push(t('createRecipe.scan.fields.prepTime'));
+      if (data.cookTime == null) missing.push(t('createRecipe.scan.fields.cookTime'));
+      if (data.servings == null) missing.push(t('createRecipe.scan.fields.servings'));
+      const hasIngredients = data.ingredientGroups?.some((g: any) => g.ingredients?.length > 0);
+      if (!hasIngredients) missing.push(t('createRecipe.scan.fields.ingredients'));
+      const hasInstructions = data.instructionGroups?.some((g: any) => g.instructions?.length > 0);
+      if (!hasInstructions) missing.push(t('createRecipe.scan.fields.instructions'));
+
+      if (missing.length > 0) {
+        toast.success(t('createRecipe.scan.successWithMissing', { fields: missing.join(', ') }), { id: toastId, duration: 6000 });
+      } else {
+        toast.success(t('createRecipe.scan.success'), { id: toastId });
+      }
     } catch (error: any) {
       toast.error(t('createRecipe.scan.error'), { id: toastId });
     } finally {

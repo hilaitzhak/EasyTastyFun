@@ -203,7 +203,16 @@
       "button": "Scan Recipe",
       "scanning": "Reading recipe...",
       "success": "Recipe scanned! Review the fields and press Create.",
-      "error": "Could not read the recipe from this image. Please try a clearer photo."
+      "successWithMissing": "Recipe scanned! Missing fields (add manually): {{fields}}.",
+      "error": "Could not read the recipe from this image. Please try a clearer photo.",
+      "fields": {
+        "name": "Recipe Name",
+        "prepTime": "Prep Time",
+        "cookTime": "Cook Time",
+        "servings": "Servings",
+        "ingredients": "Ingredients",
+        "instructions": "Instructions"
+      }
     },
     "similarRecipesFound": "Found {{count}} similar recipes: {{recipes}}. Would you like to continue creating this recipe?",
     "errors": {
