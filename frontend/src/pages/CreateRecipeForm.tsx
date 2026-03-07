@@ -265,7 +265,6 @@ function CreateRecipeForm() {
             ref={scanInputRef}
             type="file"
             accept="image/*"
-            capture="environment"
             className="hidden"
             onChange={handleScanImage}
           />
