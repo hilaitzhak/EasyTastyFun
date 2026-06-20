@@ -48,7 +48,7 @@ function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) 
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-4 py-2 rounded-lg bg-white border border-orange-200 text-orange-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-orange-50 transition-colors"
+            className="px-4 py-2 rounded-lg bg-surface border border-line text-ink-soft disabled:opacity-50 disabled:cursor-not-allowed hover:border-terracotta hover:text-terracotta-dark transition-colors"
           >
             {isRTL ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
           </button>
@@ -60,8 +60,8 @@ function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) 
                 onClick={() => handlePageChange(pageNumber)}
                 className={`px-4 py-2 rounded-lg border ${
                   currentPage === pageNumber
-                    ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white border-orange-500'
-                    : 'bg-white border-orange-200 text-orange-600 hover:bg-orange-50'
+                    ? 'bg-terracotta text-white border-terracotta'
+                    : 'bg-surface border-line text-ink-soft hover:border-terracotta hover:text-terracotta-dark'
                 } transition-colors`}
               >
                 {pageNumber}
@@ -72,7 +72,7 @@ function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) 
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 rounded-lg bg-white border border-orange-200 text-orange-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-orange-50 transition-colors"
+            className="px-4 py-2 rounded-lg bg-surface border border-line text-ink-soft disabled:opacity-50 disabled:cursor-not-allowed hover:border-terracotta hover:text-terracotta-dark transition-colors"
           >
             {isRTL ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
           </button>

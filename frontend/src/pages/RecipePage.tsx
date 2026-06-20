@@ -1,11 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { WheatOff, Sparkles } from 'lucide-react';
 import { categoryApi } from '../api/category.api';
 import { IRecipe } from '../interfaces/Recipe';
 import { Category, SubCategory } from '../interfaces/Category';
 import RecipeCard from '../components/RecipeCard';
 import Pagination from '../components/Pagination';
+
+// Icon + tagline for the cross-cutting "special" categories (dietary / holiday)
+const SPECIAL_CATEGORY_META: Record<string, { icon: typeof WheatOff; taglineKey: string }> = {
+  'nav.glutenFree': { icon: WheatOff, taglineKey: 'categoryTagline.glutenFree' },
+  'nav.passover': { icon: Sparkles, taglineKey: 'categoryTagline.passover' },
+};
 
 function RecipePage() {
   const ITEMS_PER_PAGE = 20;
@@ -78,13 +85,13 @@ function RecipePage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-terracotta"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 py-8">
+    <div className="min-h-screen bg-paper py-8">
       <div className="container mx-auto px-4">
         {/* Hero Section */}
         {recipes.length > 0 && (
@@ -105,16 +112,6 @@ function RecipePage() {
                   </svg>
                   {t('nav.back')}
                 </button>
-                {/* <div className="text-white">
-                  <h1 className="text-4xl md:text-5xl font-bold mb-2">
-                    {t(subCategory?.nameKey || category?.nameKey)}
-                  </h1>
-                  {subCategory?.description || category?.description ? (
-                    <p className="text-xl text-gray-200 max-w-3xl">
-                      {t(subCategory?.description || category?.description)}
-                    </p>
-                  ) : null}
-                </div> */}
               </div>
             </div>
           </div>
@@ -126,15 +123,15 @@ function RecipePage() {
         <nav className="text-sm mb-8">
           <ol className="flex items-center space-x-2">
             <li>
-              <a href="/" className="text-purple-600 hover:text-purple-700">
+              <a href="/" className="text-terracotta hover:text-terracotta-dark">
                 {t('nav.home')}
               </a>
             </li>
             {category && (
               <>
-                <li className="text-gray-500">/</li>
+                <li className="text-ink-soft">/</li>
                 <li>
-                  <a href={`${category.path}`} className="text-purple-600 hover:text-purple-700">
+                  <a href={`${category.path}`} className="text-terracotta hover:text-terracotta-dark">
                     {t(category.nameKey)}
                   </a>
                 </li>
@@ -142,8 +139,8 @@ function RecipePage() {
             )}
             {subCategory && (
               <>
-                <li className="text-gray-500">/</li>
-                <li className="text-gray-600">
+                <li className="text-ink-soft">/</li>
+                <li className="text-ink-soft">
                   {t(subCategory.nameKey)}
                 </li>
               </>
@@ -152,14 +149,32 @@ function RecipePage() {
         </nav>
 
         {/* Page Title */}
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            {subCategory ? t(subCategory.nameKey) : category ? t(category.nameKey) : ''}
-          </h1>
-          <p className="text-gray-600">
-            {t('recipe.foundCount', { count: recipes.length })}
-          </p>
-        </div>
+        {(() => {
+          const special = category ? SPECIAL_CATEGORY_META[category.nameKey] : undefined;
+          const SpecialIcon = special?.icon;
+          return (
+            <div className="mb-12">
+              <div className="flex items-center gap-3 mb-2">
+                {SpecialIcon && (
+                  <span className="flex items-center justify-center w-12 h-12 rounded-2xl bg-terracotta-light text-terracotta-dark shadow-soft shrink-0">
+                    <SpecialIcon className="w-6 h-6" />
+                  </span>
+                )}
+                <h1 className="font-display text-4xl md:text-5xl font-bold text-ink">
+                  {subCategory ? t(subCategory.nameKey) : category ? t(category.nameKey) : ''}
+                </h1>
+              </div>
+              {special && (
+                <p className="text-ink-soft max-w-xl mb-1">
+                  {t(special.taglineKey)}
+                </p>
+              )}
+              <p className="text-ink-muted text-sm">
+                {t('recipe.foundCount', { count: recipes.length })}
+              </p>
+            </div>
+          );
+        })()}
 
         {/* Recipe Grid */}
         {recipes.length > 0 ? (
@@ -183,10 +198,10 @@ function RecipePage() {
           </>
         ) : (
           <div className="text-center py-12">
-            <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+            <h2 className="font-display text-2xl font-semibold text-ink mb-4">
               {t('recipe.noRecipesFound')}
             </h2>
-            <p className="text-gray-600">
+            <p className="text-ink-soft">
               {t('recipe.tryDifferentCategory')}
             </p>
           </div>

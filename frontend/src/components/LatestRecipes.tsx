@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecipes } from '../hooks/useRecipes';
 import { PlusCircle } from 'lucide-react';
@@ -11,44 +10,41 @@ function LatestRecipes() {
   const { t } = useTranslation();
 
   return (
-    <div className="py-20 bg-gradient-to-b from-white to-orange-50/30">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center mb-12">
+    <div className="py-20 bg-paper">
+      <div className="container mx-auto px-6">
+        <div className="flex justify-between items-end mb-12 border-b border-line pb-6">
           <div>
-            <h2 className="text-4xl font-bold text-gray-700 mb-2">{t('latestRecipes.title')}</h2>
-            {/* <p className="text-gray-600">{t('latestRecipes.subtitle')}</p> */}
+            <h2 className="font-display text-4xl md:text-5xl font-semibold text-ink mb-2">{t('latestRecipes.title')}</h2>
           </div>
           <button
             onClick={() => navigate('/recipes/add-recipe')}
-            className="bg-gradient-to-r from-orange-500 to-pink-500 
-                text-white px-3 py-2 rounded-xl flex items-center gap-2 bg-gradient-to-r from-orange-400 to-pink-400 text-white px-6 py-3 rounded-full hover:from-orange-500 hover:to-pink-500 transition-all transform hover:scale-105 shadow-md hover:shadow-lg
-                hover:from-orange-600 hover:to-pink-600 
-                transition-transform shadow 
-                disabled:opacity-50 disabled:cursor-not-allowed 
-                flex items-center justify-center gap-2 min-w-[100px] text-sm font-semibold"
+            className="inline-flex items-center justify-center gap-2 min-w-[100px]
+                bg-terracotta text-white px-6 py-3 rounded-full text-sm font-medium
+                transition-colors duration-200 hover:bg-terracotta-dark
+                disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span>{t('latestRecipes.addRecipe')}</span>
-            <PlusCircle className="w-5 h-5" />
+            <PlusCircle className="w-5 h-5" strokeWidth={1.75} />
           </button>
         </div>
         
         {loading ? (
           <div className="flex justify-center items-center min-h-[300px]">
-            <div className="w-16 h-16 border-4 border-orange-400 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-16 h-16 border-4 border-terracotta border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : error ? (
-          <div className="text-center py-12 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm">
-            <p className="text-red-400 mb-4">{error}</p>
-            <button 
+          <div className="text-center py-12 bg-surface rounded-xl border border-line shadow-soft">
+            <p className="text-red-500 mb-4">{error}</p>
+            <button
               onClick={() => window.location.reload()}
-              className="text-orange-500 hover:text-orange-600 font-medium underline"
+              className="text-terracotta-dark hover:text-terracotta font-medium underline"
             >
               {t('common.tryAgain')}
             </button>
           </div>
         ) : recipes.length === 0 ? (
-          <div className="text-center py-16 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm">
-            <h3 className="text-2xl font-semibold text-gray-600 mb-4">{t('latestRecipes.noRecipes')}</h3>
+          <div className="text-center py-16 bg-surface rounded-xl border border-line shadow-soft">
+            <h3 className="font-display text-2xl font-semibold text-ink-soft mb-4">{t('latestRecipes.noRecipes')}</h3>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

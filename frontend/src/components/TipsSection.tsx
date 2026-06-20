@@ -16,15 +16,15 @@ function TipsSection({ tips, setTips }: TipsSectionProps) {
   };
 
   return (
-    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-orange-100/50 p-8 transition-all hover:shadow-2xl">
+    <div className="bg-surface rounded-2xl shadow-card border border-line p-8 transition-all hover:shadow-soft">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-extrabold text-gray-900">
+        <h2 className="text-2xl font-extrabold font-display text-ink">
           {t('createRecipe.tips.title')}
         </h2>
         <button
           type="button"
           onClick={addTip}
-          className="flex items-center gap-2 text-orange-600 hover:text-orange-800 transition-colors"
+          className="flex items-center gap-2 text-terracotta hover:text-terracotta-dark transition-colors"
         >
           <Plus className="w-4 h-4" />
           {t('createRecipe.tips.addTip')}
@@ -47,7 +47,7 @@ function TipsSection({ tips, setTips }: TipsSectionProps) {
                     setTips(newTips);
                   }}
                   placeholder={t('createRecipe.tips.tipPlaceholder')}
-                  className="w-full min-w-[400px] px-6 py-3 rounded-xl border-2 border-orange-200 focus:border-orange-400 focus:outline-none transition-colors"
+                  className="w-full min-w-[400px] px-6 py-3 rounded-xl border-2 border-line focus:border-terracotta focus:outline-none transition-colors"
                 />
               </div>
               {tips.length > 1 && (

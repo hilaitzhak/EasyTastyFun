@@ -1,10 +1,17 @@
 import { useContext, useEffect, useState } from 'react';
-import { Globe, Menu, X, ChevronDown, UserCircle, LogOut, Home } from 'lucide-react';
+import { Globe, Menu, X, ChevronDown, UserCircle, LogOut, Home, WheatOff, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { Category, SubCategory } from '../interfaces/Category';
 import { categoryApi } from '../api/category.api';
 import { AuthContext } from '../context/AuthContext';
+
+// Cross-cutting "special" categories (dietary / holiday) shown as a distinct group in the nav
+const SPECIAL_CATEGORY_KEYS = ['nav.glutenFree', 'nav.passover'];
+const SPECIAL_CATEGORY_ICONS: Record<string, typeof WheatOff> = {
+  'nav.glutenFree': WheatOff,
+  'nav.passover': Sparkles,
+};
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -75,67 +82,137 @@ function Navbar() {
     document.dir = newLang === 'he' ? 'rtl' : 'ltr';
   };
 
+  // Regular categories collapse into the "Categories" mega-menu; specials stay inline
+  const regularCategories = categories.filter((c) => !SPECIAL_CATEGORY_KEYS.includes(c.nameKey));
+  const specialCategories = categories.filter((c) => SPECIAL_CATEGORY_KEYS.includes(c.nameKey));
+
   return (
-<nav className="fixed top-0 left-0 w-full z-50 bg-white/95 shadow-sm border-b border-gray-100 backdrop-blur-md">
+<nav className="fixed top-0 left-0 w-full z-50 bg-paper/90 border-b border-line backdrop-blur-md">
       <div className="max-w-8xl mx-auto px-6 w-full">
         <div className="flex justify-between items-center h-16">
-          <div className="hidden md:flex items-center space-x-1">
+          {/* Brand wordmark */}
+          <Link to="/" className="flex items-center shrink-0 mr-6">
+            <span className="font-display text-2xl font-bold tracking-tight text-ink">
+              Easy<span className="text-terracotta">Tasty</span>Fun
+            </span>
+          </Link>
+
+          <div className="hidden md:flex items-center gap-1">
             <Link
               to="/"
-              className="flex items-center font-bold text-gray-600 text-sm px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
+              className="flex items-center font-bold text-ink-soft text-sm px-3 py-2 rounded-md transition-colors duration-200 hover:bg-terracotta-light hover:text-terracotta-dark"
             >
               <Home className="w-5 h-5" />
             </Link>
             <Link
               to="/recipes"
-              className="flex items-center font-bold text-gray-600 text-sm px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
+              className="flex items-center font-bold text-ink-soft text-sm px-3 py-2 rounded-md transition-colors duration-200 hover:bg-terracotta-light hover:text-terracotta-dark whitespace-nowrap"
             >
               {t('nav.allRecipes')}
             </Link>
-            
-            {categories.length > 0 && categories.map((category) => (
+
+            {/* Categories mega-menu (regular categories collapsed here) */}
+            {regularCategories.length > 0 && (
               <div
-                key={category.id}
-                className="relative group"
-                onMouseEnter={() => setActiveCategory(category.id)}
+                className="relative"
+                onMouseEnter={() => setActiveCategory('__categories__')}
                 onMouseLeave={() => setActiveCategory(null)}
               >
-                <Link
-                  to={category.path}
-                  className="flex items-center text-gray-600 font-bold text-sm px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
+                <button
+                  className="flex items-center font-medium text-sm px-3 py-2 rounded-md text-ink-soft transition-colors duration-200 hover:bg-terracotta-light hover:text-terracotta-dark whitespace-nowrap"
                 >
-                  <span>{t(`${category.nameKey}`)}</span>
-                  {category.subCategories && category.subCategories.length > 0 && (
-                    <ChevronDown className="ml-1 w-4 h-4 transition-transform group-hover:rotate-180 duration-200" />
-                  )}
-                </Link>
+                  <span>{t('nav.categories')}</span>
+                  <ChevronDown className={`ml-1 w-4 h-4 transition-transform duration-200 ${activeCategory === '__categories__' ? 'rotate-180' : ''}`} />
+                </button>
 
-                {category.subCategories && category.subCategories.length > 0 && activeCategory === category.id && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-max z-50">
-                    <div className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
-                      <div className="grid grid-cols-3 gap-1">
-                        {category.subCategories.map((subCategory: SubCategory) => (
-                          <Link
-                            key={subCategory.id}
-                            to={subCategory.path}
-                            className="px-4 py-3 text-gray-600 text-xs hover:text-orange-500 rounded-xl transition-all duration-200 hover:bg-orange-50 whitespace-nowrap"
-                          >
-                            {t(`${subCategory.nameKey}`)}
-                          </Link>
+                {activeCategory === '__categories__' && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 z-50">
+                    <div className="bg-surface rounded-2xl shadow-card border border-line p-8 w-[72rem] max-w-[92vw]">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-10 gap-y-8">
+                        {regularCategories.map((category) => (
+                          <div key={category.id} className="min-w-0">
+                            <Link
+                              to={category.path}
+                              className="block font-display font-semibold text-sm text-ink hover:text-terracotta-dark mb-2 pb-1.5 border-b border-line"
+                            >
+                              {t(`${category.nameKey}`)}
+                            </Link>
+                            {category.subCategories && category.subCategories.length > 0 && (
+                              <ul className="space-y-1">
+                                {category.subCategories.map((subCategory: SubCategory) => (
+                                  <li key={subCategory.id}>
+                                    <Link
+                                      to={subCategory.path}
+                                      className="block text-sm text-ink-soft hover:text-terracotta-dark py-1 leading-snug"
+                                    >
+                                      {t(`${subCategory.nameKey}`)}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
                         ))}
-                      </div> 
+                      </div>
                     </div>
                   </div>
                 )}
               </div>
-            ))}
+            )}
+
+            {/* Divider before the special (dietary / holiday) categories */}
+            {specialCategories.length > 0 && (
+              <span className="mx-2 self-center h-6 w-px bg-line" aria-hidden="true" />
+            )}
+
+            {/* Special categories — kept inline as highlighted quick-links */}
+            {specialCategories.map((category) => {
+              const SpecialIcon = SPECIAL_CATEGORY_ICONS[category.nameKey];
+              return (
+                <div
+                  key={category.id}
+                  className="relative group"
+                  onMouseEnter={() => setActiveCategory(category.id)}
+                  onMouseLeave={() => setActiveCategory(null)}
+                >
+                  <Link
+                    to={category.path}
+                    className="flex items-center font-medium text-sm px-3 py-2 rounded-md text-terracotta-dark transition-colors duration-200 hover:bg-terracotta-light whitespace-nowrap"
+                  >
+                    {SpecialIcon && <SpecialIcon className="w-4 h-4 mr-1.5 shrink-0" />}
+                    <span>{t(`${category.nameKey}`)}</span>
+                    {category.subCategories && category.subCategories.length > 0 && (
+                      <ChevronDown className="ml-1 w-4 h-4 transition-transform group-hover:rotate-180 duration-200" />
+                    )}
+                  </Link>
+
+                  {category.subCategories && category.subCategories.length > 0 && activeCategory === category.id && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-max z-50">
+                      <div className="bg-surface rounded-xl shadow-card p-4 border border-line">
+                        <div className="grid grid-cols-2 gap-1">
+                          {category.subCategories.map((subCategory: SubCategory) => (
+                            <Link
+                              key={subCategory.id}
+                              to={subCategory.path}
+                              className="px-4 py-3 text-ink-soft text-xs hover:text-terracotta-dark rounded-lg transition-colors duration-200 hover:bg-terracotta-light whitespace-nowrap"
+                            >
+                              {t(`${subCategory.nameKey}`)}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* Right Side Menu */}
           <div className="flex items-center gap-6">
             <button
               onClick={toggleLanguage}
-              className="flex items-center gap-2 text-gray-600 px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
+              className="flex items-center gap-2 text-gray-600 px-4 py-2 rounded-full transition-colors duration-200 hover:bg-terracotta-light hover:text-terracotta-dark"
             >
               <Globe className="w-5 h-5" />
               <span className="text-xs font-medium">
@@ -148,7 +225,7 @@ function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="flex items-center gap-2 text-gray-600 px-4 py-2 rounded-full transition-all duration-200 hover:bg-gray-50 hover:text-gray-800 hover:scale-105"
+                  className="flex items-center gap-2 text-gray-600 px-4 py-2 rounded-full transition-colors duration-200 hover:bg-terracotta-light hover:text-terracotta-dark"
                 >
                   <UserCircle className="w-6 h-6" />
                   <span className="text-xs font-medium">
@@ -158,10 +235,10 @@ function Navbar() {
 
                 {/* Profile Dropdown */}
                 {isProfileOpen && (
-                  <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 w-48 bg-white rounded-xl shadow-lg py-2 z-50 border border-gray-100`}>
+                  <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 w-48 bg-surface rounded-xl shadow-card py-2 z-50 border border-line`}>
                     <button
                       onClick={handleLogout}
-                      className="flex items-center gap-2 w-full px-4 py-2 text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                      className="flex items-center gap-2 w-full px-4 py-2 text-ink-soft hover:bg-terracotta-light hover:text-terracotta-dark transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>{t('auth.logout')}</span>
@@ -174,38 +251,41 @@ function Navbar() {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden p-2 rounded-full transition-all duration-200 hover:bg-gray-50 text-gray-600"
+              className="md:hidden p-2 rounded-md transition-colors duration-200 hover:bg-terracotta-light text-ink-soft"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
 
-        <div className={`md:hidden overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96' : 'max-h-0'}`}>
+        <div className={`md:hidden transition-all duration-300 ${isOpen ? 'max-h-[80vh] overflow-y-auto' : 'max-h-0 overflow-hidden'}`}>
           <div className="py-4 space-y-2">
             <Link
               to="/recipes"
-              className="block py-2 px-4 text-gray-600 hover:bg-gray-50 hover:text-gray-800 rounded-xl transition-all duration-200"
+              className="block py-2 px-4 text-ink-soft hover:bg-terracotta-light hover:text-terracotta-dark rounded-lg transition-colors duration-200"
               onClick={() => setIsOpen(false)}
             >
               {t('nav.allRecipes')}
             </Link>
-            {categories.map((category) => (
+            {categories.map((category) => {
+              const SpecialIcon = SPECIAL_CATEGORY_ICONS[category.nameKey];
+              return (
               <div key={category.id} className="space-y-1">
                 <Link
                   to={category.path}
-                  className="block py-2 px-4 text-gray-600 hover:bg-gray-50 hover:text-gray-800 rounded-xl transition-all duration-200"
+                  className={`flex items-center gap-2 py-2 px-4 hover:bg-terracotta-light hover:text-terracotta-dark rounded-lg transition-colors duration-200 ${SpecialIcon ? 'text-terracotta-dark font-medium' : 'text-ink-soft'}`}
                   onClick={() => setIsOpen(false)}
                 >
+                  {SpecialIcon && <SpecialIcon className="w-4 h-4" />}
                   {t(`${category.nameKey}`)}
                 </Link>
                 {category.subCategories && category.subCategories.length > 0 && (
-                  <div className="pl-4 space-y-1 border-l border-gray-200">
+                  <div className="pl-4 space-y-1 border-l border-line">
                     {category.subCategories.map((subCategory: SubCategory) => (
                       <Link
                         key={subCategory.id}
                         to={subCategory.path}
-                        className="block py-2 px-4 text-gray-500 hover:bg-gray-50 hover:text-gray-700 rounded-xl transition-all duration-200"
+                        className="block py-2 px-4 text-ink-muted hover:bg-terracotta-light hover:text-terracotta-dark rounded-lg transition-colors duration-200"
                         onClick={() => setIsOpen(false)}
                       >
                         {t(`${subCategory.nameKey}`)}
@@ -214,12 +294,13 @@ function Navbar() {
                   </div>
                 )}
               </div>
-            ))}
+              );
+            })}
             {auth?.user && (
-              <div className="border-t border-gray-200 mt-2 pt-2">
+              <div className="border-t border-line mt-2 pt-2">
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 w-full py-2 px-4 text-gray-600 hover:bg-gray-50 hover:text-gray-800 rounded-xl transition-all duration-200"
+                  className="flex items-center gap-2 w-full py-2 px-4 text-ink-soft hover:bg-terracotta-light hover:text-terracotta-dark rounded-lg transition-colors duration-200"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>{t('auth.logout')}</span>

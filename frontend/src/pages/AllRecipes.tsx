@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Loader, Plus, Filter } from 'lucide-react';
 import { IRecipe } from '../interfaces/Recipe';
@@ -87,18 +87,18 @@ function AllRecipes() {
   const totalPages = backendTotalPages;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50/30 via-white to-pink-50/20 py-8">
+    <div className="min-h-screen bg-paper py-12">
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-700 mb-4">{t('allRecipes.title')}</h1>
+          <h1 className="font-display text-4xl md:text-5xl font-semibold text-ink mb-4">{t('allRecipes.title')}</h1>
         </div>
 
         <div className="flex justify-center mb-8">
           <button
             onClick={() => navigate('/recipes/add-recipe')}
-            className="bg-gradient-to-r from-orange-400 to-pink-400 text-white flex items-center gap-3 px-4 py-2 rounded-xl hover:from-orange-500 hover:to-pink-500 hover:bg-white shadow-sm hover:shadow-md transition-all duration-200 border border-orange-100"
+            className="inline-flex items-center gap-2 bg-terracotta text-white px-6 py-3 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-terracotta-dark"
           >
-            <Plus className="w-5 h-5" />
+            <Plus className="w-5 h-5" strokeWidth={1.75} />
             <span>{t('recipe.create')}</span>
           </button>
         </div>
@@ -106,13 +106,13 @@ function AllRecipes() {
         {/* Search and Filter */}
         <div className="mb-8 space-y-6">
           <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-ink-muted h-5 w-5" />
             <input
               type="text"
               placeholder={t('allRecipes.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 h-12 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent bg-white shadow-sm"
+              className="w-full pl-10 pr-4 py-3 h-12 rounded-full border border-line focus:outline-none focus:ring-2 focus:ring-terracotta focus:border-transparent bg-surface shadow-soft"
             />
           </div>
 
@@ -122,9 +122,9 @@ function AllRecipes() {
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${selectedCategory.id === category.id
-                  ? "bg-gradient-to-r from-orange-400 to-pink-400 text-white shadow-md"
-                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:border-gray-300"
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${selectedCategory.id === category.id
+                  ? "bg-terracotta text-white border border-terracotta shadow-soft"
+                  : "bg-surface text-ink-soft border border-line hover:border-terracotta hover:text-terracotta-dark"
                   }`}
               >
                 {t(category.label)}
@@ -135,7 +135,7 @@ function AllRecipes() {
 
         {/* Results Info */}
         <div className="mb-6">
-          <p className="text-gray-600 text-center">
+          <p className="text-ink-muted text-center text-sm">
            {totalRecipesCount} {t('allRecipes.recipe', { count: totalRecipesCount })}
           </p>
         </div>
@@ -143,35 +143,35 @@ function AllRecipes() {
         {/* Content Section */}
         {loading ? (
           <div className="flex justify-center items-center min-h-[400px]">
-            <div className="flex items-center gap-3 text-orange-500">
+            <div className="flex items-center gap-3 text-terracotta">
               <Loader className="w-6 h-6 animate-spin" />
               <span className="text-lg">{t('common.loading')}</span>
             </div>
           </div>
         ) : error ? (
-          <div className="text-center py-12 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm">
-            <p className="text-red-400 mb-4">{error}</p>
+          <div className="text-center py-12 bg-surface rounded-xl border border-line shadow-soft">
+            <p className="text-red-500 mb-4">{error}</p>
             <button
               onClick={() => fetchRecipes()}
-              className="text-orange-500 hover:text-orange-600 font-medium underline"
+              className="text-terracotta-dark hover:text-terracotta font-medium underline"
             >
               {t('common.tryAgain')}
             </button>
           </div>
         ) : currentRecipes.length === 0 ? (
-          <div className="text-center py-12 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm">
-            <div className="text-gray-400 mb-4">
-              <Filter className="h-16 w-16 mx-auto" />
+          <div className="text-center py-12 bg-surface rounded-xl border border-line shadow-soft">
+            <div className="text-ink-muted mb-4">
+              <Filter className="h-16 w-16 mx-auto" strokeWidth={1.25} />
             </div>
             {searchTerm || selectedCategory.id !== 'all' ? (
               <>
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">{t('allRecipes.noResults')}</h3>
-                <p className="text-gray-600 mb-4">{t('allRecipes.adjustSearch')}</p>
+                <h3 className="font-display text-xl font-semibold text-ink mb-2">{t('allRecipes.noResults')}</h3>
+                <p className="text-ink-soft mb-4">{t('allRecipes.adjustSearch')}</p>
                 <div className="space-x-4">
                   {searchTerm && (
                     <button
                       onClick={() => setSearchTerm('')}
-                      className="text-orange-500 hover:text-orange-600 font-medium"
+                      className="text-terracotta-dark hover:text-terracotta font-medium"
                     >
                       {t('allRecipes.clearSearch')}
                     </button>
@@ -179,7 +179,7 @@ function AllRecipes() {
                   {selectedCategory.id !== 'all' && (
                     <button
                       onClick={() => setSelectedCategory({ id: 'all', label: t('nav.all') })}
-                      className="text-orange-500 hover:text-orange-600 font-medium"
+                      className="text-terracotta-dark hover:text-terracotta font-medium"
                     >
                       {t('allRecipes.clearFilters')}
                     </button>
@@ -188,13 +188,13 @@ function AllRecipes() {
               </>
             ) : (
               <>
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                <h3 className="font-display text-xl font-semibold text-ink mb-2">
                   {t('allRecipes.noRecipes')}
                 </h3>
-                <p className="text-gray-600 mb-6">{t('allRecipes.startAdding')}</p>
+                <p className="text-ink-soft mb-6">{t('allRecipes.startAdding')}</p>
                 <button
                   onClick={() => navigate('/recipes/add-recipe')}
-                  className="bg-gradient-to-r from-orange-400 to-pink-400 text-white px-6 py-3 rounded-full hover:from-orange-500 hover:to-pink-500 transition-all shadow-md"
+                  className="bg-terracotta text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-terracotta-dark transition-colors"
                 >
                   {t('recipe.create')}
                 </button>

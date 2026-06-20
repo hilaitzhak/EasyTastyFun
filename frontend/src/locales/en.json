@@ -1,7 +1,13 @@
 {
+  "categoryTagline": {
+    "glutenFree": "Cakes and cookies you can enjoy — every one gluten-free.",
+    "passover": "Kosher-for-Passover cakes and cookies for your Seder table."
+  },
   "nav": {
     "home": "Home",
+    "back": "Back",
     "allRecipes": "All Recipes",
+    "categories": "Categories",
     "all": "All",
     "createRecipe": "Create Recipe",
     "backToRecipes": "Back to Recipes",
@@ -15,8 +21,14 @@
     "pastries": "Pastries",
     "parve": "Parve",
     "soups": "Soups",
+    "glutenFree": "Gluten-Free",
+    "passover": "Passover",
     "backToHome": "Back to Home",
     "subCategories": {
+      "glutenFreeCakes": "Cakes",
+      "glutenFreeCookies": "Cookies",
+      "passoverCakes": "Cakes",
+      "passoverCookies": "Cookies",
       "chocolateCakes": "Chocolate cakes",
       "cheesecakes": "Cheesecakes",
       "torteCakes": "Torte cakes",

@@ -17,7 +17,7 @@ function SortableItem({ id, children, nested }: SortableItemProps) {
       style={style} 
       className={`flex gap-4 items-start ${nested ? 'pl-8' : 'mb-4'}`}
     >
-      <div {...attributes} {...listeners} className="cursor-grab hover:text-gray-600 mt-3">
+      <div {...attributes} {...listeners} className="cursor-grab text-ink-muted hover:text-ink-soft mt-3">
         <GripVertical className="w-4 h-4" />
       </div>
       {children}

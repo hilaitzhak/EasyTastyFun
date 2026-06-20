@@ -5,33 +5,32 @@ import { Link } from 'react-router-dom';
 function HeroSection() {
   const { t } = useTranslation();
   return (
-    <div className="relative h-[600px] overflow-hidden bg-gradient-to-br from-orange-50 via-pink-50 to-yellow-50">
-      <div className="absolute inset-0 bg-gradient-to-r from-orange-100/60 to-pink-100/60">
-        <div className="container mx-auto px-4 h-full flex items-center">
-          <div className="max-w-3xl text-gray-800 space-y-8">
-            <div className="flex items-center gap-4 text-orange-500">
-              <ChefHat size={32} />
-              <UtensilsCrossed size={32} />
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold leading-tight text-gray-700">
-              {t('hero.discoverTitle')}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-500">
-                {" "}{t('hero.cookingTitle')}
-              </span>
-            </h1>
-            <div className="flex gap-4">
-              <Link
-                to="/recipes"
-                className="bg-gradient-to-r from-orange-500 to-pink-500 
-                text-white px-4 py-3 rounded-xl flex items-center gap-2 bg-gradient-to-r from-orange-400 to-pink-400 text-white px-6 py-3 rounded-full hover:from-orange-500 hover:to-pink-500 transition-all transform hover:scale-105 shadow-md hover:shadow-lg
-                hover:from-orange-600 hover:to-pink-600 
-                transition-transform shadow 
-                disabled:opacity-50 disabled:cursor-not-allowed 
-                flex items-center justify-center gap-2 min-w-[150px] text-md font-semibold"
-              >
-                {t('hero.browseRecipes')}
-              </Link>
-            </div>
+    <div className="relative overflow-hidden bg-gradient-to-br from-butter-light via-paper to-terracotta-light border-b border-line">
+      <div className="container mx-auto px-6 py-24 md:py-32">
+        <div className="max-w-3xl space-y-8">
+          <div className="flex items-center gap-3 text-terracotta">
+            <ChefHat size={28} strokeWidth={1.5} />
+            <UtensilsCrossed size={28} strokeWidth={1.5} />
+            <span className="text-xs font-medium uppercase tracking-[0.2em] text-ink-muted">
+              EasyTastyFun
+            </span>
+          </div>
+          <h1 className="font-display text-5xl md:text-7xl font-bold leading-[1.1] text-ink">
+            {t('hero.discoverTitle')}
+            <span className="text-terracotta">
+              {" "}{t('hero.cookingTitle')}
+            </span>
+          </h1>
+          <div className="flex gap-4 pt-2">
+            <Link
+              to="/recipes"
+              className="inline-flex items-center justify-center gap-2 min-w-[150px]
+                bg-terracotta text-white px-7 py-3.5 rounded-full text-sm font-medium tracking-wide
+                transition-colors duration-200 hover:bg-terracotta-dark
+                disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {t('hero.browseRecipes')}
+            </Link>
           </div>
         </div>
       </div>

@@ -18,54 +18,54 @@ function RecipeCard({ recipe }: RecipeCardProps) {
   };
 
   return (
-    <div 
+    <div
       onClick={handleClick}
-      className="group bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
+      className="group bg-surface rounded-3xl overflow-hidden border border-line shadow-soft hover:shadow-card hover:-translate-y-1 transition-all duration-300 flex flex-col h-full cursor-pointer"
     >
-      <div className="relative h-56">
+      <div className="relative h-56 overflow-hidden">
         {recipe.images && recipe.images[0] ? (
           <img
             src={recipe.images[0].link}
             alt={recipe.name}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
-            <span className="text-gray-400">{t('common.noImage')}</span>
+          <div className="w-full h-full bg-terracotta-light flex items-center justify-center">
+            <span className="text-ink-muted text-sm">{t('common.noImage')}</span>
           </div>
         )}
       </div>
-  
+
       <div className="p-6 flex flex-col flex-grow">
-        <h3 className="text-md font-bold mb-2 text-gray-800 group-hover:text-purple-600 transition-colors">
+        <h3 className="font-display text-xl font-semibold mb-3 text-ink leading-snug group-hover:text-terracotta-dark transition-colors">
           {recipe.name}
         </h3>
-        
+
         {(totalTime > 0 || (recipe?.servings ?? 0) > 0 || formattedDate) && (
-          <div className="mt-auto grid grid-cols-2 gap-y-2 text-xs text-gray-500">
+          <div className="mt-auto pt-4 border-t border-line grid grid-cols-2 gap-y-2 text-xs text-ink-muted">
             {recipe && (
               <>
                 {totalTime > 0 && (
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-purple-500" />
+                    <Clock className="w-4 h-4 text-olive" strokeWidth={1.75} />
                     <span>
                       {totalTime} {t('recipe.minutes')}
                     </span>
                   </div>
                 )}
-                
+
                 {(recipe?.servings ?? 0) > 0 && (
                   <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-purple-500" />
+                    <Users className="w-4 h-4 text-olive" strokeWidth={1.75} />
                     <span>
                       {recipe.servings} {t('recipe.servings')}
                     </span>
                   </div>
                 )}
-                
+
                 {formattedDate && (
                   <div className="flex items-center gap-2 col-span-2 mt-1">
-                    <Calendar className="w-4 h-4 text-purple-500" />
+                    <Calendar className="w-4 h-4 text-olive" strokeWidth={1.75} />
                     <span>{t('recipe.createdAt', { date: formattedDate })}</span>
                   </div>
                 )}

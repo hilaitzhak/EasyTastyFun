@@ -74,18 +74,18 @@ function RecipeDetails() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-pink-50 to-yellow-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-400"></div>
+      <div className="min-h-screen flex items-center justify-center bg-paper">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-terracotta"></div>
       </div>
     );
   }
 
   if (!recipe) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-pink-50 to-yellow-50">
+      <div className="min-h-screen flex items-center justify-center bg-paper">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-700 mb-4">{t('recipe.notFound')}</h2>
-          <button onClick={() => navigate('/recipes')} className="text-orange-500 hover:text-orange-600 transition-colors">
+          <h2 className="text-2xl font-bold text-ink mb-4">{t('recipe.notFound')}</h2>
+          <button onClick={() => navigate('/recipes')} className="text-terracotta hover:text-terracotta-dark transition-colors">
             {t('nav.backToRecipes')}
           </button>
         </div>
@@ -94,7 +94,7 @@ function RecipeDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-yellow-50 py-8">
+    <div className="min-h-screen bg-paper py-8">
       <div className="container mx-auto px-4">
         {/* Hero Section */}
         <div className="relative h-80 overflow-hidden mb-8 rounded-2xl">
@@ -117,17 +117,17 @@ function RecipeDetails() {
               <div className="text-white">
                 <div className="mb-3 flex gap-2">
                   {category && (
-                    <span className="inline-block bg-orange-600 px-3 py-1 rounded-full text-sm font-medium">
+                    <span className="inline-block bg-terracotta px-3 py-1 rounded-full text-sm font-medium">
                       {t(category.nameKey)}
                     </span>
                   )}
                   {subcategory && (
-                    <span className="inline-block bg-orange-500 px-3 py-1 rounded-full text-sm font-medium">
+                    <span className="inline-block bg-terracotta px-3 py-1 rounded-full text-sm font-medium">
                       {t(subcategory.nameKey)}
                     </span>
                   )}
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold">{recipe.name}</h1>
+                <h1 className="font-display text-3xl md:text-4xl font-bold">{recipe.name}</h1>
               </div>
             </div>
           </div>
@@ -136,16 +136,16 @@ function RecipeDetails() {
         <div className="max-w-8xl mx-auto">
           {/* Recipe Info & Actions */}
           <div className="flex justify-between items-start mb-8">
-            <div className="flex gap-6 text-gray-600">
+            <div className="flex gap-6 text-ink-soft">
               {recipe.prepTime > 0 && (
                 <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-orange-500" />
+                  <Clock className="w-5 h-5 text-olive" />
                   <span>{t('recipe.totalTimeInMin', { time: recipe.prepTime + recipe.cookTime })}</span>
                 </div>
               )}
               {recipe.servings > 0 && (
                 <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-orange-500" />
+                  <Users className="w-5 h-5 text-olive" />
                   <span>{t('recipe.servingsCount', { count: recipe.servings })}</span>
                 </div>
               )}
@@ -154,7 +154,7 @@ function RecipeDetails() {
             <div className="flex gap-3">
               <button
                 onClick={() => navigate(`/recipe/edit/${id}`)}
-                className="relative group p-2 text-gray-600 hover:text-orange-500 transition-colors"
+                className="relative group p-2 text-ink-soft hover:text-terracotta transition-colors"
                 title={t('recipe.edit')}
               >
                 <Edit className="w-5 h-5" />
@@ -164,7 +164,7 @@ function RecipeDetails() {
               </button>
               <button
                 onClick={handleDelete}
-                className="relative group p-2 text-gray-600 hover:text-red-500 transition-colors"
+                className="relative group p-2 text-ink-soft hover:text-red-500 transition-colors"
                 title={t('recipe.delete')}
               >
                 <Trash2 className="w-5 h-5" />
@@ -181,9 +181,9 @@ function RecipeDetails() {
               {/* Images Gallery */}
               {recipe.images && recipe.images.length > 0 && (
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-700 mb-4">{t('createRecipe.images.title')}</h2>
-                  <div className="relative rounded-xl overflow-hidden">
-                    <div className="w-full h-64 bg-gray-100 cursor-pointer" onClick={() => setIsModalOpen(true)}>
+                  <h2 className="font-display text-xl font-semibold text-ink mb-4">{t('createRecipe.images.title')}</h2>
+                  <div className="relative rounded-2xl overflow-hidden">
+                    <div className="w-full h-64 bg-terracotta-light cursor-pointer" onClick={() => setIsModalOpen(true)}>
                       <img
                         src={recipe.images[currentImageIndex]?.link}
                         alt={recipe.name}
@@ -217,12 +217,12 @@ function RecipeDetails() {
               {/* Video */}
               {recipe.video && (
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-700 mb-4">Video</h2>
-                  <div className="rounded-xl overflow-hidden">
-                    <video 
-                      src={recipe.video.link} 
+                  <h2 className="font-display text-xl font-semibold text-ink mb-4">Video</h2>
+                  <div className="rounded-2xl overflow-hidden">
+                    <video
+                      src={recipe.video.link}
                       controls
-                      className="w-full h-64 rounded-xl"
+                      className="w-full h-64 rounded-2xl"
                       poster={recipe.images?.[0]?.data}
                       controlsList="nodownload"
                     >
@@ -235,23 +235,23 @@ function RecipeDetails() {
           ) : null}
 
           {/* Ingredients */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200 p-6 mb-6">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">{t('recipe.ingredients')}</h2>
-            
+          <div className="bg-surface rounded-2xl border border-line p-6 mb-6 shadow-card">
+            <h2 className="font-display text-xl font-semibold text-ink mb-4">{t('recipe.ingredients')}</h2>
+
             {recipe.ingredientGroups.map((group: any, groupIndex: number) => (
               <div key={groupIndex} className="mb-4 last:mb-0">
                 {group.title && (
-                  <h3 className="text-md font-medium text-gray-600 mb-2 border-b pb-1">
+                  <h3 className="text-md font-medium text-ink-soft mb-2 border-b border-line pb-1">
                     {group.title}
                   </h3>
                 )}
                 <div className="space-y-1">
                   {group.ingredients.map((ingredient: Ingredient, ingIndex: number) => (
                     <div key={`${groupIndex}-${ingIndex}`} className="flex items-center gap-3 py-1">
-                      <span className="text-sm text-gray-500 min-w-20">
+                      <span className="text-sm text-ink-soft min-w-20">
                         {ingredient.amount} {ingredient.unit}
                       </span>
-                      <span className="text-gray-700">{ingredient.name}</span>
+                      <span className="text-ink">{ingredient.name}</span>
                     </div>
                   ))}
                 </div>
@@ -260,23 +260,23 @@ function RecipeDetails() {
           </div>
 
           {/* Instructions */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200 p-6 mb-6">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">{t('recipe.instructions')}</h2>
-            
+          <div className="bg-surface rounded-2xl border border-line p-6 mb-6 shadow-card">
+            <h2 className="font-display text-xl font-semibold text-ink mb-4">{t('recipe.instructions')}</h2>
+
             {recipe.instructionGroups.map((group: any, groupIndex: number) => (
               <div key={groupIndex} className="mb-4 last:mb-0">
                 {group.title && (
-                  <h3 className="text-md font-medium text-gray-600 mb-2 border-b pb-1">
+                  <h3 className="text-md font-medium text-ink-soft mb-2 border-b border-line pb-1">
                     {group.title}
                   </h3>
                 )}
                 <ol className="space-y-3">
                   {group.instructions.map((instruction: { content: string }, instIndex: number) => (
                     <li key={`${groupIndex}-${instIndex}`} className="flex gap-3">
-                      <span className="flex-shrink-0 w-6 h-6 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-sm font-semibold">
+                      <span className="flex-shrink-0 w-6 h-6 bg-terracotta-light text-terracotta-dark rounded-full flex items-center justify-center text-sm font-semibold">
                         {instIndex + 1}
                       </span>
-                      <p className="text-gray-600 leading-relaxed text-sm">{instruction.content}</p>
+                      <p className="text-ink-soft leading-relaxed text-sm">{instruction.content}</p>
                     </li>
                   ))}
                 </ol>
@@ -286,16 +286,16 @@ function RecipeDetails() {
 
           {/* Tips */}
           {recipe.tips && recipe.tips.length > 0 && (
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-700 mb-4">{t('createRecipe.tips.title')}</h2>
-              
+            <div className="bg-surface rounded-2xl border border-line p-6 shadow-card">
+              <h2 className="font-display text-xl font-semibold text-ink mb-4">{t('createRecipe.tips.title')}</h2>
+
               <ul className="space-y-3">
                 {recipe.tips.map((tip: string, index: number) => (
                   <li key={index} className="flex gap-3 items-start">
-                    <span className="flex-shrink-0 w-6 h-6 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-sm font-semibold">
+                    <span className="flex-shrink-0 w-6 h-6 bg-terracotta-light text-terracotta-dark rounded-full flex items-center justify-center text-sm font-semibold">
                       {index + 1}
                     </span>
-                    <p className="text-gray-600 leading-relaxed text-sm">{tip}</p>
+                    <p className="text-ink-soft leading-relaxed text-sm">{tip}</p>
                   </li>
                 ))}
               </ul>

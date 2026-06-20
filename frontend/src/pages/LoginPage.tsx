@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { authApi } from '../api/auth.api';
 import { AuthContext } from '../context/AuthContext';
-import { jwtDecode } from 'jwt-decode';
 import { GoogleLogin } from '@react-oauth/google';
 import girlChefIcon from '../assets/girl-chef.png';
 
@@ -22,7 +21,6 @@ function LoginPage() {
         return;
       }
 
-      const decoded = jwtDecode(credentialResponse.credential);
       const response = await authApi.googleLogin(credentialResponse.credential);
       if (response.data.token) {
         auth.login(response.data.token, response?.data?.user?.name);
@@ -38,8 +36,8 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white shadow-2xl rounded-2xl p-10 border border-purple-100">
+    <div className="min-h-screen bg-paper flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-surface shadow-card rounded-3xl p-10 border border-line">
         <div className="text-center">
           <div className="mb-6 flex justify-center">
             <div className="w-24 h-24 flex items-center justify-center">
@@ -52,13 +50,10 @@ function LoginPage() {
 
           </div>
           <div className="text-center">
-            <h2 className="text-4xl font-extrabold text-purple-600 mb-4">
+            <h2 className="font-display text-4xl font-extrabold text-terracotta mb-4">
               {t('auth.appName')}
             </h2>
-            {/* <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              {t('auth.welcome')}
-            </h2> */}
-            <p className="text-gray-600 mb-6">
+            <p className="text-ink-soft mb-6">
               {t('auth.loginPrompt')}
             </p>
           </div>
@@ -81,7 +76,7 @@ function LoginPage() {
 
         {loading && (
           <div className="flex justify-center mt-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-terracotta"></div>
           </div>
         )}
       </div>

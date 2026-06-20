@@ -3,7 +3,7 @@ import Recipe from '../models/recipe.model';
 import { RedisService } from './redis.service';
 import { randomUUID } from 'node:crypto';
 import { s3 } from '../config/s3.config';
-import mongoose, { PipelineStage } from 'mongoose';
+import { PipelineStage } from 'mongoose';
 
 export class RecipeService {
   private redisService: RedisService;
@@ -98,7 +98,9 @@ export class RecipeService {
       const matchStage: Record<string, any> = {};
 
       if (category) {
-        matchStage.category = new mongoose.Types.ObjectId(category);
+        // recipe.category is stored as a String (the category's UUID), so match it directly —
+        // do NOT cast to ObjectId (a UUID is not a valid ObjectId and would throw / never match).
+        matchStage.category = category;
       }
 
       if (search && search.trim()) {

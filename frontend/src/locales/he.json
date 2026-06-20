@@ -1,7 +1,13 @@
 {
+  "categoryTagline": {
+    "glutenFree": "עוגות ועוגיות שאפשר ליהנות מהן — כולן ללא גלוטן.",
+    "passover": "עוגות ועוגיות כשרות לפסח לשולחן החג."
+  },
   "nav": {
     "home": "דף הבית",
+    "back": "חזור",
     "allRecipes": "כל המתכונים",
+    "categories": "קטגוריות",
     "all": "הכל",
     "createRecipe": "צור מתכון",
     "backToRecipes": "חזור למתכונים",
@@ -16,8 +22,14 @@
     "parve": "פרווה",
     "soups": "מרקים",
     "breakfast": " ארוחות בוקר",
+    "glutenFree": "ללא גלוטן",
+    "passover": "פסח",
     "backToHome": "חזרה לדף הבית",
     "subCategories": {
+      "glutenFreeCakes": "עוגות",
+      "glutenFreeCookies": "עוגיות",
+      "passoverCakes": "עוגות",
+      "passoverCookies": "עוגיות",
       "chocolateCakes": "עוגות שוקולד",
       "cheesecakes": "עוגות גבינה",
       "torteCakes": "עוגות טורט",

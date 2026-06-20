@@ -28,19 +28,19 @@ function VideoUploadSection({ video, setVideo }: VideoUploadSectionProps) {
   };
   
   return (
-    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-orange-100/50 p-8 space-y-6 transition-all hover:shadow-2xl">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">
+    <div className="bg-surface rounded-2xl shadow-card border border-line p-8 space-y-6 transition-all hover:shadow-soft">
+      <h2 className="text-2xl font-bold font-display text-ink mb-4">
         {t('createRecipe.video.title')}
       </h2>
-      
+
       <div className="grid gap-6 items-center">
         {!video?.link ? (
-          <label className="border-2 border-dashed border-orange-200 rounded-xl p-8 flex flex-col items-center justify-center hover:bg-orange-50 transition-colors cursor-pointer group">
-            <Video className="w-10 h-10 text-orange-400 group-hover:text-orange-600 transition-colors" />
-            <span className="mt-4 text-sm font-medium text-gray-600 group-hover:text-orange-700">
+          <label className="border-2 border-dashed border-line rounded-xl p-8 flex flex-col items-center justify-center hover:bg-terracotta-light transition-colors cursor-pointer group">
+            <Video className="w-10 h-10 text-terracotta group-hover:text-terracotta-dark transition-colors" />
+            <span className="mt-4 text-sm font-medium text-ink-soft group-hover:text-terracotta-dark">
               {t('createRecipe.video.upload')}
             </span>
-            <span className="mt-2 text-xs text-gray-500">
+            <span className="mt-2 text-xs text-ink-muted">
               {t('createRecipe.video.maxSize')}
             </span>
             <input 

@@ -156,33 +156,33 @@ function CreateRecipeForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-yellow-50">
+    <div className="min-h-screen bg-paper">
       {/* Modern Header with Glass Effect */}
-      <div className="sticky top-0 z-10 backdrop-blur-md bg-white/80 border-b border-orange-100/50 shadow-sm">
+      <div className="sticky top-0 z-10 backdrop-blur-md bg-surface border-b border-line shadow-soft">
       <div className="max-w-8xl mx-auto px-6 w-full py-6">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => navigate('/recipes')}
-                  className="group flex items-center gap-3 px-4 py-2 rounded-xl bg-white/70 hover:bg-white shadow-sm hover:shadow-md transition-all duration-200 border border-orange-100"
+                  className="group flex items-center gap-3 px-4 py-2 rounded-xl bg-surface hover:bg-terracotta-light shadow-soft hover:shadow-card transition-all duration-200 border border-line"
                 >
                   {isRTL ? (
-                    <ArrowRight className="w-5 h-5 text-orange-500 group-hover:translate-x-1 transition-transform duration-200" />
+                    <ArrowRight className="w-5 h-5 text-terracotta group-hover:translate-x-1 transition-transform duration-200" />
                   ) : (
-                    <ArrowLeft className="w-5 h-5 text-orange-500 group-hover:-translate-x-1 transition-transform duration-200" />
+                    <ArrowLeft className="w-5 h-5 text-terracotta group-hover:-translate-x-1 transition-transform duration-200" />
                   )}
-                  <span className="font-medium text-gray-700">{t('nav.backToRecipes')}</span>
+                  <span className="font-medium text-ink">{t('nav.backToRecipes')}</span>
                 </button>
-                
-                <div className="hidden sm:block w-px h-8 bg-orange-200"></div>
-                
+
+                <div className="hidden sm:block w-px h-8 bg-line"></div>
+
                 <div className="flex items-center space-x-3 gap-4">
-                  <div className="p-2 rounded-xl bg-gradient-to-br from-orange-400 to-pink-400 shadow-md">
+                  <div className="p-2 rounded-xl bg-terracotta shadow-card">
                     <ChefHat className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">
+                    <h1 className="font-display text-2xl md:text-3xl font-bold text-terracotta">
                       {t('createRecipe.title')}
                     </h1>
                   </div>
@@ -197,7 +197,7 @@ function CreateRecipeForm() {
       <div className="max-w-8xl mx-auto px-6 w-full">
         <div className="max-w-7xl mx-auto py-4">
           {/* Modern Card Container */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 overflow-hidden">
+          <div className="bg-surface backdrop-blur-sm rounded-3xl shadow-card border border-line overflow-hidden">
             <div className="p-8">
               <RecipeForm
                 onSubmit={handleSubmit}
