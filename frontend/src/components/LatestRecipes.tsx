@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { useRecipes } from '../hooks/useRecipes';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, UtensilsCrossed } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import RecipeCard from './RecipeCard';
+import RecipeCardSkeleton from './RecipeCardSkeleton';
 
 function LatestRecipes() {
   const { recipes, loading, error } = useRecipes(true);
@@ -29,8 +30,8 @@ function LatestRecipes() {
         </div>
         
         {loading ? (
-          <div className="flex justify-center items-center min-h-[300px]">
-            <div className="w-16 h-16 border-4 border-terracotta border-t-transparent rounded-full animate-spin"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {Array.from({ length: 4 }).map((_, i) => <RecipeCardSkeleton key={i} />)}
           </div>
         ) : error ? (
           <div className="text-center py-12 bg-surface rounded-xl border border-line shadow-soft">
@@ -43,8 +44,21 @@ function LatestRecipes() {
             </button>
           </div>
         ) : recipes.length === 0 ? (
-          <div className="text-center py-16 bg-surface rounded-xl border border-line shadow-soft">
-            <h3 className="font-display text-2xl font-semibold text-ink-soft mb-4">{t('latestRecipes.noRecipes')}</h3>
+          <div className="flex flex-col items-center justify-center py-16 bg-surface rounded-xl border border-line shadow-soft gap-4">
+            <div className="w-16 h-16 rounded-2xl bg-terracotta-light flex items-center justify-center">
+              <UtensilsCrossed className="w-8 h-8 text-terracotta" />
+            </div>
+            <div className="text-center">
+              <h3 className="font-display text-2xl font-semibold text-ink-soft mb-1">{t('latestRecipes.noRecipes')}</h3>
+              <p className="text-ink-soft text-sm mb-5">{t('latestRecipes.beFirst')}</p>
+              <button
+                onClick={() => navigate('/recipes/add-recipe')}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-sm text-white bg-terracotta hover:bg-terracotta-dark transition-colors duration-200"
+              >
+                <PlusCircle className="w-4 h-4" strokeWidth={1.75} />
+                {t('latestRecipes.createRecipe')}
+              </button>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

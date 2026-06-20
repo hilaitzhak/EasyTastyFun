@@ -1,16 +1,14 @@
-
-import { Minus, Video } from "lucide-react";
+import { X, Video } from "lucide-react";
 import { VideoUploadSectionProps } from "../interfaces/Recipe";
 import { useTranslation } from "react-i18next";
 
 function VideoUploadSection({ video, setVideo }: VideoUploadSectionProps) {
   const { t } = useTranslation();
-  
+
   const handleVideoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // 50MB limit
     if (file.size > 50 * 1024 * 1024) {
       alert(t('createRecipe.videoSizeError'));
       return;
@@ -22,56 +20,54 @@ function VideoUploadSection({ video, setVideo }: VideoUploadSectionProps) {
     };
     reader.readAsDataURL(file);
   };
-  
+
   const removeVideo = () => {
     setVideo(null);
   };
-  
-  return (
-    <div className="bg-surface rounded-2xl shadow-card border border-line p-8 space-y-6 transition-all hover:shadow-soft">
-      <h2 className="text-2xl font-bold font-display text-ink mb-4">
-        {t('createRecipe.video.title')}
-      </h2>
 
-      <div className="grid gap-6 items-center">
-        {!video?.link ? (
-          <label className="border-2 border-dashed border-line rounded-xl p-8 flex flex-col items-center justify-center hover:bg-terracotta-light transition-colors cursor-pointer group">
-            <Video className="w-10 h-10 text-terracotta group-hover:text-terracotta-dark transition-colors" />
-            <span className="mt-4 text-sm font-medium text-ink-soft group-hover:text-terracotta-dark">
-              {t('createRecipe.video.upload')}
-            </span>
-            <span className="mt-2 text-xs text-ink-muted">
-              {t('createRecipe.video.maxSize')}
-            </span>
-            <input 
-              type="file" 
-              className="hidden" 
-              accept="video/*" 
-              onChange={handleVideoUpload} 
-            />
-          </label>
-        ) : (
-          <div className="relative group rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all w-64">
-            <video
-              src={video.link}
-              controls
-              className="w-full rounded-lg"
-              controlsList="nodownload"
-            >
-              {t('recipe.videoNotSupported')}
-            </video>
-            <button
-              type="button"
-              onClick={removeVideo}
-              className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-            >
-              <Minus className="w-4 h-4" />
-            </button>
-          </div>
-        )}
+  return (
+    <div className="bg-surface rounded-2xl border border-line shadow-card p-8 space-y-6 transition-all hover:shadow-soft">
+      <div className="flex items-center gap-3 mb-2">
+        <div className="w-9 h-9 rounded-xl bg-terracotta-light flex items-center justify-center">
+          <Video className="w-4 h-4 text-terracotta" />
+        </div>
+        <h2 className="text-2xl font-bold font-display text-ink">{t('createRecipe.video.title')}</h2>
       </div>
+
+      {!video?.link ? (
+        <label className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-line rounded-2xl p-8 cursor-pointer hover:border-terracotta hover:bg-terracotta-light transition-all group">
+          <div className="w-12 h-12 rounded-xl bg-terracotta-light group-hover:bg-terracotta-light flex items-center justify-center transition-colors">
+            <Video className="w-5 h-5 text-terracotta group-hover:text-terracotta-dark transition-colors" />
+          </div>
+          <div className="text-center">
+            <p className="text-sm font-medium text-ink-soft group-hover:text-terracotta-dark transition-colors">
+              {t('createRecipe.video.upload')}
+            </p>
+            <p className="text-xs text-ink-muted mt-0.5">{t('createRecipe.video.maxSize')}</p>
+          </div>
+          <input type="file" className="hidden" accept="video/*" onChange={handleVideoUpload} />
+        </label>
+      ) : (
+        <div className="relative group rounded-xl overflow-hidden w-full max-w-sm">
+          <video
+            src={video.link}
+            controls
+            className="w-full rounded-xl"
+            controlsList="nodownload"
+          >
+            {t('recipe.videoNotSupported')}
+          </video>
+          <button
+            type="button"
+            onClick={removeVideo}
+            className="absolute top-2 right-2 w-7 h-7 bg-surface rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-red-50"
+          >
+            <X className="w-3.5 h-3.5 text-red-500" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
-  
+
 export default VideoUploadSection;

@@ -1,4 +1,4 @@
-import { Calendar, Clock, Users } from "lucide-react";
+import { Calendar, Clock, Users, UtensilsCrossed } from "lucide-react";
 import { RecipeCardProps } from "../interfaces/Recipe";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -7,11 +7,9 @@ function RecipeCard({ recipe }: RecipeCardProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const totalTime = (recipe?.prepTime || 0) + (recipe?.cookTime || 0);
-  const formattedDate = new Date(recipe.createdAt).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });  
+  const formattedDate = recipe?.createdAt
+    ? new Date(recipe.createdAt).toLocaleDateString()
+    : "";
 
   const handleClick = () => {
     navigate(`/recipe/${recipe.recipeId}`);
@@ -22,22 +20,29 @@ function RecipeCard({ recipe }: RecipeCardProps) {
       onClick={handleClick}
       className="group bg-surface rounded-3xl overflow-hidden border border-line shadow-soft hover:shadow-card hover:-translate-y-1 transition-all duration-300 flex flex-col h-full cursor-pointer"
     >
+      {/* Image */}
       <div className="relative h-56 overflow-hidden">
         {recipe.images && recipe.images[0] ? (
-          <img
-            src={recipe.images[0].link}
-            alt={recipe.name}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
+          <>
+            <img
+              src={recipe.images[0].link}
+              alt={recipe.name}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+          </>
         ) : (
-          <div className="w-full h-full bg-terracotta-light flex items-center justify-center">
+          <div className="w-full h-full bg-terracotta-light flex flex-col items-center justify-center gap-2">
+            <UtensilsCrossed className="w-10 h-10 text-terracotta" />
             <span className="text-ink-muted text-sm">{t('common.noImage')}</span>
           </div>
         )}
       </div>
 
+      {/* Content */}
       <div className="p-6 flex flex-col flex-grow">
-        <h3 className="font-display text-xl font-semibold mb-3 text-ink leading-snug group-hover:text-terracotta-dark transition-colors">
+        <h3 className="font-display text-xl font-semibold mb-3 text-ink leading-snug group-hover:text-terracotta-dark transition-colors line-clamp-2">
           {recipe.name}
         </h3>
 

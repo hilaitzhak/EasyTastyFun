@@ -4,6 +4,7 @@ import { RedisService } from './redis.service';
 import { randomUUID } from 'node:crypto';
 import { s3 } from '../config/s3.config';
 import { PipelineStage } from 'mongoose';
+import Anthropic from '@anthropic-ai/sdk';
 
 export class RecipeService {
   private redisService: RedisService;
@@ -85,7 +86,6 @@ export class RecipeService {
       throw new Error(`Failed to upload ${fileType.slice(0, -1)}`);
     }
   }
-
 
   async getAllRecipes(
     page: number = 1,
@@ -506,5 +506,70 @@ export class RecipeService {
       console.error('Error checking similar recipes:', error);
       throw error;
     }
+  }
+
+  async extractRecipeFromImage(base64Image: string): Promise<any> {
+    const matches = base64Image.match(/^data:(image\/[a-zA-Z0-9+]+);base64,(.+)$/);
+    if (!matches) throw new Error('Invalid image format');
+
+    const mimeType = matches[1];
+    const imageData = matches[2];
+
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 4096,
+      messages: [{
+        role: 'user',
+        content: [
+          {
+            type: 'image',
+            source: { type: 'base64', media_type: mimeType as any, data: imageData }
+          },
+          {
+            type: 'text',
+            text: `You are extracting a recipe from an image. The recipe may be written in Hebrew or English.
+
+CRITICAL LANGUAGE RULE: You MUST write all text fields in the EXACT language used in the image. If the image is in Hebrew — write Hebrew characters. If the image is in English — write English. NEVER translate. NEVER switch languages.
+
+Read all the text in the image carefully, including Hebrew right-to-left text, and extract the recipe into this exact JSON structure (return ONLY the raw JSON, no markdown, no explanation):
+
+{
+  "name": "Recipe name in original language",
+  "prepTime": 30,
+  "cookTime": 45,
+  "servings": 4,
+  "ingredientGroups": [
+    {
+      "title": "",
+      "ingredients": [
+        { "name": "ingredient name in original language", "amount": "2", "unit": "unit in original language" }
+      ]
+    }
+  ],
+  "instructionGroups": [
+    {
+      "title": "",
+      "instructions": [
+        { "content": "Step text in original language" }
+      ]
+    }
+  ],
+  "tips": []
+}
+
+Additional rules:
+- STRICT EXTRACTION: Copy only what is explicitly written. Do NOT invent, guess, or add anything not in the image.
+- prepTime, cookTime, servings: use the exact number if written, otherwise null.
+- tips: only include if explicitly written in the image, otherwise empty array [].`
+          }
+        ]
+      }]
+    });
+
+    const text = response.content[0].type === 'text' ? response.content[0].text : '';
+    const cleaned = text.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+    return JSON.parse(cleaned);
   }
 }

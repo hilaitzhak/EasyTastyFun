@@ -44,15 +44,15 @@ function LoginPage() {
               <img
                 src={girlChefIcon}
                 alt="Chef Icon"
-                className="w-24 h-24 rounded-full object-cover"
+                className="w-24 h-24 rounded-full object-cover ring-4 ring-primary-100"
               />
             </div>
-
           </div>
           <div className="text-center">
             <h2 className="font-display text-4xl font-extrabold text-terracotta mb-4">
               {t('auth.appName')}
             </h2>
+            <div className="w-10 h-0.5 rounded-full bg-terracotta mx-auto mb-4" />
             <p className="text-ink-soft mb-6">
               {t('auth.loginPrompt')}
             </p>

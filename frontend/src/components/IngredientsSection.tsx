@@ -1,5 +1,4 @@
-
-import { Plus, Minus } from 'lucide-react';
+import { Plus, Minus, ShoppingBasket, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { IngredientGroup, IngredientsProps } from '../interfaces/Recipe';
 import SortableList from './SortableList';
@@ -32,10 +31,13 @@ function IngredientsSection({ ingredientGroups, setIngredientGroups }: Ingredien
 
   return (
     <div className="bg-surface rounded-2xl shadow-card border border-line p-8 transition-all hover:shadow-soft">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-extrabold font-display text-ink">
-          {t('createRecipe.ingredients.title')}
-        </h2>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-terracotta-light flex items-center justify-center">
+            <ShoppingBasket className="w-4 h-4 text-olive" />
+          </div>
+          <h2 className="text-2xl font-extrabold font-display text-ink">{t('createRecipe.ingredients.title')}</h2>
+        </div>
         <button
           type="button"
           onClick={addIngredientGroup}
@@ -46,10 +48,11 @@ function IngredientsSection({ ingredientGroups, setIngredientGroups }: Ingredien
         </button>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {ingredientGroups.map((group: IngredientGroup, groupIndex: number) => (
           <div key={groupIndex} className="bg-terracotta-light rounded-xl p-6 space-y-4">
-            <div className="flex items-center justify-between">
+            {/* Group header */}
+            <div className="flex items-center gap-3">
               <input
                 type="text"
                 value={group.title}
@@ -59,17 +62,24 @@ function IngredientsSection({ ingredientGroups, setIngredientGroups }: Ingredien
                   setIngredientGroups(newGroups);
                 }}
                 placeholder={t('createRecipe.ingredients.groupTitlePlaceholder')}
-                className="font-semibold text-lg px-4 py-2 rounded-xl border-2 border-line focus:border-terracotta focus:outline-none transition-colors"
+                className="flex-1 font-semibold text-lg px-4 py-2 rounded-xl border-2 border-line focus:border-terracotta focus:outline-none transition-colors"
               />
               {ingredientGroups.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removeIngredientGroup(groupIndex)}
-                  className="p-2 text-red-500 hover:text-red-600 transition-colors"
+                  className="p-2 text-ink-muted hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                 >
-                  <Minus className="w-4 h-4" />
+                  <Trash2 className="w-4 h-4" />
                 </button>
               )}
+            </div>
+
+            {/* Column labels */}
+            <div className="flex gap-3 items-center px-1">
+              <span className="w-24 text-xs font-medium text-ink-muted">{t('createRecipe.ingredients.amountPlaceholder')}</span>
+              <span className="w-24 text-xs font-medium text-ink-muted">{t('createRecipe.ingredients.unitPlaceholder')}</span>
+              <span className="flex-1 text-xs font-medium text-ink-muted">{t('createRecipe.ingredients.namePlaceholder')}</span>
             </div>
 
             <SortableList
@@ -81,7 +91,7 @@ function IngredientsSection({ ingredientGroups, setIngredientGroups }: Ingredien
               }}
               groupId={`group-${groupIndex}`}
               renderItem={(ingredient, ingredientIndex) => (
-                <div className="flex gap-4 items-start">
+                <div className="flex gap-3 items-center">
                   <div className="w-24">
                     <input
                       type="text"
@@ -91,7 +101,7 @@ function IngredientsSection({ ingredientGroups, setIngredientGroups }: Ingredien
                         newGroups[groupIndex].ingredients[ingredientIndex].amount = e.target.value;
                         setIngredientGroups(newGroups);
                       }}
-                      placeholder={t('createRecipe.ingredients.amountPlaceholder')}
+                      placeholder="0"
                       className="w-full px-3 py-2 rounded-lg border-2 border-line focus:border-terracotta focus:outline-none transition-colors"
                     />
                   </div>
@@ -104,7 +114,7 @@ function IngredientsSection({ ingredientGroups, setIngredientGroups }: Ingredien
                         newGroups[groupIndex].ingredients[ingredientIndex].unit = e.target.value;
                         setIngredientGroups(newGroups);
                       }}
-                      placeholder={t('createRecipe.ingredients.unitPlaceholder')}
+                      placeholder="g / ml"
                       className="w-full px-3 py-2 rounded-lg border-2 border-line focus:border-terracotta focus:outline-none transition-colors"
                     />
                   </div>
@@ -125,20 +135,21 @@ function IngredientsSection({ ingredientGroups, setIngredientGroups }: Ingredien
                     <button
                       type="button"
                       onClick={() => removeIngredientFromGroup(groupIndex, ingredientIndex)}
-                      className="p-2 text-red-500 hover:text-red-600 transition-colors"
+                      className="p-1.5 text-ink-muted hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                     >
-                      <Minus className="w-4 h-4" />
+                      <Minus className="w-3.5 h-3.5" />
                     </button>
                   )}
                 </div>
               )}
             />
+
             <button
               type="button"
               onClick={() => addIngredientToGroup(groupIndex)}
-              className="flex items-center gap-2 text-terracotta hover:text-terracotta-dark transition-colors"
+              className="flex items-center gap-2 text-terracotta hover:text-terracotta-dark font-medium transition-colors pt-1"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-3.5 h-3.5" />
               {t('createRecipe.ingredients.addToGroup')}
             </button>
           </div>

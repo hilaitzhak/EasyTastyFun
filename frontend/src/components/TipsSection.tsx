@@ -1,5 +1,4 @@
-
-import { Plus, Minus } from 'lucide-react';
+import { Plus, Minus, Lightbulb } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import SortableList from './SortableList';
 import { TipsSectionProps } from '../interfaces/Recipe';
@@ -17,10 +16,13 @@ function TipsSection({ tips, setTips }: TipsSectionProps) {
 
   return (
     <div className="bg-surface rounded-2xl shadow-card border border-line p-8 transition-all hover:shadow-soft">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-extrabold font-display text-ink">
-          {t('createRecipe.tips.title')}
-        </h2>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-terracotta-light flex items-center justify-center">
+            <Lightbulb className="w-4 h-4 text-olive" />
+          </div>
+          <h2 className="text-2xl font-extrabold font-display text-ink">{t('createRecipe.tips.title')}</h2>
+        </div>
         <button
           type="button"
           onClick={addTip}
@@ -36,7 +38,10 @@ function TipsSection({ tips, setTips }: TipsSectionProps) {
           items={tips}
           setItems={setTips}
           renderItem={(tip: string, index: number) => (
-            <div className="flex gap-4 items-start">
+            <div className="flex gap-4 items-center">
+              <span className="w-5 h-5 flex-shrink-0 rounded-full bg-terracotta-light text-terracotta text-xs font-bold flex items-center justify-center">
+                {index + 1}
+              </span>
               <div className="flex-1">
                 <input
                   type="text"
@@ -47,14 +52,14 @@ function TipsSection({ tips, setTips }: TipsSectionProps) {
                     setTips(newTips);
                   }}
                   placeholder={t('createRecipe.tips.tipPlaceholder')}
-                  className="w-full min-w-[400px] px-6 py-3 rounded-xl border-2 border-line focus:border-terracotta focus:outline-none transition-colors"
+                  className="w-full px-6 py-3 rounded-xl border-2 border-line focus:border-terracotta focus:outline-none transition-colors"
                 />
               </div>
               {tips.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removeTip(index)}
-                  className="p-2 text-red-500 hover:text-red-600 transition-colors"
+                  className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                 >
                   <Minus className="w-4 h-4" />
                 </button>

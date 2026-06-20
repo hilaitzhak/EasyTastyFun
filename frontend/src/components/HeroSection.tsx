@@ -6,8 +6,13 @@ function HeroSection() {
   const { t } = useTranslation();
   return (
     <div className="relative overflow-hidden bg-gradient-to-br from-butter-light via-paper to-terracotta-light border-b border-line">
-      <div className="container mx-auto px-6 py-24 md:py-32">
-        <div className="max-w-3xl space-y-8">
+      {/* Decorative blobs */}
+      <div className="absolute -top-24 -right-24 w-96 h-96 bg-terracotta-light/40 rounded-full blur-3xl" />
+      <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-butter-light/30 rounded-full blur-3xl" />
+
+      <div className="relative container mx-auto px-6 py-24 md:py-32">
+        <div className="max-w-3xl space-y-8 animate-fade-up">
+          {/* Icons */}
           <div className="flex items-center gap-3 text-terracotta">
             <ChefHat size={28} strokeWidth={1.5} />
             <UtensilsCrossed size={28} strokeWidth={1.5} />
@@ -15,12 +20,19 @@ function HeroSection() {
               EasyTastyFun
             </span>
           </div>
+
+          {/* Heading */}
           <h1 className="font-display text-5xl md:text-7xl font-bold leading-[1.1] text-ink">
             {t('hero.discoverTitle')}
-            <span className="text-terracotta">
-              {" "}{t('hero.cookingTitle')}
+            <span className="block text-terracotta">
+              {t('hero.cookingTitle')}
             </span>
           </h1>
+
+          {/* Subtitle decoration */}
+          <div className="w-16 h-1 rounded-full bg-terracotta" />
+
+          {/* CTA */}
           <div className="flex gap-4 pt-2">
             <Link
               to="/recipes"
@@ -36,6 +48,6 @@ function HeroSection() {
       </div>
     </div>
   );
-};
+}
 
 export default HeroSection;

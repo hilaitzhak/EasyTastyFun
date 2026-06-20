@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Search, Loader, Plus, Filter } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Search, Plus, Filter } from 'lucide-react';
 import { IRecipe } from '../interfaces/Recipe';
 import { recipeApi } from '../api/recipe.api';
 import { categoryApi } from '../api/category.api';
 import RecipeCard from '../components/RecipeCard';
+import RecipeCardSkeleton from '../components/RecipeCardSkeleton';
 import Pagination from '../components/Pagination';
 import { useTranslation } from 'react-i18next';
 
@@ -12,12 +13,13 @@ function AllRecipes() {
   const ITEMS_PER_PAGE = 15;
 
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
-  const [selectedCategory, setSelectedCategory] = useState({ id: 'all', label: t('nav.all') });
+  const [searchTerm, setSearchTerm] = useState<string>(searchParams.get('search') || '');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchParams.get('search') || '');
+  const [selectedCategory, setSelectedCategory] = useState({ id: searchParams.get('category') || 'all', label: t('nav.all') });
   const [allRecipes, setAllRecipes] = useState<IRecipe[]>([]);
   const [categories, setCategories] = useState<Array<{ id: string, label: string }>>([{ id: 'all', label: t('nav.all') }]);
   const [backendTotalPages, setBackendTotalPages] = useState<number>(0);
@@ -27,12 +29,14 @@ function AllRecipes() {
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
+      // sync URL
+      const params: Record<string, string> = {};
+      if (searchTerm) params.search = searchTerm;
+      if (selectedCategory.id !== 'all') params.category = selectedCategory.id;
+      setSearchParams(params, { replace: true });
     }, 500);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchTerm]);
+    return () => clearTimeout(handler);
+  }, [searchTerm, selectedCategory]);
 
   // Fetch categories only once
   useEffect(() => {
@@ -142,11 +146,8 @@ function AllRecipes() {
 
         {/* Content Section */}
         {loading ? (
-          <div className="flex justify-center items-center min-h-[400px]">
-            <div className="flex items-center gap-3 text-terracotta">
-              <Loader className="w-6 h-6 animate-spin" />
-              <span className="text-lg">{t('common.loading')}</span>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+            {Array.from({ length: 10 }).map((_, i) => <RecipeCardSkeleton key={i} />)}
           </div>
         ) : error ? (
           <div className="text-center py-12 bg-surface rounded-xl border border-line shadow-soft">

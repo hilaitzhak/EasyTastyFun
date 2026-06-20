@@ -92,6 +92,7 @@ export interface RecipeFormProps {
   loading: boolean;
   isEdit?: boolean;
   initialData?: any;
+  basicInfoKey?: number;
   ingredientGroups: IngredientGroup[];
   setIngredientGroups: React.Dispatch<React.SetStateAction<IngredientGroup[]>>;
   instructionGroups: InstructionGroup[];
@@ -133,6 +134,7 @@ export interface BasicInfoSectionProps {
   onSubCategoryChange: (subCategoryId: string) => void;
   selectedCategory: string;
   selectedSubCategory: string;
+  scanKey?: number;
 }
 
 export interface ImageUploadSectionProps {

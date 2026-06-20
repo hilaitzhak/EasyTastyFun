@@ -33,6 +33,7 @@ export class RecipeRouter {
         // this.router.route('/recipes/add-recipe').get(authMiddleware, this.chatController.getChatById.bind(this.chatController)); // Get specific chat
         this.router.get('/recipes/recent', this.recipeController.getRecentRecipes.bind(this.recipeController));
         this.router.post('/recipes/check-similar', this.recipeController.checkSimilarRecipes.bind(this.recipeController));
+        this.router.post('/recipes/extract-from-image', this.recipeController.extractFromImage.bind(this.recipeController));
         this.router.get('/recipes/:id', this.recipeController.getRecipeById.bind(this.recipeController));
         this.router.delete('/recipes/:id', authMiddleware, this.recipeController.deleteRecipe.bind(this.recipeController));
         this.router.put('/recipes/:id', authMiddleware, this.recipeController.updateRecipe.bind(this.recipeController));

@@ -77,7 +77,26 @@
     "deleteFailed": "Failed to delete recipe",
     "totalTimeInMin": "{{time}} mins",
     "servingsCount": "{{count}} servings",
-    "ingredientAmount": "{{amount}} {{unit}}"
+    "ingredientAmount": "{{amount}} {{unit}}",
+    "share": "Share",
+    "linkCopied": "Link copied!",
+    "relatedRecipes": "More from this category",
+    "deleting": "Deleting...",
+    "deleteSuccess": "Recipe deleted"
+  },
+  "errors": {
+    "network": "No internet connection. Please check your connection and try again.",
+    "badRequest": "Something looks wrong with the data. Please review and try again.",
+    "unauthorized": "Your session has expired. Please log in again.",
+    "forbidden": "You don't have permission to do this.",
+    "notFound": "The item you're looking for no longer exists.",
+    "fileTooLarge": "The file is too large. Please choose a smaller one.",
+    "server": "Something went wrong on our end. Please try again in a moment.",
+    "generic": "Something went wrong. Please try again.",
+    "createRecipe": "Failed to create the recipe. Please try again.",
+    "saveRecipe": "Failed to save changes. Please try again.",
+    "loadRecipe": "Failed to load the recipe. Please try again.",
+    "deleteRecipe": "Failed to delete the recipe. Please try again."
   },
   "common": {
     "loading": "Loading...",
@@ -189,11 +208,28 @@
       "creating": "Creating Recipe...",
       "create": "Create Recipe"
     },
+    "scan": {
+      "title": "Scan a Recipe Photo",
+      "description": "Take a photo or upload an image of a recipe and we'll fill in the form automatically.",
+      "button": "Scan Recipe",
+      "scanning": "Reading recipe...",
+      "success": "Recipe scanned! Review the fields and press Create.",
+      "successWithMissing": "Recipe scanned! Missing fields (add manually): {{fields}}.",
+      "error": "Could not read the recipe from this image. Please try a clearer photo.",
+      "fields": {
+        "name": "Recipe Name",
+        "prepTime": "Prep Time",
+        "cookTime": "Cook Time",
+        "servings": "Servings",
+        "ingredients": "Ingredients",
+        "instructions": "Instructions"
+      }
+    },
     "similarRecipesFound": "Found {{count}} similar recipes: {{recipes}}. Would you like to continue creating this recipe?",
     "errors": {
-      "serverError": "Server Error: {{message}}",
-      "connectionError": "No response from server. Please check your connection.",
-      "createError": "Error creating recipe: {{message}}"
+      "serverError": "Something went wrong on our end. Please try again.",
+      "connectionError": "No internet connection. Please check your connection.",
+      "createError": "Failed to create the recipe. Please try again."
     }
   },
   "editRecipe": {

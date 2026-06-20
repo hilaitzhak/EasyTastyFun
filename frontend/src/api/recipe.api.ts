@@ -16,5 +16,6 @@ export const recipeApi = {
     getRecipeById: (recipeId: string) => axios.get(`${API_BACKEND_URL}/recipes/${recipeId}`),
     update: (id: string, data: any, config = {}) => axios.put(`${API_BACKEND_URL}/recipes/${id}`, data, config),
     delete: (id: string, config = {}) => axios.delete(`${API_BACKEND_URL}/recipes/${id}`, config),
-    checkSimilarRecipes: (ingredients: string[]) => axios.post(`${API_BACKEND_URL}/recipes/check-similar`, ingredients)
+    checkSimilarRecipes: (ingredients: string[]) => axios.post(`${API_BACKEND_URL}/recipes/check-similar`, ingredients),
+    extractFromImage: (base64Image: string) => axios.post(`${API_BACKEND_URL}/recipes/extract-from-image`, { image: base64Image })
 };

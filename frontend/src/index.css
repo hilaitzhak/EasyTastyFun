@@ -2,15 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  margin: 0;
-  /* Cozy Pantry — Nunito (EN) / Rubik (HE) for body */
-  font-family: 'Nunito', 'Rubik', system-ui, -apple-system, 'Segoe UI',
-    'Roboto', 'Helvetica Neue', sans-serif;
-  color: #3D3833;
-  background-color: #FBF7F0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    /* Cozy Pantry — Nunito (EN) / Rubik (HE) for body */
+    font-family: 'Nunito', 'Rubik', system-ui, -apple-system, 'Segoe UI',
+      'Roboto', 'Helvetica Neue', sans-serif;
+    color: #3D3833;
+    background-color: #FBF7F0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Custom scrollbar — Cozy Pantry */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #F6E7DF;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #C97B5A;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #A85F40;
+  }
 }
 
 /* Friendly rounded headings — Quicksand (EN) / Rubik (HE) */
@@ -25,16 +53,4 @@ body {
 }
 [dir='rtl'] .font-display {
   font-family: 'Rubik', 'Quicksand', system-ui, sans-serif;
-}
-
-body, html {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  overflow-x: hidden;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
 }

@@ -40,25 +40,24 @@ function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) 
     };
 
     if (totalPages <= 1) {
-        console.log('Pagination hidden because totalPages <= 1');
         return null;
     }
     return (
-        <div className="flex justify-center items-center gap-2 mt-8">
+        <div className="flex justify-center items-center gap-1.5 mt-10">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
             className="px-4 py-2 rounded-lg bg-surface border border-line text-ink-soft disabled:opacity-50 disabled:cursor-not-allowed hover:border-terracotta hover:text-terracotta-dark transition-colors"
           >
-            {isRTL ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
+            {isRTL ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
           </button>
-    
-          <div className="flex gap-2">
+
+          <div className="flex gap-1.5">
             {getPageNumbers().map((pageNumber) => (
               <button
                 key={pageNumber}
                 onClick={() => handlePageChange(pageNumber)}
-                className={`px-4 py-2 rounded-lg border ${
+                className={`w-9 h-9 rounded-xl text-sm font-medium border transition-all ${
                   currentPage === pageNumber
                     ? 'bg-terracotta text-white border-terracotta'
                     : 'bg-surface border-line text-ink-soft hover:border-terracotta hover:text-terracotta-dark'
@@ -68,13 +67,13 @@ function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) 
               </button>
             ))}
           </div>
-    
+
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
             className="px-4 py-2 rounded-lg bg-surface border border-line text-ink-soft disabled:opacity-50 disabled:cursor-not-allowed hover:border-terracotta hover:text-terracotta-dark transition-colors"
           >
-            {isRTL ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
+            {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
           </button>
         </div>
     );

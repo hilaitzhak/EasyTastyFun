@@ -2,6 +2,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, ChefHat } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { getApiErrorKey } from '../utils/apiError';
 import { recipeApi } from '../api/recipe.api';
 import { useTranslation } from 'react-i18next';
 import { IngredientGroup, InstructionGroup, RecipeImage } from '../interfaces/Recipe';
@@ -28,7 +30,18 @@ const EditRecipe = () => {
   const [ingredientGroups, setIngredientGroups] = useState<IngredientGroup[]>([]);
   const [instructionGroups, setInstructionGroups] = useState<InstructionGroup[]>([]);
   const [tips, setTips] = useState<string[]>(['']);
+  const [isDirty, setIsDirty] = useState(false);
   const auth = useContext(AuthContext);
+
+  useEffect(() => {
+    if (!isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [isDirty]);
+
+  // Mark dirty when editable fields change (skip on initial load)
+  useEffect(() => { if (recipe) setIsDirty(true); }, [images, ingredientGroups, instructionGroups, tips]);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -62,9 +75,9 @@ const EditRecipe = () => {
         setSelectedCategory(recipeData.category);
         setSelectedSubCategory(recipeData.subcategory);
         setTips(recipeData.tips || []);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching recipe:', error);
-        alert(t('editRecipe.loadError'));
+        toast.error(t(getApiErrorKey(error)));
         navigate('/recipes');
       } finally {
         setLoading(false);
@@ -99,10 +112,12 @@ const EditRecipe = () => {
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId);
     setSelectedSubCategory('');
+    setIsDirty(true);
   };
 
   const handleSubCategoryChange = (subCategoryId: string) => {
     setSelectedSubCategory(subCategoryId);
+    setIsDirty(true);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -164,10 +179,11 @@ const EditRecipe = () => {
           Authorization: `Bearer ${auth?.token}`,
         },
       });
+      toast.success(t('editRecipe.updateSuccess'));
       navigate(`/recipe/${id}`);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating recipe:', error);
-      alert('Failed to update recipe');
+      toast.error(t(getApiErrorKey(error)));
     } finally {
       setSaving(false);
     }
@@ -195,7 +211,7 @@ const EditRecipe = () => {
     <div className="min-h-screen bg-paper">
       {/* Modern Header with Glass Effect */}
       <div className="sticky top-0 z-10 backdrop-blur-lg bg-surface border-b border-line shadow-soft">
-      <div className="max-w-8xl mx-auto px-6 w-full py-6">
+        <div className="max-w-8xl mx-auto px-6 w-full py-6">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
@@ -256,7 +272,7 @@ const EditRecipe = () => {
                 tips={tips}
                 setTips={setTips}
                 video={video}
-                setVideo={setVideo} 
+                setVideo={setVideo}
               />
             </div>
           </div>
