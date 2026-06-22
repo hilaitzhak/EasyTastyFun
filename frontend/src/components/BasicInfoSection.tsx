@@ -34,7 +34,7 @@ function BasicInfoSection({ initialData, categories, subcategories, onCategoryCh
           {[
             { name: 'prepTime', label: t('recipe.prepTime'), value: initialData?.prepTime, unit: 'min' },
             { name: 'cookTime', label: t('recipe.cookTime'), value: initialData?.cookTime, unit: 'min' },
-            { name: 'servings', label: t('recipe.servings'), value: initialData?.servings, unit: '' }
+            { name: 'servings', label: t('recipe.servingsLabel'), value: initialData?.servings, unit: '' }
           ].map(({ name, label, value, unit }) => (
             <div key={name}>
               <label className={labelClass}>{label}</label>

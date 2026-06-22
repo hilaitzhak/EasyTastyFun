@@ -12,6 +12,7 @@ import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
 import { AuthProvider } from './context/AuthContext';
 import { FavoritesProvider } from './context/FavoritesContext';
+import { NotesProvider } from './context/NotesContext';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -42,8 +43,10 @@ const App = () => {
     <GoogleOAuthProvider clientId="1009677730362-r1ij07teaec85blr84pem0r1haud1i1p.apps.googleusercontent.com">
       <AuthProvider>
         <FavoritesProvider>
-          <Toaster position="top-center" toastOptions={{ duration: 4000, style: { borderRadius: '12px', fontSize: '14px' } }} />
-          <RouterProvider router={router} />
+          <NotesProvider>
+            <Toaster position="top-center" toastOptions={{ duration: 4000, style: { borderRadius: '12px', fontSize: '14px' } }} />
+            <RouterProvider router={router} />
+          </NotesProvider>
         </FavoritesProvider>
       </AuthProvider>
     </GoogleOAuthProvider>

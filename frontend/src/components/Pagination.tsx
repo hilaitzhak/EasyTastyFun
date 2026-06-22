@@ -47,6 +47,8 @@ function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) 
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
+            data-tooltip={i18n.t('common.previous')}
+            aria-label={i18n.t('common.previous')}
             className="px-4 py-2 rounded-lg bg-surface border border-line text-ink-soft disabled:opacity-50 disabled:cursor-not-allowed hover:border-terracotta hover:text-terracotta-dark transition-colors"
           >
             {isRTL ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
@@ -71,6 +73,8 @@ function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) 
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
+            data-tooltip={i18n.t('common.next')}
+            aria-label={i18n.t('common.next')}
             className="px-4 py-2 rounded-lg bg-surface border border-line text-ink-soft disabled:opacity-50 disabled:cursor-not-allowed hover:border-terracotta hover:text-terracotta-dark transition-colors"
           >
             {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}

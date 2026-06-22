@@ -1,9 +1,11 @@
 import { useContext, useEffect, useRef, useState } from 'react';
-import { Globe, Menu, X, ChevronDown, UserCircle, LogOut, Home, Search, WheatOff, Sparkles, Heart, ChefHat } from 'lucide-react';
+import { Globe, Menu, X, ChevronDown, UserCircle, LogOut, Home, Search, WheatOff, Sparkles, Heart, ChefHat, Dices, Sun, Moon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { Category, SubCategory } from '../interfaces/Category';
 import { categoryApi } from '../api/category.api';
+import { recipeApi } from '../api/recipe.api';
+import toast from 'react-hot-toast';
 import { AuthContext } from '../context/AuthContext';
 
 // Cross-cutting "special" categories (dietary / holiday) shown as a distinct group in the nav
@@ -19,6 +21,7 @@ function Navbar() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const { t, i18n } = useTranslation();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -79,6 +82,15 @@ function Navbar() {
     fetchCategories();
   }, []);
 
+  const toggleTheme = () => {
+    setIsDark((prev) => {
+      const next = !prev;
+      document.documentElement.classList.toggle('dark', next);
+      localStorage.setItem('theme', next ? 'dark' : 'light');
+      return next;
+    });
+  };
+
   const toggleLanguage = () => {
     const newLang = i18n.language === 'en' ? 'he' : 'en';
     i18n.changeLanguage(newLang);
@@ -88,6 +100,16 @@ function Navbar() {
   // Regular categories collapse into the "Categories" mega-menu; specials stay inline
   const regularCategories = categories.filter((c) => !SPECIAL_CATEGORY_KEYS.includes(c.nameKey));
   const specialCategories = categories.filter((c) => SPECIAL_CATEGORY_KEYS.includes(c.nameKey));
+
+  const goToRandomRecipe = async () => {
+    try {
+      const { data } = await recipeApi.getRandom();
+      if (data?.recipeId) navigate(`/recipe/${data.recipeId}`);
+      else toast.error(t('latestRecipes.noRecipes'));
+    } catch {
+      toast.error(t('common.error'));
+    }
+  };
 
   const openSearch = () => {
     setIsSearchOpen(true);
@@ -135,6 +157,13 @@ function Navbar() {
               <ChefHat className="w-4 h-4 text-terracotta" />
               {t('nav.whatCanICook')}
             </Link>
+            <button
+              onClick={goToRandomRecipe}
+              className="flex items-center gap-1.5 font-medium text-ink-soft text-sm px-3 py-2 rounded-md transition-colors duration-200 hover:bg-terracotta-light hover:text-terracotta-dark whitespace-nowrap"
+            >
+              <Dices className="w-4 h-4 text-terracotta" />
+              {t('nav.surpriseMe')}
+            </button>
             <Link
               to="/favorites"
               className="flex items-center gap-1.5 font-medium text-ink-soft text-sm px-3 py-2 rounded-md transition-colors duration-200 hover:bg-terracotta-light hover:text-terracotta-dark whitespace-nowrap"
@@ -220,6 +249,8 @@ function Navbar() {
               ) : (
                 <button
                   onClick={openSearch}
+                  data-tooltip={t('nav.search')}
+                  aria-label={t('nav.search')}
                   className="flex items-center gap-2 text-ink-soft px-3 py-2 rounded-full transition-colors duration-200 hover:bg-terracotta-light hover:text-terracotta-dark"
                 >
                   <Search className="w-5 h-5" />
@@ -228,7 +259,18 @@ function Navbar() {
             </div>
 
             <button
+              onClick={toggleTheme}
+              aria-label={t('nav.toggleTheme')}
+              data-tooltip={t('nav.toggleTheme')}
+              className="flex items-center text-ink-soft p-2 rounded-full transition-colors duration-200 hover:bg-terracotta-light hover:text-terracotta-dark"
+            >
+              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+
+            <button
               onClick={toggleLanguage}
+              data-tooltip={t('nav.switchLanguage')}
+              aria-label={t('nav.switchLanguage')}
               className="flex items-center gap-2 text-ink-soft px-4 py-2 rounded-full transition-colors duration-200 hover:bg-terracotta-light hover:text-terracotta-dark"
             >
               <Globe className="w-5 h-5" />
@@ -242,6 +284,8 @@ function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  data-tooltip={t('nav.account')}
+                  aria-label={t('nav.account')}
                   className="flex items-center gap-2 text-ink-soft px-4 py-2 rounded-full transition-colors duration-200 hover:bg-terracotta-light hover:text-terracotta-dark"
                 >
                   <UserCircle className="w-6 h-6" />
@@ -268,6 +312,8 @@ function Navbar() {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
+              data-tooltip={t('nav.menu')}
+              aria-label={t('nav.menu')}
               className="md:hidden p-2 rounded-md transition-colors duration-200 hover:bg-terracotta-light text-ink-soft"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -292,6 +338,13 @@ function Navbar() {
               <ChefHat className="w-4 h-4 text-terracotta" />
               {t('nav.whatCanICook')}
             </Link>
+            <button
+              onClick={() => { setIsOpen(false); goToRandomRecipe(); }}
+              className="flex items-center gap-2 w-full py-2 px-4 text-ink-soft hover:bg-terracotta-light hover:text-terracotta-dark rounded-lg transition-colors duration-200"
+            >
+              <Dices className="w-4 h-4 text-terracotta" />
+              {t('nav.surpriseMe')}
+            </button>
             <Link
               to="/favorites"
               className="flex items-center gap-2 py-2 px-4 text-ink-soft hover:bg-terracotta-light hover:text-terracotta-dark rounded-lg transition-colors duration-200"

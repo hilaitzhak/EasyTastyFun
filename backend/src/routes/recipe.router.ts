@@ -36,6 +36,11 @@ export class RecipeRouter {
         this.router.post('/recipes/extract-from-image', this.recipeController.extractFromImage.bind(this.recipeController));
         this.router.post('/recipes/substitutions', this.recipeController.getSubstitutions.bind(this.recipeController));
         this.router.post('/recipes/what-can-i-cook', this.recipeController.whatCanICook.bind(this.recipeController));
+        this.router.get('/recipes/random', this.recipeController.getRandomRecipe.bind(this.recipeController));
+        this.router.post('/recipes/generate', this.recipeController.generateRecipe.bind(this.recipeController));
+        this.router.post('/recipes/ask', this.recipeController.askAboutRecipe.bind(this.recipeController));
+        this.router.post('/recipes/pairing', this.recipeController.getPairing.bind(this.recipeController));
+        this.router.post('/recipes/leftovers', this.recipeController.leftoverIdeas.bind(this.recipeController));
         this.router.get('/recipes/:id', this.recipeController.getRecipeById.bind(this.recipeController));
         this.router.delete('/recipes/:id', authMiddleware, this.recipeController.deleteRecipe.bind(this.recipeController));
         this.router.put('/recipes/:id', authMiddleware, this.recipeController.updateRecipe.bind(this.recipeController));

@@ -1,44 +1,41 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
     extend: {
       // ── Cozy Pantry design system ──────────────────────────────
+      // Tokens are CSS variables (RGB triplets) so a `.dark` class can swap the
+      // whole palette without touching components. Alpha utilities (bg-paper/90)
+      // keep working through the <alpha-value> placeholder.
       colors: {
-        // Page & surfaces — warm cream
-        paper: '#FBF7F0',     // page background (cream)
-        line: '#EBE3D8',      // hairline borders / dividers
-        // surface kept as an object so both `bg-surface` (cards) and the
-        // remote's `surface-muted` / `surface-warm` utilities keep working
+        paper: 'rgb(var(--c-paper) / <alpha-value>)',
+        line: 'rgb(var(--c-line) / <alpha-value>)',
         surface: {
-          DEFAULT: '#FFFDF9', // cards / panels (warm white)
-          muted:   '#fef3e2',
-          warm:    '#fde8c8',
+          DEFAULT: 'rgb(var(--c-surface) / <alpha-value>)',
+          muted:   'rgb(var(--c-surface-muted) / <alpha-value>)',
+          warm:    'rgb(var(--c-surface-warm) / <alpha-value>)',
         },
-        // Text — warm browns, not cold grays
         ink: {
-          DEFAULT: '#3D3833', // primary text / headings
-          soft: '#6F665C',    // secondary text
-          muted: '#A39A8C',   // captions / meta
+          DEFAULT: 'rgb(var(--c-ink) / <alpha-value>)',
+          soft: 'rgb(var(--c-ink-soft) / <alpha-value>)',
+          muted: 'rgb(var(--c-ink-muted) / <alpha-value>)',
         },
-        // Primary accent — terracotta
         terracotta: {
-          light: '#F6E7DF',
-          DEFAULT: '#C97B5A',
-          dark: '#A85F40',
+          light: 'rgb(var(--c-terracotta-light) / <alpha-value>)',
+          DEFAULT: 'rgb(var(--c-terracotta) / <alpha-value>)',
+          dark: 'rgb(var(--c-terracotta-dark) / <alpha-value>)',
         },
-        // Secondary accent — olive
         olive: {
-          light: '#EEF0E6',
-          DEFAULT: '#7C8B5B',
-          dark: '#61703F',
+          light: 'rgb(var(--c-olive-light) / <alpha-value>)',
+          DEFAULT: 'rgb(var(--c-olive) / <alpha-value>)',
+          dark: 'rgb(var(--c-olive-dark) / <alpha-value>)',
         },
-        // Warm highlight — butter
         butter: {
-          light: '#FCF1CF',
-          DEFAULT: '#F4D35E',
+          light: 'rgb(var(--c-butter-light) / <alpha-value>)',
+          DEFAULT: 'rgb(var(--c-butter) / <alpha-value>)',
         },
         // Legacy tokens retained so components from origin/master stay styled
         primary: {

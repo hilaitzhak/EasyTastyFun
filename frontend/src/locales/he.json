@@ -9,6 +9,12 @@
     "allRecipes": "כל המתכונים",
     "favorites": "מועדפים",
     "whatCanICook": "מה אפשר לבשל?",
+    "surpriseMe": "הפתע אותי",
+    "toggleTheme": "מצב כהה",
+    "switchLanguage": "החלף שפה",
+    "search": "חיפוש",
+    "menu": "תפריט",
+    "account": "חשבון",
     "categories": "קטגוריות",
     "all": "הכל",
     "createRecipe": "צור מתכון",
@@ -67,6 +73,19 @@
     "substitutesFor": "תחליפים ל{{ingredient}}",
     "noSubstitutions": "לא נמצאו תחליפים.",
     "substitutionsError": "לא ניתן לטעון תחליפים. נסה שוב.",
+    "print": "הדפס",
+    "serves": "מספיק ל-{{count}} סועדים",
+    "forHowMany": "לכמה אנשים?",
+    "servingsLabel": "מנות (אנשים)",
+    "scanToOpen": "סרוק כדי לפתוח",
+    "pairing": "התאמת משקה",
+    "pairingTitle": "משקאות שמתאימים",
+    "pairingError": "לא ניתן לטעון התאמות. נסה שוב.",
+    "myNotes": "ההערות שלי",
+    "notesPlaceholder": "הוסף הערות משלך על המתכון...",
+    "saveNote": "שמור הערה",
+    "noteSaved": "ההערה נשמרה",
+    "noteError": "לא ניתן לשמור את ההערה. נסה שוב.",
     "ingredients": "מצרכים",
     "instructions": "הוראות הכנה",
     "servings": "מנות",
@@ -95,6 +114,48 @@
   "favorites": {
     "empty": "עדיין לא שמרת מועדפים. לחץ על הלב במתכון כדי לשמור אותו כאן."
   },
+  "recentlyViewed": {
+    "title": "נצפו לאחרונה"
+  },
+  "difficulty": {
+    "easy": "קל",
+    "medium": "בינוני",
+    "hard": "מאתגר"
+  },
+  "converter": {
+    "title": "ממיר יחידות",
+    "ingredient": "מרכיב",
+    "note": "המרות בישול משוערות.",
+    "densityNote": "המרת נפח↔משקל מבוססת על צפיפות של {{ingredient}}. משוער.",
+    "ingredients": {
+      "water": "מים",
+      "milk": "חלב",
+      "oil": "שמן",
+      "butter": "חמאה (מומסת)",
+      "flour": "קמח",
+      "sugar": "סוכר",
+      "brownSugar": "סוכר חום",
+      "powderedSugar": "אבקת סוכר",
+      "honey": "דבש",
+      "salt": "מלח",
+      "cocoa": "אבקת קקאו",
+      "rice": "אורז (לא מבושל)"
+    }
+  },
+  "panScaler": {
+    "title": "גודל תבנית",
+    "round": "עגולה",
+    "rect": "מלבנית",
+    "from": "תבנית המתכון",
+    "to": "התבנית שלי",
+    "factor": "הכמויות שונו ב-×{{factor}}"
+  },
+  "chat": {
+    "title": "שאל את השף",
+    "intro": "שאל אותי כל דבר על \"{{recipe}}\" — תחליפים, הכפלת כמויות, טכניקות...",
+    "placeholder": "הקלד את השאלה שלך...",
+    "error": "מצטערים, משהו השתבש. נסה שוב."
+  },
   "whatCanICook": {
     "title": "מה אפשר לבשל?",
     "subtitle": "ספר לנו מה יש לך ונמצא מתכונים שתוכל להכין.",
@@ -104,7 +165,10 @@
     "searching": "מחפש...",
     "noResults": "לא נמצאו מתכונים מתאימים. נסה להוסיף עוד מצרכים.",
     "resultsTitle": "{{count}} מתכונים שאפשר להכין",
-    "missing": "חסר"
+    "missing": "חסר",
+    "getIdeas": "תן לי רעיונות",
+    "thinking": "חושב...",
+    "ideasTitle": "רעיונות מהמצרכים שלך"
   },
   "errors": {
     "network": "אין חיבור לאינטרנט. בדוק את החיבור ונסה שוב.",
@@ -130,6 +194,11 @@
     "yes": "כן",
     "no": "לא",
     "noImage": "אין תמונה זמינה",
+    "close": "סגור",
+    "previous": "הקודם",
+    "next": "הבא",
+    "increase": "הוסף",
+    "decrease": "הפחת",
     "unsavedChanges": "יש לך שינויים שלא נשמרו. האם אתה בטוח שברצונך לצאת? השינויים שלך יאבדו.",
     "leave": "צא",
     "stay": "הישאר"
@@ -251,6 +320,15 @@
         "ingredients": "מצרכים",
         "instructions": "הוראות הכנה"
       }
+    },
+    "generate": {
+      "title": "יצירה בעזרת AI",
+      "description": "תאר מנה ואנחנו נכתוב עבורך את המתכון המלא לבדיקה.",
+      "placeholder": "למשל פסטה מהירה ללא חלב עם פטריות",
+      "button": "צור",
+      "generating": "כותב מתכון...",
+      "success": "המתכון נוצר! בדוק את השדות ולחץ על צור.",
+      "error": "לא ניתן ליצור מתכון. נסה שוב."
     },
     "similarRecipesFound": "נמצאו {{count}} מתכונים דומים : {{recipes}}. האם תרצה להמשיך ליצור את המתכון הזה?",
     "errors": {

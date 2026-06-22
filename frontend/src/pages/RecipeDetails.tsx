@@ -1,7 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Clock, Users, Edit, Trash2, ShoppingBasket, ListOrdered, Lightbulb, Timer, UtensilsCrossed, Share2, Minus, Plus, Check, Repeat, X, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Clock, Users, Edit, Trash2, ShoppingBasket, ListOrdered, Lightbulb, Timer, UtensilsCrossed, Share2, Minus, Plus, Check, Repeat, X, Sparkles, Printer, StickyNote, Wine, Calculator, Ruler } from 'lucide-react';
 import { recipeApi } from '../api/recipe.api';
+import { userApi } from '../api/user.api';
 import i18n from '../i18n/i18n';
 import { useTranslation } from 'react-i18next';
 import { Ingredient } from '../interfaces/Recipe';
@@ -12,6 +13,13 @@ import { AuthContext } from '../context/AuthContext';
 import ConfirmModal from '../components/ConfirmModal';
 import RecipeCard from '../components/RecipeCard';
 import FavoriteButton from '../components/FavoriteButton';
+import DifficultyBadge from '../components/DifficultyBadge';
+import ChatAssistant from '../components/ChatAssistant';
+import UnitConverter from '../components/UnitConverter';
+import PanScaler from '../components/PanScaler';
+import { addRecentlyViewed } from '../utils/recentlyViewed';
+import { NotesContext } from '../context/NotesContext';
+import { QRCodeSVG } from 'qrcode.react';
 import toast from 'react-hot-toast';
 
 interface Substitution { name: string; ratio: string; note: string; }
@@ -34,8 +42,18 @@ function RecipeDetails() {
   const [subFor, setSubFor] = useState<string | null>(null);
   const [substitutions, setSubstitutions] = useState<Substitution[]>([]);
   const [subLoading, setSubLoading] = useState(false);
+  const [note, setNote] = useState('');
+  const [savedNote, setSavedNote] = useState('');
+  const [noteSaving, setNoteSaving] = useState(false);
+  const [pairingOpen, setPairingOpen] = useState(false);
+  const [pairings, setPairings] = useState<{ name: string; note: string }[]>([]);
+  const [pairingLoading, setPairingLoading] = useState(false);
+  const [converterOpen, setConverterOpen] = useState(false);
+  const [showPanScaler, setShowPanScaler] = useState(false);
+  const [panFactor, setPanFactor] = useState(1);
   const isRTL = i18n.language === 'he';
   const auth = useContext(AuthContext);
+  const notes = useContext(NotesContext);
 
   const backPath: string = (location.state as any)?.from || '/recipes';
   const backLabel: string = (location.state as any)?.fromLabel || t('nav.backToRecipes');
@@ -47,6 +65,7 @@ function RecipeDetails() {
         const recipeData = response.data;
         setRecipe(recipeData);
         setServings(recipeData.servings || 1);
+        addRecentlyViewed(recipeData);
 
         if (recipeData.category) {
           const categoryResponse = await categoryApi.getCategoryById(recipeData.category);
@@ -73,6 +92,51 @@ function RecipeDetails() {
 
     fetchRecipe();
   }, [id]);
+
+  // Load the user's personal note for this recipe.
+  useEffect(() => {
+    if (!auth?.token || !id) return;
+    userApi
+      .getNote(id, auth.token)
+      .then(({ data }) => { setNote(data.note || ''); setSavedNote(data.note || ''); })
+      .catch(() => { /* ignore */ });
+  }, [id, auth?.token]);
+
+  const handlePrint = () => window.print();
+
+  const openPairing = async () => {
+    setPairingOpen(true);
+    setPairings([]);
+    setPairingLoading(true);
+    try {
+      const flatIngredients = (recipe.ingredientGroups || [])
+        .flatMap((g: any) => (g.ingredients || []).map((i: any) => i.name))
+        .filter(Boolean)
+        .join(', ');
+      const { data } = await recipeApi.getPairing(recipe.name, flatIngredients, i18n.language);
+      setPairings(data.pairings || []);
+    } catch {
+      toast.error(t('recipe.pairingError'));
+      setPairingOpen(false);
+    } finally {
+      setPairingLoading(false);
+    }
+  };
+
+  const saveNote = async () => {
+    if (!auth?.token || !id) return;
+    setNoteSaving(true);
+    try {
+      await userApi.setNote(id, note, auth.token);
+      setSavedNote(note);
+      notes?.markNote(id, !!note.trim());
+      toast.success(t('recipe.noteSaved'));
+    } catch {
+      toast.error(t('recipe.noteError'));
+    } finally {
+      setNoteSaving(false);
+    }
+  };
 
   const handleDelete = async () => {
     setShowDeleteConfirm(false);
@@ -111,7 +175,7 @@ function RecipeDetails() {
     const original = recipe?.servings || 1;
     const num = parseFloat(amount);
     if (isNaN(num)) return amount;
-    const scaled = (num / original) * servings;
+    const scaled = (num / original) * servings * panFactor;
     return Number.isInteger(scaled) ? String(scaled) : scaled.toFixed(1).replace(/\.0$/, '');
   };
 
@@ -166,7 +230,7 @@ function RecipeDetails() {
     <div className="min-h-screen bg-paper">
 
       {/* ── Hero ─────────────────────────────────────────── */}
-      <div className="relative h-[480px] overflow-hidden">
+      <div className="relative h-[480px] overflow-hidden print:hidden">
         {recipe.images?.[0]?.link ? (
           <img src={recipe.images[0].link} alt={recipe.name} className="w-full h-full object-cover" />
         ) : (
@@ -200,6 +264,20 @@ function RecipeDetails() {
               {t('recipe.share')}
             </button>
             <button
+              onClick={handlePrint}
+              className="flex items-center gap-1.5 text-sm text-white/90 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full transition-all"
+            >
+              <Printer className="w-4 h-4" />
+              {t('recipe.print')}
+            </button>
+            <button
+              onClick={openPairing}
+              className="flex items-center gap-1.5 text-sm text-white/90 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full transition-all"
+            >
+              <Wine className="w-4 h-4" />
+              {t('recipe.pairing')}
+            </button>
+            <button
               onClick={() => navigate(`/recipe/edit/${id}`)}
               className="flex items-center gap-1.5 text-sm text-white/90 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full transition-all"
             >
@@ -230,6 +308,7 @@ function RecipeDetails() {
                   {t(subcategory.nameKey)}
                 </span>
               )}
+              <DifficultyBadge recipe={recipe} />
             </div>
 
             <h1 className="font-display text-3xl md:text-5xl font-bold text-white leading-tight mb-4">{recipe.name}</h1>
@@ -250,7 +329,7 @@ function RecipeDetails() {
               {recipe.servings > 0 && (
                 <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm">
                   <Users className="w-4 h-4" />
-                  <span>{t('recipe.servingsCount', { count: recipe.servings })}</span>
+                  <span>{t('recipe.serves', { count: recipe.servings })}</span>
                 </div>
               )}
             </div>
@@ -261,9 +340,24 @@ function RecipeDetails() {
       {/* ── Content ──────────────────────────────────────── */}
       <div className="max-w-4xl mx-auto px-6 py-8 space-y-6">
 
+        {/* Print-only title (the image hero is hidden when printing) */}
+        <div className="hidden print:flex items-start justify-between gap-4">
+          <div>
+            <h1 className="font-display text-3xl font-bold text-ink mb-1">{recipe.name}</h1>
+            <p className="text-sm text-ink-soft">
+              {[category && t(category.nameKey), subcategory && t(subcategory.nameKey), totalTime > 0 && t('recipe.totalTimeInMin', { time: totalTime }), recipe.servings > 0 && t('recipe.serves', { count: recipe.servings })].filter(Boolean).join(' · ')}
+            </p>
+          </div>
+          <div className="text-center flex-shrink-0">
+            <QRCodeSVG value={typeof window !== 'undefined' ? window.location.href : ''} size={84} />
+            <p className="text-[10px] text-ink-muted mt-1">{t('recipe.scanToOpen')}</p>
+          </div>
+        </div>
+
+
         {/* Image thumbnails */}
         {recipe.images && recipe.images.length > 1 && (
-          <div className="flex gap-3 overflow-x-auto pb-1">
+          <div className="flex gap-3 overflow-x-auto pb-1 print:hidden">
             {recipe.images.map((img: any, idx: number) => (
               <button
                 key={idx}
@@ -280,7 +374,7 @@ function RecipeDetails() {
 
         {/* Video */}
         {recipe.video && (
-          <div className="bg-surface rounded-2xl border border-line shadow-card p-6">
+          <div className="bg-surface rounded-2xl border border-line shadow-card p-6 print:hidden">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-9 h-9 rounded-xl bg-terracotta-light flex items-center justify-center">
                 <span className="text-terracotta text-sm">▶</span>
@@ -307,10 +401,12 @@ function RecipeDetails() {
 
             {/* Serving size adjuster */}
             {recipe.servings > 0 && (
-              <div className="flex items-center gap-3 mb-5 p-3 bg-terracotta-light rounded-xl">
-                <span className="text-sm text-ink-soft font-medium flex-1">{t('recipe.servings')}</span>
+              <div className="flex items-center gap-3 mb-5 p-3 bg-terracotta-light rounded-xl print:hidden">
+                <span className="text-sm text-ink-soft font-medium flex-1">{t('recipe.forHowMany')}</span>
                 <button
                   onClick={() => setServings(s => Math.max(1, s - 1))}
+                  data-tooltip={t('common.decrease')}
+                  aria-label={t('common.decrease')}
                   className="w-7 h-7 flex items-center justify-center rounded-lg bg-surface border border-line hover:border-terracotta hover:text-terracotta transition-colors"
                 >
                   <Minus className="w-3.5 h-3.5" />
@@ -318,12 +414,35 @@ function RecipeDetails() {
                 <span className="text-sm font-bold text-ink w-5 text-center">{servings}</span>
                 <button
                   onClick={() => setServings(s => s + 1)}
+                  data-tooltip={t('common.increase')}
+                  aria-label={t('common.increase')}
                   className="w-7 h-7 flex items-center justify-center rounded-lg bg-surface border border-line hover:border-terracotta hover:text-terracotta transition-colors"
                 >
                   <Plus className="w-3.5 h-3.5" />
                 </button>
               </div>
             )}
+
+            {/* Kitchen tools: unit converter + pan-size scaler */}
+            <div className="flex gap-2 mb-4 print:hidden">
+              <button
+                onClick={() => setConverterOpen(true)}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-line text-xs font-medium text-ink-soft hover:border-terracotta hover:text-terracotta transition-colors"
+              >
+                <Calculator className="w-3.5 h-3.5" />
+                {t('converter.title')}
+              </button>
+              <button
+                onClick={() => setShowPanScaler(v => !v)}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border text-xs font-medium transition-colors ${
+                  showPanScaler ? 'border-terracotta text-terracotta bg-terracotta-light' : 'border-line text-ink-soft hover:border-terracotta hover:text-terracotta'
+                }`}
+              >
+                <Ruler className="w-3.5 h-3.5" />
+                {t('panScaler.title')}
+              </button>
+            </div>
+            {showPanScaler && <div className="mb-4 print:hidden"><PanScaler onFactorChange={setPanFactor} /></div>}
 
             <div className="space-y-5">
               {recipe.ingredientGroups.map((group: any, groupIndex: number) => (
@@ -356,9 +475,9 @@ function RecipeDetails() {
                           </span>
                           <button
                             onClick={(e) => { e.stopPropagation(); openSubstitutions(ingredient.name); }}
-                            title={t('recipe.substitute')}
+                            data-tooltip={t('recipe.substitute')}
                             aria-label={t('recipe.substitute')}
-                            className={`${isRTL ? 'mr-auto' : 'ml-auto'} flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-lg text-ink-muted hover:text-terracotta hover:bg-terracotta-light transition-colors`}
+                            className={`${isRTL ? 'mr-auto' : 'ml-auto'} flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-lg text-ink-muted hover:text-terracotta hover:bg-terracotta-light transition-colors print:hidden`}
                           >
                             <Repeat className="w-3.5 h-3.5" />
                           </button>
@@ -424,9 +543,37 @@ function RecipeDetails() {
           </div>
         )}
 
+        {/* Personal notes */}
+        {auth?.user && (
+          <div className="bg-surface rounded-2xl border border-line shadow-card p-6 print:hidden">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-9 h-9 rounded-xl bg-terracotta-light flex items-center justify-center">
+                <StickyNote className="w-4 h-4 text-terracotta" />
+              </div>
+              <h2 className="font-display text-lg font-semibold text-ink">{t('recipe.myNotes')}</h2>
+            </div>
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder={t('recipe.notesPlaceholder')}
+              rows={4}
+              className="w-full px-4 py-3 rounded-xl border border-line focus:outline-none focus:ring-2 focus:ring-terracotta focus:border-transparent bg-paper text-sm text-ink-soft resize-y"
+            />
+            <div className="flex justify-end mt-3">
+              <button
+                onClick={saveNote}
+                disabled={noteSaving || note === savedNote}
+                className="px-5 py-2 rounded-xl font-semibold text-sm text-white bg-terracotta hover:bg-terracotta-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {noteSaving ? t('common.loading') : t('recipe.saveNote')}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Related Recipes */}
         {relatedRecipes.length > 0 && (
-          <div>
+          <div className="print:hidden">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-1 h-6 rounded-full bg-terracotta" />
               <h2 className="font-display text-xl font-bold text-ink">{t('recipe.relatedRecipes')}</h2>
@@ -464,7 +611,7 @@ function RecipeDetails() {
                 <Sparkles className="w-5 h-5 text-terracotta" />
                 <h3 className="font-display text-lg font-semibold text-ink">{t('recipe.substitutesFor', { ingredient: subFor })}</h3>
               </div>
-              <button onClick={() => setSubFor(null)} className="text-ink-muted hover:text-ink p-1">
+              <button onClick={() => setSubFor(null)} data-tooltip={t('common.close')} aria-label={t('common.close')} className="text-ink-muted hover:text-ink p-1">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -491,6 +638,43 @@ function RecipeDetails() {
           </div>
         </div>
       )}
+
+      {/* Drink pairing modal */}
+      {pairingOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setPairingOpen(false)} />
+          <div className="relative bg-surface rounded-2xl shadow-xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <Wine className="w-5 h-5 text-terracotta" />
+                <h3 className="font-display text-lg font-semibold text-ink">{t('recipe.pairingTitle')}</h3>
+              </div>
+              <button onClick={() => setPairingOpen(false)} data-tooltip={t('common.close')} aria-label={t('common.close')} className="text-ink-muted hover:text-ink p-1">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            {pairingLoading ? (
+              <div className="flex justify-center py-10">
+                <div className="animate-spin rounded-full h-8 w-8 border-2 border-terracotta border-t-transparent" />
+              </div>
+            ) : (
+              <ul className="space-y-3 mt-4">
+                {pairings.map((p, idx) => (
+                  <li key={idx} className="bg-paper rounded-xl border border-line p-3">
+                    <span className="font-semibold text-ink">{p.name}</span>
+                    {p.note && <p className="text-sm text-ink-soft mt-1 leading-snug">{p.note}</p>}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
+
+      {converterOpen && <UnitConverter onClose={() => setConverterOpen(false)} />}
+
+      {/* Ask-the-chef floating chat */}
+      <ChatAssistant recipeId={recipe.recipeId} recipeName={recipe.name} />
     </div>
   );
 }

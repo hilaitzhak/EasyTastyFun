@@ -9,6 +9,12 @@
     "allRecipes": "All Recipes",
     "favorites": "Favorites",
     "whatCanICook": "What can I cook?",
+    "surpriseMe": "Surprise me",
+    "toggleTheme": "Toggle dark mode",
+    "switchLanguage": "Switch language",
+    "search": "Search",
+    "menu": "Menu",
+    "account": "Account",
     "categories": "Categories",
     "all": "All",
     "createRecipe": "Create Recipe",
@@ -66,6 +72,19 @@
     "substitutesFor": "Substitutes for {{ingredient}}",
     "noSubstitutions": "No substitutions found.",
     "substitutionsError": "Could not load substitutions. Please try again.",
+    "print": "Print",
+    "serves": "Serves {{count}}",
+    "forHowMany": "For how many people?",
+    "servingsLabel": "Servings (people)",
+    "scanToOpen": "Scan to open",
+    "pairing": "Pairing",
+    "pairingTitle": "Drinks that pair well",
+    "pairingError": "Could not load pairings. Please try again.",
+    "myNotes": "My notes",
+    "notesPlaceholder": "Add your own notes about this recipe...",
+    "saveNote": "Save note",
+    "noteSaved": "Note saved",
+    "noteError": "Could not save note. Please try again.",
     "ingredients": "Ingredients",
     "instructions": "Instructions",
     "servings": "Servings",
@@ -94,6 +113,48 @@
   "favorites": {
     "empty": "You haven't saved any favorites yet. Tap the heart on a recipe to save it here."
   },
+  "recentlyViewed": {
+    "title": "Recently viewed"
+  },
+  "difficulty": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
+  },
+  "converter": {
+    "title": "Converter",
+    "ingredient": "Ingredient",
+    "note": "Approximate cooking conversions.",
+    "densityNote": "Volume↔weight uses the density of {{ingredient}}. Approximate.",
+    "ingredients": {
+      "water": "Water",
+      "milk": "Milk",
+      "oil": "Oil",
+      "butter": "Butter (melted)",
+      "flour": "Flour",
+      "sugar": "Sugar",
+      "brownSugar": "Brown sugar",
+      "powderedSugar": "Powdered sugar",
+      "honey": "Honey",
+      "salt": "Salt",
+      "cocoa": "Cocoa powder",
+      "rice": "Rice (raw)"
+    }
+  },
+  "panScaler": {
+    "title": "Pan size",
+    "round": "Round",
+    "rect": "Rectangular",
+    "from": "Recipe pan",
+    "to": "My pan",
+    "factor": "Quantities scaled ×{{factor}}"
+  },
+  "chat": {
+    "title": "Ask the chef",
+    "intro": "Ask me anything about \"{{recipe}}\" — substitutions, scaling, techniques...",
+    "placeholder": "Type your question...",
+    "error": "Sorry, something went wrong. Please try again."
+  },
   "whatCanICook": {
     "title": "What can I cook?",
     "subtitle": "Tell us what you have and we'll find recipes you can make.",
@@ -103,7 +164,10 @@
     "searching": "Searching...",
     "noResults": "No matching recipes found. Try adding more ingredients.",
     "resultsTitle": "{{count}} recipes you can make",
-    "missing": "Missing"
+    "missing": "Missing",
+    "getIdeas": "Get ideas",
+    "thinking": "Thinking...",
+    "ideasTitle": "Ideas for your ingredients"
   },
   "errors": {
     "network": "No internet connection. Please check your connection and try again.",
@@ -129,6 +193,11 @@
     "yes": "Yes",
     "no": "No",
     "noImage": "No image available",
+    "close": "Close",
+    "previous": "Previous",
+    "next": "Next",
+    "increase": "Increase",
+    "decrease": "Decrease",
     "unsavedChanges": "You have unsaved changes. Are you sure you want to leave? Your changes will be lost.",
     "leave": "Leave",
     "stay": "Stay"
@@ -248,6 +317,15 @@
         "ingredients": "Ingredients",
         "instructions": "Instructions"
       }
+    },
+    "generate": {
+      "title": "Generate with AI",
+      "description": "Describe a dish and we'll write the full recipe for you to review.",
+      "placeholder": "e.g. quick dairy-free pasta with mushrooms",
+      "button": "Generate",
+      "generating": "Writing recipe...",
+      "success": "Recipe generated! Review the fields and press Create.",
+      "error": "Could not generate a recipe. Please try again."
     },
     "similarRecipesFound": "Found {{count}} similar recipes: {{recipes}}. Would you like to continue creating this recipe?",
     "errors": {

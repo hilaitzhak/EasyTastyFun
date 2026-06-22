@@ -138,4 +138,78 @@ export class RecipeController {
             res.status(500).json({ message: 'Failed to find recipes' });
         }
     }
+
+    async getRandomRecipe(_req: Request, res: Response): Promise<void> {
+        try {
+            const recipe = await this.recipeService.getRandomRecipe();
+            if (!recipe) {
+                res.status(404).json({ message: 'No recipes found' });
+                return;
+            }
+            res.status(200).json(recipe);
+        } catch (error) {
+            console.error('Error getting random recipe:', error);
+            res.status(500).json({ message: 'Failed to get random recipe' });
+        }
+    }
+
+    async generateRecipe(req: Request, res: Response): Promise<void> {
+        try {
+            const { prompt, language, categories } = req.body;
+            if (!prompt || !prompt.trim()) {
+                res.status(400).json({ message: 'No prompt provided' });
+                return;
+            }
+            const result = await this.recipeService.generateRecipe(prompt, language || 'en', categories || []);
+            res.status(200).json(result);
+        } catch (error) {
+            console.error('Error generating recipe:', error);
+            res.status(500).json({ message: 'Failed to generate recipe' });
+        }
+    }
+
+    async askAboutRecipe(req: Request, res: Response): Promise<void> {
+        try {
+            const { recipeId, question, language, history } = req.body;
+            if (!recipeId || !question || !question.trim()) {
+                res.status(400).json({ message: 'recipeId and question are required' });
+                return;
+            }
+            const answer = await this.recipeService.askAboutRecipe(recipeId, question, language || 'en', history || []);
+            res.status(200).json({ answer });
+        } catch (error) {
+            console.error('Error in askAboutRecipe:', error);
+            res.status(500).json({ message: 'Failed to answer' });
+        }
+    }
+
+    async getPairing(req: Request, res: Response): Promise<void> {
+        try {
+            const { recipeName, ingredients, language } = req.body;
+            if (!recipeName) {
+                res.status(400).json({ message: 'recipeName is required' });
+                return;
+            }
+            const result = await this.recipeService.getPairing(recipeName, ingredients || '', language || 'en');
+            res.status(200).json(result);
+        } catch (error) {
+            console.error('Error getting pairing:', error);
+            res.status(500).json({ message: 'Failed to get pairing' });
+        }
+    }
+
+    async leftoverIdeas(req: Request, res: Response): Promise<void> {
+        try {
+            const { ingredients, language } = req.body;
+            if (!Array.isArray(ingredients) || ingredients.length === 0) {
+                res.status(400).json({ message: 'No ingredients provided' });
+                return;
+            }
+            const result = await this.recipeService.leftoverIdeas(ingredients, language || 'en');
+            res.status(200).json(result);
+        } catch (error) {
+            console.error('Error in leftoverIdeas:', error);
+            res.status(500).json({ message: 'Failed to get ideas' });
+        }
+    }
 }

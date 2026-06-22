@@ -10,10 +10,11 @@ import { recipeApi } from "../api/recipe.api";
 import RecipeForm from "../components/RecipeForm";
 import { Category, SubCategory } from "../interfaces/Category";
 import { categoryApi } from "../api/category.api";
-import { ArrowLeft, ArrowRight, Camera, ChefHat } from "lucide-react";
+import { ArrowLeft, ArrowRight, Camera, ChefHat, Sparkles } from "lucide-react";
 import i18n from "../i18n/i18n";
 import { Ingredient, IngredientGroup, InstructionGroup } from "../interfaces/Recipe";
 import { AuthContext } from "../context/AuthContext";
+import { fileToScaledBase64 } from "../utils/image";
 
 function CreateRecipeForm() {
   const navigate = useNavigate();
@@ -43,6 +44,8 @@ function CreateRecipeForm() {
   const [isDirty, setIsDirty] = useState(false);
   const [scannedInitialData, setScannedInitialData] = useState<any>(undefined);
   const [basicInfoKey, setBasicInfoKey] = useState(0);
+  const [genPrompt, setGenPrompt] = useState('');
+  const [generating, setGenerating] = useState(false);
   const scanInputRef = useRef<HTMLInputElement>(null);
   const auth = useContext(AuthContext);
 
@@ -87,64 +90,51 @@ function CreateRecipeForm() {
     setSelectedSubCategory(subCategoryId);
   };
 
+  // Build the category list (translated) so the AI can classify the recipe.
+  const buildCategoryGuide = () => categories.map((c) => ({
+    id: c.id,
+    name: t(c.nameKey),
+    subCategories: subcategories
+      .filter((s) => s.categoryId === c.id)
+      .map((s) => ({ id: s.id, name: t(s.nameKey) })),
+  }));
+
+  // Fill all form sections from an AI-produced recipe object (scan or generate).
+  const fillFormFromData = (data: any) => {
+    setScannedInitialData({
+      name: data.name,
+      prepTime: data.prepTime ?? undefined,
+      cookTime: data.cookTime ?? undefined,
+      servings: data.servings ?? undefined,
+    });
+    setBasicInfoKey(k => k + 1);
+
+    if (data.ingredientGroups?.length) setIngredientGroups(data.ingredientGroups);
+    if (data.instructionGroups?.length) setInstructionGroups(data.instructionGroups);
+    if (data.tips?.length) setTips(data.tips);
+
+    if (data.categoryId && categories.some((c) => c.id === data.categoryId)) {
+      setSelectedCategory(data.categoryId);
+      if (data.subCategoryId && subcategories.some((s) => s.id === data.subCategoryId && s.categoryId === data.categoryId)) {
+        setSelectedSubCategory(data.subCategoryId);
+      }
+    }
+  };
+
   const handleScanImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error(t('createRecipe.imageSizeError'));
-      return;
-    }
 
     setScanning(true);
     const toastId = toast.loading(t('createRecipe.scan.scanning'));
 
     try {
-      const reader = new FileReader();
-      const base64 = await new Promise<string>((resolve, reject) => {
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      // Downscale/compress so large phone photos fit and read better.
+      const base64 = await fileToScaledBase64(file);
 
-      // Send the site's categories (with translated names) so the AI can
-      // classify the recipe into the best-fitting category / subcategory.
-      const categoryGuide = categories.map((c) => ({
-        id: c.id,
-        name: t(c.nameKey),
-        subCategories: subcategories
-          .filter((s) => s.categoryId === c.id)
-          .map((s) => ({ id: s.id, name: t(s.nameKey) })),
-      }));
+      const { data } = await recipeApi.extractFromImage(base64, buildCategoryGuide());
 
-      const { data } = await recipeApi.extractFromImage(base64, categoryGuide);
-
-      // Auto-fill all sections
-      setScannedInitialData({
-        name: data.name,
-        prepTime: data.prepTime ?? undefined,
-        cookTime: data.cookTime ?? undefined,
-        servings: data.servings ?? undefined,
-      });
-      setBasicInfoKey(k => k + 1);
-
-      if (data.ingredientGroups?.length) {
-        setIngredientGroups(data.ingredientGroups);
-      }
-      if (data.instructionGroups?.length) {
-        setInstructionGroups(data.instructionGroups);
-      }
-      if (data.tips?.length) {
-        setTips(data.tips);
-      }
-
-      // Auto-select the AI-chosen category / subcategory (only if valid ids)
-      if (data.categoryId && categories.some((c) => c.id === data.categoryId)) {
-        setSelectedCategory(data.categoryId);
-        if (data.subCategoryId && subcategories.some((s) => s.id === data.subCategoryId && s.categoryId === data.categoryId)) {
-          setSelectedSubCategory(data.subCategoryId);
-        }
-      }
+      fillFormFromData(data);
 
       // Detect missing fields and alert the user
       const missing: string[] = [];
@@ -168,6 +158,21 @@ function CreateRecipeForm() {
       setScanning(false);
       // Reset input so the same file can be re-selected if needed
       if (scanInputRef.current) scanInputRef.current.value = '';
+    }
+  };
+
+  const handleGenerate = async () => {
+    if (!genPrompt.trim()) return;
+    setGenerating(true);
+    const toastId = toast.loading(t('createRecipe.generate.generating'));
+    try {
+      const { data } = await recipeApi.generate(genPrompt.trim(), i18n.language, buildCategoryGuide());
+      fillFormFromData(data);
+      toast.success(t('createRecipe.generate.success'), { id: toastId });
+    } catch {
+      toast.error(t('createRecipe.generate.error'), { id: toastId });
+    } finally {
+      setGenerating(false);
     }
   };
 
@@ -308,6 +313,34 @@ function CreateRecipeForm() {
               <Camera className="w-4 h-4" />
               {scanning ? t('createRecipe.scan.scanning') : t('createRecipe.scan.button')}
             </button>
+          </div>
+
+          {/* AI Generate Banner */}
+          <div className="bg-surface border border-line rounded-2xl p-5">
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="w-4 h-4 text-terracotta" />
+              <h3 className="text-base font-semibold text-ink">{t('createRecipe.generate.title')}</h3>
+            </div>
+            <p className="text-sm text-ink-soft mb-3">{t('createRecipe.generate.description')}</p>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                value={genPrompt}
+                onChange={(e) => setGenPrompt(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleGenerate(); } }}
+                placeholder={t('createRecipe.generate.placeholder')}
+                className="flex-1 px-4 py-2.5 rounded-xl border border-line focus:outline-none focus:ring-2 focus:ring-terracotta focus:border-transparent bg-paper text-sm"
+              />
+              <button
+                type="button"
+                disabled={generating || !genPrompt.trim()}
+                onClick={handleGenerate}
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white bg-terracotta hover:bg-terracotta-dark shadow-soft transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed whitespace-nowrap"
+              >
+                <Sparkles className="w-4 h-4" />
+                {generating ? t('createRecipe.generate.generating') : t('createRecipe.generate.button')}
+              </button>
+            </div>
           </div>
 
           {/* Modern Card Container */}

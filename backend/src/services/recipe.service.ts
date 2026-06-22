@@ -618,7 +618,7 @@ export class RecipeService {
 
 CRITICAL LANGUAGE RULE: Write all text fields in the EXACT language used in the image. If the image is in Hebrew — write Hebrew characters. If the image is in English — write English. NEVER translate. NEVER switch languages.
 
-Read ALL the text carefully, including Hebrew right-to-left text. Be thorough: extract EVERY ingredient (with its amount and unit) and EVERY instruction step you can see in the image — do not stop at the first few.
+Read ALL the text carefully, including Hebrew right-to-left text and HANDWRITTEN text (the recipe may be handwritten in cursive — do your best to decipher it). Be thorough: extract EVERY ingredient (with its amount and unit) and EVERY instruction step you can see in the image — do not stop at the first few.
 
 Rules:
 - STRICT EXTRACTION of recipe content: Copy ingredients, amounts, units, and instruction steps only as they are explicitly written. Do NOT invent, guess, or add recipe content that is not in the image.
@@ -764,5 +764,208 @@ Pick recipes the user can make, or can ALMOST make (missing at most 2-3 non-basi
         return { recipe, missingIngredients: m.missingIngredients || [] };
       })
       .filter(Boolean);
+  }
+
+  // Return a single random recipe (for the "Surprise me" feature).
+  async getRandomRecipe() {
+    const [recipe] = await Recipe.aggregate([{ $sample: { size: 1 } }]);
+    return recipe || null;
+  }
+
+  // Generate a full recipe from a free-text prompt, in the same structure as the image scan.
+  async generateRecipe(prompt: string, language: string, categories: CategoryGuide[] = []): Promise<any> {
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const lang = language === 'he' ? 'Hebrew' : 'English';
+
+    const hasCategories = categories.length > 0;
+    const categoryGuide = categories
+      .map((c) => {
+        const subs = (c.subCategories || []).map((s) => `    - id "${s.id}": ${s.name}`).join('\n');
+        return `- category id "${c.id}": ${c.name}` + (subs ? `\n  subcategories:\n${subs}` : '');
+      })
+      .join('\n');
+
+    const tool = {
+      name: 'save_recipe',
+      description: 'Save the generated recipe into structured fields.',
+      input_schema: {
+        type: 'object' as const,
+        properties: {
+          name: { type: 'string' },
+          prepTime: { type: ['integer', 'null'] },
+          cookTime: { type: ['integer', 'null'] },
+          servings: { type: ['integer', 'null'] },
+          ingredientGroups: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                title: { type: 'string' },
+                ingredients: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: { name: { type: 'string' }, amount: { type: 'string' }, unit: { type: 'string' } },
+                    required: ['name', 'amount', 'unit'],
+                  },
+                },
+              },
+              required: ['title', 'ingredients'],
+            },
+          },
+          instructionGroups: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                title: { type: 'string' },
+                instructions: {
+                  type: 'array',
+                  items: { type: 'object', properties: { content: { type: 'string' } }, required: ['content'] },
+                },
+              },
+              required: ['title', 'instructions'],
+            },
+          },
+          tips: { type: 'array', items: { type: 'string' } },
+          categoryId: { type: ['string', 'null'] },
+          subCategoryId: { type: ['string', 'null'] },
+        },
+        required: ['name', 'prepTime', 'cookTime', 'servings', 'ingredientGroups', 'instructionGroups', 'tips', 'categoryId', 'subCategoryId'],
+      },
+    };
+
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 8192,
+      tools: [tool],
+      tool_choice: { type: 'tool', name: 'save_recipe' },
+      messages: [{
+        role: 'user',
+        content: `Create a complete, realistic recipe based on this request: "${prompt}".
+
+Write ALL text fields in ${lang}. Provide sensible prep/cook time and servings. Use clear ingredient amounts and step-by-step instructions. If the request has no section headings, use one group with an empty "" title.${hasCategories ? `
+
+Then classify the recipe into the best-fitting categoryId and subCategoryId from this list (or null if none fit). Use ONLY ids from this list:
+${categoryGuide}` : ''}`,
+      }],
+    });
+
+    const toolUse = response.content.find((block) => block.type === 'tool_use');
+    if (!toolUse || toolUse.type !== 'tool_use') {
+      throw new Error('Model did not return a recipe');
+    }
+    return toolUse.input;
+  }
+
+  // Compact text summary of a recipe, used as context for the AI helpers below.
+  private recipeContext(recipe: any): string {
+    const ingredients = (recipe.ingredientGroups || [])
+      .flatMap((g: any) => (g.ingredients || []).map((i: any) => `${i.amount || ''} ${i.unit || ''} ${i.name}`.trim()))
+      .join(', ');
+    const steps = (recipe.instructionGroups || [])
+      .flatMap((g: any) => (g.instructions || []).map((s: any) => s.content))
+      .join(' | ');
+    return `Recipe name: ${recipe.name}\nServings: ${recipe.servings ?? 'n/a'}\nIngredients: ${ingredients}\nInstructions: ${steps}`;
+  }
+
+  // "Ask the chef" — answer a question about a specific recipe, with chat history.
+  async askAboutRecipe(recipeId: string, question: string, language: string, history: { role: string; content: string }[] = []): Promise<string> {
+    const recipe = await Recipe.findOne({ recipeId });
+    if (!recipe) throw new Error('Recipe not found');
+
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const lang = language === 'he' ? 'Hebrew' : 'English';
+
+    const messages = [
+      ...history.slice(-8).map((h) => ({
+        role: (h.role === 'assistant' ? 'assistant' : 'user') as 'assistant' | 'user',
+        content: h.content,
+      })),
+      { role: 'user' as const, content: question },
+    ];
+
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1024,
+      system: `You are a friendly, practical cooking assistant helping with one specific recipe. Answer concisely in ${lang}. Stay focused on cooking and this recipe. Here is the recipe:\n${this.recipeContext(recipe)}`,
+      messages,
+    });
+
+    return response.content[0].type === 'text' ? response.content[0].text : '';
+  }
+
+  // Suggest drink pairings for a recipe.
+  async getPairing(recipeName: string, ingredients: string, language: string): Promise<any> {
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const lang = language === 'he' ? 'Hebrew' : 'English';
+    const tool = {
+      name: 'suggest_pairings',
+      description: 'Suggest drinks that pair with a dish.',
+      input_schema: {
+        type: 'object' as const,
+        properties: {
+          pairings: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: { type: 'string', description: 'The drink (wine, beer, juice, tea, etc.)' },
+                note: { type: 'string', description: 'Short reason it pairs well' },
+              },
+              required: ['name', 'note'],
+            },
+          },
+        },
+        required: ['pairings'],
+      },
+    };
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1024,
+      tools: [tool],
+      tool_choice: { type: 'tool', name: 'suggest_pairings' },
+      messages: [{ role: 'user', content: `Suggest 2-4 drink pairings (include at least one non-alcoholic option) for "${recipeName}"${ingredients ? ` (ingredients: ${ingredients})` : ''}. Write all text in ${lang}.` }],
+    });
+    const toolUse = response.content.find((b) => b.type === 'tool_use');
+    if (!toolUse || toolUse.type !== 'tool_use') throw new Error('No pairings');
+    return toolUse.input;
+  }
+
+  // "Leftover rescue" — free-form ideas for what to make with leftover ingredients.
+  async leftoverIdeas(ingredients: string[], language: string): Promise<any> {
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const lang = language === 'he' ? 'Hebrew' : 'English';
+    const tool = {
+      name: 'suggest_ideas',
+      description: 'Suggest dishes to make from leftover ingredients.',
+      input_schema: {
+        type: 'object' as const,
+        properties: {
+          ideas: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                title: { type: 'string', description: 'Dish name' },
+                description: { type: 'string', description: 'One or two sentences on how to make it' },
+              },
+              required: ['title', 'description'],
+            },
+          },
+        },
+        required: ['ideas'],
+      },
+    };
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1536,
+      tools: [tool],
+      tool_choice: { type: 'tool', name: 'suggest_ideas' },
+      messages: [{ role: 'user', content: `I have these leftovers: ${ingredients.join(', ')}. Suggest 3-5 quick dish ideas to use them up (assume basic pantry staples are available). Write all text in ${lang}.` }],
+    });
+    const toolUse = response.content.find((b) => b.type === 'tool_use');
+    if (!toolUse || toolUse.type !== 'tool_use') throw new Error('No ideas');
+    return toolUse.input;
   }
 }

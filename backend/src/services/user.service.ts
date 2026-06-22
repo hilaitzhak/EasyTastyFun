@@ -52,4 +52,29 @@ export class UserService {
         await user.save();
         return favorites;
     }
+
+    async getNoteIds(userId: string): Promise<string[]> {
+        const user = await this.getUser(userId);
+        const notes = user.get("notes") as Map<string, string> | undefined;
+        return notes ? Array.from(notes.keys()) : [];
+    }
+
+    async getNote(userId: string, recipeId: string): Promise<string> {
+        const user = await this.getUser(userId);
+        const notes = user.get("notes") as Map<string, string> | undefined;
+        return notes?.get(recipeId) || "";
+    }
+
+    async setNote(userId: string, recipeId: string, note: string): Promise<string> {
+        const user = await this.getUser(userId);
+        const notes = (user.get("notes") as Map<string, string>) || new Map();
+        if (note && note.trim()) {
+            notes.set(recipeId, note);
+        } else {
+            notes.delete(recipeId);
+        }
+        user.set("notes", notes);
+        await user.save();
+        return note.trim();
+    }
 }

@@ -49,4 +49,34 @@ export class UserController {
             res.status(500).json({ message: "Failed to remove favorite" });
         }
     }
+
+    async getNoteIds(req: AuthRequest, res: Response): Promise<void> {
+        try {
+            const ids = await this.userService.getNoteIds(req.user!.userId);
+            res.status(200).json(ids);
+        } catch (error) {
+            console.error("Error fetching note ids:", error);
+            res.status(500).json({ message: "Failed to fetch note ids" });
+        }
+    }
+
+    async getNote(req: AuthRequest, res: Response): Promise<void> {
+        try {
+            const note = await this.userService.getNote(req.user!.userId, req.params.recipeId);
+            res.status(200).json({ note });
+        } catch (error) {
+            console.error("Error fetching note:", error);
+            res.status(500).json({ message: "Failed to fetch note" });
+        }
+    }
+
+    async setNote(req: AuthRequest, res: Response): Promise<void> {
+        try {
+            const note = await this.userService.setNote(req.user!.userId, req.params.recipeId, req.body.note || "");
+            res.status(200).json({ note });
+        } catch (error) {
+            console.error("Error saving note:", error);
+            res.status(500).json({ message: "Failed to save note" });
+        }
+    }
 }

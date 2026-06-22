@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChefHat, Sparkles, X, Plus, AlertCircle } from 'lucide-react';
+import { ChefHat, Sparkles, X, Plus, AlertCircle, Recycle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n/i18n';
 import { recipeApi } from '../api/recipe.api';
@@ -10,12 +10,19 @@ interface Match {
   missingIngredients: string[];
 }
 
+interface Idea {
+  title: string;
+  description: string;
+}
+
 function WhatCanICook() {
   const { t } = useTranslation();
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [input, setInput] = useState('');
   const [results, setResults] = useState<Match[] | null>(null);
+  const [ideas, setIdeas] = useState<Idea[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const [ideasLoading, setIdeasLoading] = useState(false);
 
   const addIngredient = () => {
     const value = input.trim();
@@ -40,6 +47,7 @@ function WhatCanICook() {
     if (ingredients.length === 0) return;
     setLoading(true);
     setResults(null);
+    setIdeas(null);
     try {
       const { data } = await recipeApi.whatCanICook(ingredients, i18n.language);
       setResults(data || []);
@@ -47,6 +55,21 @@ function WhatCanICook() {
       setResults([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getIdeas = async () => {
+    if (ingredients.length === 0) return;
+    setIdeasLoading(true);
+    setIdeas(null);
+    setResults(null);
+    try {
+      const { data } = await recipeApi.leftoverIdeas(ingredients, i18n.language);
+      setIdeas(data.ideas || []);
+    } catch {
+      setIdeas([]);
+    } finally {
+      setIdeasLoading(false);
     }
   };
 
@@ -99,22 +122,51 @@ function WhatCanICook() {
             </div>
           )}
 
-          <button
-            type="button"
-            onClick={search}
-            disabled={ingredients.length === 0 || loading}
-            className="mt-5 inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-sm text-white bg-terracotta hover:bg-terracotta-dark shadow-soft transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            <Sparkles className="w-4 h-4" />
-            {loading ? t('whatCanICook.searching') : t('whatCanICook.search')}
-          </button>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={search}
+              disabled={ingredients.length === 0 || loading || ideasLoading}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-sm text-white bg-terracotta hover:bg-terracotta-dark shadow-soft transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <Sparkles className="w-4 h-4" />
+              {loading ? t('whatCanICook.searching') : t('whatCanICook.search')}
+            </button>
+            <button
+              type="button"
+              onClick={getIdeas}
+              disabled={ingredients.length === 0 || loading || ideasLoading}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-sm text-terracotta-dark bg-terracotta-light border border-line hover:border-terracotta transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <Recycle className="w-4 h-4" />
+              {ideasLoading ? t('whatCanICook.thinking') : t('whatCanICook.getIdeas')}
+            </button>
+          </div>
         </div>
 
         {/* Results */}
-        {loading && (
+        {(loading || ideasLoading) && (
           <div className="flex justify-center py-10">
             <div className="animate-spin rounded-full h-10 w-10 border-2 border-terracotta border-t-transparent" />
           </div>
+        )}
+
+        {ideas && !ideasLoading && (
+          ideas.length === 0 ? (
+            <div className="text-center py-12 text-ink-soft">{t('whatCanICook.noResults')}</div>
+          ) : (
+            <div className="space-y-4">
+              <h2 className="font-display text-xl font-bold text-ink">{t('whatCanICook.ideasTitle')}</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {ideas.map((idea, idx) => (
+                  <div key={idx} className="bg-surface rounded-2xl border border-line shadow-card p-5">
+                    <h3 className="font-display font-semibold text-ink mb-1">{idea.title}</h3>
+                    <p className="text-sm text-ink-soft leading-relaxed">{idea.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
         )}
 
         {results && !loading && (

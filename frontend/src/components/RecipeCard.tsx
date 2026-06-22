@@ -1,12 +1,16 @@
-import { Calendar, Clock, Users, UtensilsCrossed } from "lucide-react";
+import { Calendar, Clock, Users, UtensilsCrossed, StickyNote } from "lucide-react";
+import { useContext } from "react";
 import { RecipeCardProps } from "../interfaces/Recipe";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import FavoriteButton from "./FavoriteButton";
+import { NotesContext } from "../context/NotesContext";
 
 function RecipeCard({ recipe }: RecipeCardProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const notes = useContext(NotesContext);
+  const hasNote = !!recipe.recipeId && !!notes?.hasNote(recipe.recipeId);
   const totalTime = (recipe?.prepTime || 0) + (recipe?.cookTime || 0);
   const formattedDate = recipe?.createdAt
     ? new Date(recipe.createdAt).toLocaleDateString()
@@ -28,6 +32,14 @@ function RecipeCard({ recipe }: RecipeCardProps) {
             recipeId={recipe.recipeId}
             className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/85 backdrop-blur-sm text-ink-soft hover:bg-white shadow-soft"
           />
+        )}
+        {hasNote && (
+          <span
+            title={t('recipe.myNotes')}
+            className="absolute top-3 left-3 z-10 w-9 h-9 rounded-full bg-white/85 backdrop-blur-sm text-terracotta shadow-soft flex items-center justify-center"
+          >
+            <StickyNote className="w-4 h-4" />
+          </span>
         )}
         {recipe.images && recipe.images[0] ? (
           <>

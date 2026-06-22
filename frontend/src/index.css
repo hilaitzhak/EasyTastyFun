@@ -2,6 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Instant, styled hover tooltips — add `data-tooltip="..."` to any element. */
+[data-tooltip] { position: relative; }
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.96);
+  background: rgb(var(--c-ink));
+  color: rgb(var(--c-paper));
+  padding: 4px 9px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  transition: opacity 0.12s ease, transform 0.12s ease;
+}
+[data-tooltip]:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+@media print { [data-tooltip]::after { display: none; } }
+
+/* Cozy Pantry palette as RGB triplets — light (default) and dark themes. */
+:root {
+  --c-paper: 251 247 240;
+  --c-line: 235 227 216;
+  --c-surface: 255 253 249;
+  --c-surface-muted: 254 243 226;
+  --c-surface-warm: 253 232 200;
+  --c-ink: 61 56 51;
+  --c-ink-soft: 111 102 92;
+  --c-ink-muted: 163 154 140;
+  --c-terracotta-light: 246 231 223;
+  --c-terracotta: 201 123 90;
+  --c-terracotta-dark: 168 95 64;
+  --c-olive-light: 238 240 230;
+  --c-olive: 124 139 91;
+  --c-olive-dark: 97 112 63;
+  --c-butter-light: 252 241 207;
+  --c-butter: 244 211 94;
+}
+
+.dark {
+  --c-paper: 26 23 21;
+  --c-line: 58 52 47;
+  --c-surface: 38 34 31;
+  --c-surface-muted: 50 44 39;
+  --c-surface-warm: 62 51 39;
+  --c-ink: 244 239 232;
+  --c-ink-soft: 198 190 180;
+  --c-ink-muted: 146 138 128;
+  --c-terracotta-light: 62 46 40;
+  --c-terracotta: 209 138 110;
+  --c-terracotta-dark: 226 165 138;
+  --c-olive-light: 42 48 35;
+  --c-olive: 150 165 110;
+  --c-olive-dark: 172 187 132;
+  --c-butter-light: 64 54 32;
+  --c-butter: 244 211 94;
+}
+
+/* Clean printing: drop the app chrome and ink-heavy backgrounds, keep the recipe. */
+@media print {
+  nav { display: none !important; }
+  .flex-1 { padding-top: 0 !important; }
+  body { background: #fff !important; }
+  .shadow-card, .shadow-soft { box-shadow: none !important; }
+  .border, .border-line { border-color: #e5e0d8 !important; }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -12,8 +88,8 @@
     /* Cozy Pantry — Nunito (EN) / Rubik (HE) for body */
     font-family: 'Nunito', 'Rubik', system-ui, -apple-system, 'Segoe UI',
       'Roboto', 'Helvetica Neue', sans-serif;
-    color: #3D3833;
-    background-color: #FBF7F0;
+    color: rgb(var(--c-ink));
+    background-color: rgb(var(--c-paper));
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
