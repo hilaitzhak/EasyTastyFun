@@ -1,7 +1,9 @@
 import { useContext, useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
+import UnsavedChangesPrompt from "../components/UnsavedChangesPrompt";
 import { getApiErrorKey } from "../utils/apiError";
 import ConfirmModal from "../components/ConfirmModal";
 import { recipeApi } from "../api/recipe.api";
@@ -44,16 +46,13 @@ function CreateRecipeForm() {
   const scanInputRef = useRef<HTMLInputElement>(null);
   const auth = useContext(AuthContext);
 
-  // Mark form dirty on any user input
-  useEffect(() => { setIsDirty(true); }, [images, video, ingredientGroups, instructionGroups, tips, selectedCategory, selectedSubCategory]);
-
-  // Warn on browser close/refresh
+  // Mark form dirty on any user input — but skip the initial mount so an
+  // untouched form doesn't trigger the unsaved-changes warning.
+  const isInitialMount = useRef(true);
   useEffect(() => {
-    if (!isDirty) return;
-    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); };
-    window.addEventListener('beforeunload', handler);
-    return () => window.removeEventListener('beforeunload', handler);
-  }, [isDirty]);
+    if (isInitialMount.current) { isInitialMount.current = false; return; }
+    setIsDirty(true);
+  }, [images, video, ingredientGroups, instructionGroups, tips, selectedCategory, selectedSubCategory]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -108,7 +107,17 @@ function CreateRecipeForm() {
         reader.readAsDataURL(file);
       });
 
-      const { data } = await recipeApi.extractFromImage(base64);
+      // Send the site's categories (with translated names) so the AI can
+      // classify the recipe into the best-fitting category / subcategory.
+      const categoryGuide = categories.map((c) => ({
+        id: c.id,
+        name: t(c.nameKey),
+        subCategories: subcategories
+          .filter((s) => s.categoryId === c.id)
+          .map((s) => ({ id: s.id, name: t(s.nameKey) })),
+      }));
+
+      const { data } = await recipeApi.extractFromImage(base64, categoryGuide);
 
       // Auto-fill all sections
       setScannedInitialData({
@@ -127,6 +136,14 @@ function CreateRecipeForm() {
       }
       if (data.tips?.length) {
         setTips(data.tips);
+      }
+
+      // Auto-select the AI-chosen category / subcategory (only if valid ids)
+      if (data.categoryId && categories.some((c) => c.id === data.categoryId)) {
+        setSelectedCategory(data.categoryId);
+        if (data.subCategoryId && subcategories.some((s) => s.id === data.subCategoryId && s.categoryId === data.categoryId)) {
+          setSelectedSubCategory(data.subCategoryId);
+        }
       }
 
       // Detect missing fields and alert the user
@@ -160,6 +177,9 @@ function CreateRecipeForm() {
         headers: { Authorization: `Bearer ${auth?.token}` },
       });
       if (response.data) {
+        // Clear the dirty flag synchronously so the success navigation isn't
+        // intercepted by the unsaved-changes prompt.
+        flushSync(() => setIsDirty(false));
         navigate(`/recipe/${response.data.recipeId}`);
       }
     } catch (error: any) {
@@ -225,6 +245,7 @@ function CreateRecipeForm() {
 
   return (
     <div className="min-h-screen bg-paper">
+      <UnsavedChangesPrompt when={isDirty} />
       {/* Modern Header with Glass Effect */}
       <div className="sticky top-0 z-10 backdrop-blur-md bg-surface border-b border-line shadow-soft">
       <div className="max-w-8xl mx-auto px-6 w-full py-6">

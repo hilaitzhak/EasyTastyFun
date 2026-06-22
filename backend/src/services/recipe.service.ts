@@ -6,6 +6,13 @@ import { s3 } from '../config/s3.config';
 import { PipelineStage } from 'mongoose';
 import Anthropic from '@anthropic-ai/sdk';
 
+// Shape the frontend sends so the model can classify a scanned recipe into an existing category.
+interface CategoryGuide {
+  id: string;
+  name: string;
+  subCategories?: { id: string; name: string }[];
+}
+
 export class RecipeService {
   private redisService: RedisService;
 
@@ -508,7 +515,7 @@ export class RecipeService {
     }
   }
 
-  async extractRecipeFromImage(base64Image: string): Promise<any> {
+  async extractRecipeFromImage(base64Image: string, categories: CategoryGuide[] = []): Promise<any> {
     const matches = base64Image.match(/^data:(image\/[a-zA-Z0-9+]+);base64,(.+)$/);
     if (!matches) throw new Error('Invalid image format');
 
@@ -517,9 +524,87 @@ export class RecipeService {
 
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
+    // Build a human-readable guide of the site's categories so the model can
+    // classify the recipe into the best-fitting category / subcategory.
+    const hasCategories = categories.length > 0;
+    const categoryGuide = categories
+      .map((c) => {
+        const subs = (c.subCategories || []).map((s) => `    - id "${s.id}": ${s.name}`).join('\n');
+        return `- category id "${c.id}": ${c.name}` + (subs ? `\n  subcategories:\n${subs}` : '');
+      })
+      .join('\n');
+
+    // Force a structured tool call so the model MUST return valid JSON matching
+    // this schema — no markdown fences, no stray prose, nothing to hand-parse.
+    const recipeTool = {
+      name: 'save_recipe',
+      description: 'Save the recipe extracted from the image into structured fields.',
+      input_schema: {
+        type: 'object' as const,
+        properties: {
+          name: { type: ['string', 'null'], description: 'Recipe name, in the original language' },
+          prepTime: { type: ['integer', 'null'], description: 'Prep time in minutes if written, else null' },
+          cookTime: { type: ['integer', 'null'], description: 'Cook time in minutes if written, else null' },
+          servings: { type: ['integer', 'null'], description: 'Number of servings if written, else null' },
+          ingredientGroups: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                title: { type: 'string', description: 'Group heading, or "" if the recipe has a single ungrouped list' },
+                ingredients: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      name: { type: 'string' },
+                      amount: { type: 'string' },
+                      unit: { type: 'string' },
+                    },
+                    required: ['name', 'amount', 'unit'],
+                  },
+                },
+              },
+              required: ['title', 'ingredients'],
+            },
+          },
+          instructionGroups: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                title: { type: 'string', description: 'Group heading, or "" if a single ungrouped list' },
+                instructions: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: { content: { type: 'string' } },
+                    required: ['content'],
+                  },
+                },
+              },
+              required: ['title', 'instructions'],
+            },
+          },
+          tips: { type: 'array', items: { type: 'string' } },
+          categoryId: {
+            type: ['string', 'null'],
+            description: 'The id of the best-fitting category from the provided list, or null if none fit.',
+          },
+          subCategoryId: {
+            type: ['string', 'null'],
+            description: 'The id of the best-fitting subcategory under the chosen category, or null if none fit.',
+          },
+        },
+        required: ['name', 'prepTime', 'cookTime', 'servings', 'ingredientGroups', 'instructionGroups', 'tips', 'categoryId', 'subCategoryId'],
+      },
+    };
+
     const response = await client.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: 4096,
+      max_tokens: 8192,
+      tools: [recipeTool],
+      tool_choice: { type: 'tool', name: 'save_recipe' },
       messages: [{
         role: 'user',
         content: [
@@ -529,47 +614,155 @@ export class RecipeService {
           },
           {
             type: 'text',
-            text: `You are extracting a recipe from an image. The recipe may be written in Hebrew or English.
+            text: `Extract the recipe from this image and call the save_recipe tool with the result. The recipe may be written in Hebrew or English.
 
-CRITICAL LANGUAGE RULE: You MUST write all text fields in the EXACT language used in the image. If the image is in Hebrew — write Hebrew characters. If the image is in English — write English. NEVER translate. NEVER switch languages.
+CRITICAL LANGUAGE RULE: Write all text fields in the EXACT language used in the image. If the image is in Hebrew — write Hebrew characters. If the image is in English — write English. NEVER translate. NEVER switch languages.
 
-Read all the text in the image carefully, including Hebrew right-to-left text, and extract the recipe into this exact JSON structure (return ONLY the raw JSON, no markdown, no explanation):
+Read ALL the text carefully, including Hebrew right-to-left text. Be thorough: extract EVERY ingredient (with its amount and unit) and EVERY instruction step you can see in the image — do not stop at the first few.
 
-{
-  "name": "Recipe name in original language",
-  "prepTime": 30,
-  "cookTime": 45,
-  "servings": 4,
-  "ingredientGroups": [
-    {
-      "title": "",
-      "ingredients": [
-        { "name": "ingredient name in original language", "amount": "2", "unit": "unit in original language" }
-      ]
-    }
-  ],
-  "instructionGroups": [
-    {
-      "title": "",
-      "instructions": [
-        { "content": "Step text in original language" }
-      ]
-    }
-  ],
-  "tips": []
-}
-
-Additional rules:
-- STRICT EXTRACTION: Copy only what is explicitly written. Do NOT invent, guess, or add anything not in the image.
+Rules:
+- STRICT EXTRACTION of recipe content: Copy ingredients, amounts, units, and instruction steps only as they are explicitly written. Do NOT invent, guess, or add recipe content that is not in the image.
+- name: the dish/recipe name. Ignore website branding, chef names, or logos (e.g. a site title bar) — those are NOT the recipe name.
 - prepTime, cookTime, servings: use the exact number if written, otherwise null.
-- tips: only include if explicitly written in the image, otherwise empty array [].`
+- If the recipe has no section headings, use one group with an empty "" title.
+- tips: only include tips explicitly written in the image, otherwise an empty array.${hasCategories ? `
+
+CATEGORIZATION (this part IS inference — choose, don't copy):
+Based on what the recipe IS, pick the single best-fitting category from the list below, and the best-fitting subcategory under it. Return their ids in categoryId and subCategoryId. If nothing fits, use null. Choose ONLY ids from this list:
+${categoryGuide}` : `
+
+There are no categories provided — set categoryId and subCategoryId to null.`}`
           }
         ]
       }]
     });
 
-    const text = response.content[0].type === 'text' ? response.content[0].text : '';
-    const cleaned = text.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
-    return JSON.parse(cleaned);
+    const toolUse = response.content.find((block) => block.type === 'tool_use');
+    if (!toolUse || toolUse.type !== 'tool_use') {
+      throw new Error('Model did not return structured recipe data');
+    }
+    return toolUse.input;
+  }
+
+  // Suggest ingredient substitutions, respecting the recipe context (e.g. gluten-free).
+  async getIngredientSubstitutions(ingredient: string, recipeName: string, language: string): Promise<any> {
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const lang = language === 'he' ? 'Hebrew' : 'English';
+
+    const tool = {
+      name: 'suggest_substitutions',
+      description: 'Return a list of substitution options for a cooking ingredient.',
+      input_schema: {
+        type: 'object' as const,
+        properties: {
+          substitutions: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: { type: 'string', description: 'The substitute ingredient' },
+                ratio: { type: 'string', description: 'How much to use relative to the original, e.g. "1:1" or "3/4 cup"' },
+                note: { type: 'string', description: 'Short note on taste/texture effect or when to use it' },
+              },
+              required: ['name', 'ratio', 'note'],
+            },
+          },
+        },
+        required: ['substitutions'],
+      },
+    };
+
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1024,
+      tools: [tool],
+      tool_choice: { type: 'tool', name: 'suggest_substitutions' },
+      messages: [{
+        role: 'user',
+        content: `Suggest 2-4 practical cooking substitutions for the ingredient "${ingredient}"${recipeName ? ` in the recipe "${recipeName}"` : ''}. Write ALL text fields in ${lang}. Keep notes short and practical.`,
+      }],
+    });
+
+    const toolUse = response.content.find((block) => block.type === 'tool_use');
+    if (!toolUse || toolUse.type !== 'tool_use') {
+      throw new Error('Model did not return substitutions');
+    }
+    return toolUse.input;
+  }
+
+  // Given the ingredients the user has, pick recipes from the site they can make (or nearly make).
+  async whatCanICook(availableIngredients: string[], language: string): Promise<any[]> {
+    const allRecipes = await Recipe.find({}, { recipeId: 1, name: 1, ingredientGroups: 1 });
+
+    // Compact list for the model: recipeId, name, and a flat ingredient name list.
+    const catalog = allRecipes.map((r: any) => ({
+      recipeId: r.recipeId,
+      name: r.name,
+      ingredients: (r.ingredientGroups || [])
+        .flatMap((g: any) => (g.ingredients || []).map((i: any) => i.name))
+        .filter(Boolean),
+    }));
+
+    if (catalog.length === 0) return [];
+
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const lang = language === 'he' ? 'Hebrew' : 'English';
+
+    const tool = {
+      name: 'pick_recipes',
+      description: 'Pick the recipes the user can make with the ingredients they have on hand.',
+      input_schema: {
+        type: 'object' as const,
+        properties: {
+          matches: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                recipeId: { type: 'string', description: 'recipeId from the provided catalog' },
+                missingIngredients: {
+                  type: 'array',
+                  items: { type: 'string' },
+                  description: 'Ingredients the recipe needs that the user did NOT list (empty if they have everything)',
+                },
+              },
+              required: ['recipeId', 'missingIngredients'],
+            },
+          },
+        },
+        required: ['matches'],
+      },
+    };
+
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 2048,
+      tools: [tool],
+      tool_choice: { type: 'tool', name: 'pick_recipes' },
+      messages: [{
+        role: 'user',
+        content: `The user has these ingredients: ${availableIngredients.join(', ')}.
+
+Here is the recipe catalog (JSON):
+${JSON.stringify(catalog)}
+
+Pick recipes the user can make, or can ALMOST make (missing at most 2-3 non-basic ingredients — assume they have basics like water, salt, pepper, oil). For each, list any missing ingredients. Write missingIngredients in ${lang}. Order best matches first (fewest missing). Only use recipeId values from the catalog.`,
+      }],
+    });
+
+    const toolUse = response.content.find((block) => block.type === 'tool_use');
+    if (!toolUse || toolUse.type !== 'tool_use') return [];
+    const matches = (toolUse.input as any).matches || [];
+
+    // Map matched ids back to full recipe docs, preserving the model's ordering.
+    const fullRecipes = await Recipe.find({ recipeId: { $in: matches.map((m: any) => m.recipeId) } });
+    const byId = new Map(fullRecipes.map((r: any) => [r.recipeId, r]));
+    return matches
+      .map((m: any) => {
+        const recipe = byId.get(m.recipeId);
+        if (!recipe) return null;
+        return { recipe, missingIngredients: m.missingIngredients || [] };
+      })
+      .filter(Boolean);
   }
 }

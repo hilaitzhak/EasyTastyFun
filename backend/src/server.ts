@@ -5,6 +5,7 @@ import { connectDB } from './config/db.config';
 import { RecipeRouter } from './routes/recipe.router';
 import { CategoryRouter } from './routes/category.router';
 import { AuthRouter } from './routes/auth.router';
+import { UserRouter } from './routes/user.router';
 import Redis from 'ioredis';
 import { RedisService } from './services/redis.service';
 
@@ -48,12 +49,20 @@ export class AppServer {
     }
 
     private setRouters() {
+        // Lightweight liveness check — responds instantly without hitting the DB
+        // or Redis. Point an uptime pinger here to keep the host from sleeping.
+        this.app.get('/health', (_req, res) => {
+            res.status(200).json({ status: 'ok' });
+        });
+
         const recipeRouter = new RecipeRouter(this.redisService);
         const categoryRouter = new CategoryRouter();
         const authRouter = new AuthRouter();
+        const userRouter = new UserRouter();
         this.app.use('/easy-tasty-fun', recipeRouter.getRouter());
         this.app.use('/easy-tasty-fun', categoryRouter.getRouter());
         this.app.use('/easy-tasty-fun', authRouter.getRouter());
+        this.app.use('/easy-tasty-fun', userRouter.getRouter());
     }
 
     private async initRedis() {

@@ -96,16 +96,46 @@ export class RecipeController {
 
     async extractFromImage(req: Request, res: Response): Promise<void> {
         try {
-            const { image } = req.body;
+            const { image, categories } = req.body;
             if (!image) {
                 res.status(400).json({ message: 'No image provided' });
                 return;
             }
-            const recipeData = await this.recipeService.extractRecipeFromImage(image);
+            const recipeData = await this.recipeService.extractRecipeFromImage(image, categories || []);
             res.status(200).json(recipeData);
         } catch (error) {
             console.error('Error extracting recipe from image:', error);
             res.status(500).json({ message: 'Failed to extract recipe from image' });
+        }
+    }
+
+    async getSubstitutions(req: Request, res: Response): Promise<void> {
+        try {
+            const { ingredient, recipeName, language } = req.body;
+            if (!ingredient) {
+                res.status(400).json({ message: 'No ingredient provided' });
+                return;
+            }
+            const result = await this.recipeService.getIngredientSubstitutions(ingredient, recipeName || '', language || 'en');
+            res.status(200).json(result);
+        } catch (error) {
+            console.error('Error getting substitutions:', error);
+            res.status(500).json({ message: 'Failed to get substitutions' });
+        }
+    }
+
+    async whatCanICook(req: Request, res: Response): Promise<void> {
+        try {
+            const { ingredients, language } = req.body;
+            if (!Array.isArray(ingredients) || ingredients.length === 0) {
+                res.status(400).json({ message: 'No ingredients provided' });
+                return;
+            }
+            const result = await this.recipeService.whatCanICook(ingredients, language || 'en');
+            res.status(200).json(result);
+        } catch (error) {
+            console.error('Error in whatCanICook:', error);
+            res.status(500).json({ message: 'Failed to find recipes' });
         }
     }
 }

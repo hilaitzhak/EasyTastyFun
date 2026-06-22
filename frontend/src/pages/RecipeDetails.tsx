@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Clock, Users, Edit, Trash2, ShoppingBasket, ListOrdered, Lightbulb, Timer, UtensilsCrossed, Share2, Minus, Plus, Check } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Clock, Users, Edit, Trash2, ShoppingBasket, ListOrdered, Lightbulb, Timer, UtensilsCrossed, Share2, Minus, Plus, Check, Repeat, X, Sparkles } from 'lucide-react';
 import { recipeApi } from '../api/recipe.api';
 import i18n from '../i18n/i18n';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,10 @@ import { categoryApi } from '../api/category.api';
 import { AuthContext } from '../context/AuthContext';
 import ConfirmModal from '../components/ConfirmModal';
 import RecipeCard from '../components/RecipeCard';
+import FavoriteButton from '../components/FavoriteButton';
 import toast from 'react-hot-toast';
+
+interface Substitution { name: string; ratio: string; note: string; }
 
 function RecipeDetails() {
   const { t } = useTranslation();
@@ -28,6 +31,9 @@ function RecipeDetails() {
   const [servings, setServings] = useState<number>(1);
   const [checkedIngredients, setCheckedIngredients] = useState<Set<string>>(new Set());
   const [relatedRecipes, setRelatedRecipes] = useState<any[]>([]);
+  const [subFor, setSubFor] = useState<string | null>(null);
+  const [substitutions, setSubstitutions] = useState<Substitution[]>([]);
+  const [subLoading, setSubLoading] = useState(false);
   const isRTL = i18n.language === 'he';
   const auth = useContext(AuthContext);
 
@@ -118,6 +124,21 @@ function RecipeDetails() {
     });
   };
 
+  const openSubstitutions = async (ingredientName: string) => {
+    setSubFor(ingredientName);
+    setSubstitutions([]);
+    setSubLoading(true);
+    try {
+      const { data } = await recipeApi.getSubstitutions(ingredientName, recipe?.name || '', i18n.language);
+      setSubstitutions(data.substitutions || []);
+    } catch {
+      toast.error(t('recipe.substitutionsError'));
+      setSubFor(null);
+    } finally {
+      setSubLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-paper">
@@ -167,6 +188,10 @@ function RecipeDetails() {
           </button>
 
           <div className="flex items-center gap-2">
+            <FavoriteButton
+              recipeId={recipe.recipeId}
+              className="w-9 h-9 rounded-full text-white/90 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm"
+            />
             <button
               onClick={handleShare}
               className="flex items-center gap-1.5 text-sm text-white/90 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full transition-all"
@@ -329,6 +354,14 @@ function RecipeDetails() {
                           <span className={`text-ink font-medium ${checked ? 'line-through' : ''}`}>
                             {ingredient.name}
                           </span>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); openSubstitutions(ingredient.name); }}
+                            title={t('recipe.substitute')}
+                            aria-label={t('recipe.substitute')}
+                            className={`${isRTL ? 'mr-auto' : 'ml-auto'} flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-lg text-ink-muted hover:text-terracotta hover:bg-terracotta-light transition-colors`}
+                          >
+                            <Repeat className="w-3.5 h-3.5" />
+                          </button>
                         </li>
                       );
                     })}
@@ -419,6 +452,44 @@ function RecipeDetails() {
           onConfirm={handleDelete}
           onCancel={() => setShowDeleteConfirm(false)}
         />
+      )}
+
+      {/* AI substitutions modal */}
+      {subFor && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSubFor(null)} />
+          <div className="relative bg-surface rounded-2xl shadow-xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-terracotta" />
+                <h3 className="font-display text-lg font-semibold text-ink">{t('recipe.substitutesFor', { ingredient: subFor })}</h3>
+              </div>
+              <button onClick={() => setSubFor(null)} className="text-ink-muted hover:text-ink p-1">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {subLoading ? (
+              <div className="flex justify-center py-10">
+                <div className="animate-spin rounded-full h-8 w-8 border-2 border-terracotta border-t-transparent" />
+              </div>
+            ) : substitutions.length === 0 ? (
+              <p className="text-ink-soft text-sm py-6 text-center">{t('recipe.noSubstitutions')}</p>
+            ) : (
+              <ul className="space-y-3 mt-4">
+                {substitutions.map((sub, idx) => (
+                  <li key={idx} className="bg-paper rounded-xl border border-line p-3">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="font-semibold text-ink">{sub.name}</span>
+                      <span className="text-xs text-terracotta-dark font-medium whitespace-nowrap">{sub.ratio}</span>
+                    </div>
+                    {sub.note && <p className="text-sm text-ink-soft mt-1 leading-snug">{sub.note}</p>}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { API_BACKEND_URL } from '../config';
+import { API_BACKEND_URL, LONG_REQUEST_TIMEOUT } from '../config';
 export const recipeApi = {
-    createRecipe: (recipeData: any, config = {}) => axios.post(`${API_BACKEND_URL}/recipes/add-recipe`, recipeData, config),
+    createRecipe: (recipeData: any, config = {}) => axios.post(`${API_BACKEND_URL}/recipes/add-recipe`, recipeData, { timeout: LONG_REQUEST_TIMEOUT, ...config }),
     getAll(page: number, limit: number, filters?: { search?: string; category?: string }) {
         const params = new URLSearchParams({
             page: page.toString(),
@@ -14,8 +14,10 @@ export const recipeApi = {
     },
     getRecentRecipes: () => axios.get(`${API_BACKEND_URL}/recipes/recent`),
     getRecipeById: (recipeId: string) => axios.get(`${API_BACKEND_URL}/recipes/${recipeId}`),
-    update: (id: string, data: any, config = {}) => axios.put(`${API_BACKEND_URL}/recipes/${id}`, data, config),
+    update: (id: string, data: any, config = {}) => axios.put(`${API_BACKEND_URL}/recipes/${id}`, data, { timeout: LONG_REQUEST_TIMEOUT, ...config }),
     delete: (id: string, config = {}) => axios.delete(`${API_BACKEND_URL}/recipes/${id}`, config),
     checkSimilarRecipes: (ingredients: string[]) => axios.post(`${API_BACKEND_URL}/recipes/check-similar`, ingredients),
-    extractFromImage: (base64Image: string) => axios.post(`${API_BACKEND_URL}/recipes/extract-from-image`, { image: base64Image })
+    extractFromImage: (base64Image: string, categories?: any[]) => axios.post(`${API_BACKEND_URL}/recipes/extract-from-image`, { image: base64Image, categories }, { timeout: LONG_REQUEST_TIMEOUT }),
+    getSubstitutions: (ingredient: string, recipeName: string, language: string) => axios.post(`${API_BACKEND_URL}/recipes/substitutions`, { ingredient, recipeName, language }, { timeout: LONG_REQUEST_TIMEOUT }),
+    whatCanICook: (ingredients: string[], language: string) => axios.post(`${API_BACKEND_URL}/recipes/what-can-i-cook`, { ingredients, language }, { timeout: LONG_REQUEST_TIMEOUT })
 };

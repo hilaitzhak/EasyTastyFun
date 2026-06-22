@@ -29,12 +29,14 @@ export class AuthService {
         }
 
         const user = await this.findOrCreateGoogleUser(payload);
-        const token = this.generateToken(user.id);
+        // Use the stable Mongo _id — the custom `id` field is missing on older
+        // users and is regenerated ephemerally on load, so it can't be trusted.
+        const token = this.generateToken(user._id);
 
         return {
             token,
             user: {
-                id: user.id,
+                id: user._id,
                 name: user.name,
                 email: user.email
             }

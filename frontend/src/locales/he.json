@@ -7,6 +7,8 @@
     "home": "דף הבית",
     "back": "חזרה",
     "allRecipes": "כל המתכונים",
+    "favorites": "מועדפים",
+    "whatCanICook": "מה אפשר לבשל?",
     "categories": "קטגוריות",
     "all": "הכל",
     "createRecipe": "צור מתכון",
@@ -60,6 +62,11 @@
     "noRecipesFound": "לא נמצאו מתכונים",
     "tryDifferentCategory": "נסה לבחור קטגוריה אחרת",
     "favorite": "הוסף למועדפים",
+    "removeFavorite": "הסר מהמועדפים",
+    "substitute": "מצא תחליפים",
+    "substitutesFor": "תחליפים ל{{ingredient}}",
+    "noSubstitutions": "לא נמצאו תחליפים.",
+    "substitutionsError": "לא ניתן לטעון תחליפים. נסה שוב.",
     "ingredients": "מצרכים",
     "instructions": "הוראות הכנה",
     "servings": "מנות",
@@ -85,6 +92,20 @@
     "deleting": "מוחק...",
     "deleteSuccess": "המתכון נמחק"
   },
+  "favorites": {
+    "empty": "עדיין לא שמרת מועדפים. לחץ על הלב במתכון כדי לשמור אותו כאן."
+  },
+  "whatCanICook": {
+    "title": "מה אפשר לבשל?",
+    "subtitle": "ספר לנו מה יש לך ונמצא מתכונים שתוכל להכין.",
+    "inputLabel": "המצרכים שיש לך",
+    "inputPlaceholder": "למשל ביצים, קמח, חלב",
+    "search": "מצא מתכונים",
+    "searching": "מחפש...",
+    "noResults": "לא נמצאו מתכונים מתאימים. נסה להוסיף עוד מצרכים.",
+    "resultsTitle": "{{count}} מתכונים שאפשר להכין",
+    "missing": "חסר"
+  },
   "errors": {
     "network": "אין חיבור לאינטרנט. בדוק את החיבור ונסה שוב.",
     "badRequest": "משהו לא תקין בנתונים. בדוק ונסה שוב.",
@@ -108,7 +129,10 @@
     "confirmation": "האם אתה בטוח?",
     "yes": "כן",
     "no": "לא",
-    "noImage": "אין תמונה זמינה"
+    "noImage": "אין תמונה זמינה",
+    "unsavedChanges": "יש לך שינויים שלא נשמרו. האם אתה בטוח שברצונך לצאת? השינויים שלך יאבדו.",
+    "leave": "צא",
+    "stay": "הישאר"
   },
   "hero": {
     "discoverTitle": "גלה את אומנות",

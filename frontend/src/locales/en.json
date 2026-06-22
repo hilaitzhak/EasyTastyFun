@@ -7,6 +7,8 @@
     "home": "Home",
     "back": "Back",
     "allRecipes": "All Recipes",
+    "favorites": "Favorites",
+    "whatCanICook": "What can I cook?",
     "categories": "Categories",
     "all": "All",
     "createRecipe": "Create Recipe",
@@ -59,6 +61,11 @@
     "noRecipesFound": "No recipes found",
     "tryDifferentCategory": "Try selecting a different category",
     "favorite": "Add to favorites",
+    "removeFavorite": "Remove from favorites",
+    "substitute": "Find substitutes",
+    "substitutesFor": "Substitutes for {{ingredient}}",
+    "noSubstitutions": "No substitutions found.",
+    "substitutionsError": "Could not load substitutions. Please try again.",
     "ingredients": "Ingredients",
     "instructions": "Instructions",
     "servings": "Servings",
@@ -84,6 +91,20 @@
     "deleting": "Deleting...",
     "deleteSuccess": "Recipe deleted"
   },
+  "favorites": {
+    "empty": "You haven't saved any favorites yet. Tap the heart on a recipe to save it here."
+  },
+  "whatCanICook": {
+    "title": "What can I cook?",
+    "subtitle": "Tell us what you have and we'll find recipes you can make.",
+    "inputLabel": "Ingredients you have",
+    "inputPlaceholder": "e.g. eggs, flour, milk",
+    "search": "Find recipes",
+    "searching": "Searching...",
+    "noResults": "No matching recipes found. Try adding more ingredients.",
+    "resultsTitle": "{{count}} recipes you can make",
+    "missing": "Missing"
+  },
   "errors": {
     "network": "No internet connection. Please check your connection and try again.",
     "badRequest": "Something looks wrong with the data. Please review and try again.",
@@ -107,7 +128,10 @@
     "confirmation": "Are you sure?",
     "yes": "Yes",
     "no": "No",
-    "noImage": "No image available"
+    "noImage": "No image available",
+    "unsavedChanges": "You have unsaved changes. Are you sure you want to leave? Your changes will be lost.",
+    "leave": "Leave",
+    "stay": "Stay"
   },
   "hero": {
     "discoverTitle": "Discover the Art of",

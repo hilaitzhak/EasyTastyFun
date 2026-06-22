@@ -151,7 +151,7 @@ function RecipePage() {
             <>
               <ChevronRight className="w-3.5 h-3.5 flex-shrink-0" />
               <a
-                href={`/categories/${category.path}`}
+                href={category.path}
                 className="hover:text-terracotta-dark transition-colors"
               >
                 {t(category.nameKey)}

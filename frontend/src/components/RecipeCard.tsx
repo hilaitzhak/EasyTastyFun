@@ -2,6 +2,7 @@ import { Calendar, Clock, Users, UtensilsCrossed } from "lucide-react";
 import { RecipeCardProps } from "../interfaces/Recipe";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import FavoriteButton from "./FavoriteButton";
 
 function RecipeCard({ recipe }: RecipeCardProps) {
   const { t } = useTranslation();
@@ -22,6 +23,12 @@ function RecipeCard({ recipe }: RecipeCardProps) {
     >
       {/* Image */}
       <div className="relative h-56 overflow-hidden">
+        {recipe.recipeId && (
+          <FavoriteButton
+            recipeId={recipe.recipeId}
+            className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/85 backdrop-blur-sm text-ink-soft hover:bg-white shadow-soft"
+          />
+        )}
         {recipe.images && recipe.images[0] ? (
           <>
             <img

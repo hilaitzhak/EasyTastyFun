@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react';
-import { Globe, Menu, X, ChevronDown, UserCircle, LogOut, Home, Search, WheatOff, Sparkles } from 'lucide-react';
+import { Globe, Menu, X, ChevronDown, UserCircle, LogOut, Home, Search, WheatOff, Sparkles, Heart, ChefHat } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { Category, SubCategory } from '../interfaces/Category';
@@ -128,9 +128,23 @@ function Navbar() {
             >
               {t('nav.allRecipes')}
             </Link>
+            <Link
+              to="/what-can-i-cook"
+              className="flex items-center gap-1.5 font-medium text-ink-soft text-sm px-3 py-2 rounded-md transition-colors duration-200 hover:bg-terracotta-light hover:text-terracotta-dark whitespace-nowrap"
+            >
+              <ChefHat className="w-4 h-4 text-terracotta" />
+              {t('nav.whatCanICook')}
+            </Link>
+            <Link
+              to="/favorites"
+              className="flex items-center gap-1.5 font-medium text-ink-soft text-sm px-3 py-2 rounded-md transition-colors duration-200 hover:bg-terracotta-light hover:text-terracotta-dark whitespace-nowrap"
+            >
+              <Heart className="w-4 h-4 text-terracotta" />
+              {t('nav.favorites')}
+            </Link>
 
-            {/* Categories mega-menu (regular categories collapsed here) */}
-            {regularCategories.length > 0 && (
+            {/* Categories mega-menu (all categories, including dietary/holiday specials) */}
+            {categories.length > 0 && (
               <div
                 className="relative"
                 onMouseEnter={() => setActiveCategory('__categories__')}
@@ -145,23 +159,27 @@ function Navbar() {
 
                 {activeCategory === '__categories__' && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 z-50">
-                    <div className="bg-surface rounded-2xl shadow-card border border-line p-8 w-[72rem] max-w-[92vw]">
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-10 gap-y-8">
-                        {regularCategories.map((category) => (
-                          <div key={category.id} className="min-w-0">
+                    <div className="bg-surface rounded-2xl shadow-card border border-line p-6 w-[52rem] max-w-[92vw] max-h-[78vh] overflow-y-auto columns-2 md:columns-3 xl:columns-4 gap-x-8">
+                      {[...regularCategories, ...specialCategories].map((category) => {
+                        const SpecialIcon = SPECIAL_CATEGORY_ICONS[category.nameKey];
+                        return (
+                          <div key={category.id} className="mb-5 break-inside-avoid">
                             <Link
                               to={category.path}
-                              className="block font-display font-semibold text-sm text-ink hover:text-terracotta-dark mb-2 pb-1.5 border-b border-line"
+                              onClick={() => setActiveCategory(null)}
+                              className={`flex items-center gap-1.5 font-display font-semibold text-sm hover:text-terracotta-dark mb-1.5 pb-1.5 border-b border-line ${SpecialIcon ? 'text-terracotta-dark' : 'text-ink'}`}
                             >
+                              {SpecialIcon && <SpecialIcon className="w-4 h-4 shrink-0" />}
                               {t(`${category.nameKey}`)}
                             </Link>
                             {category.subCategories && category.subCategories.length > 0 && (
-                              <ul className="space-y-1">
+                              <ul>
                                 {category.subCategories.map((subCategory: SubCategory) => (
                                   <li key={subCategory.id}>
                                     <Link
                                       to={subCategory.path}
-                                      className="block text-sm text-ink-soft hover:text-terracotta-dark py-1 leading-snug"
+                                      onClick={() => setActiveCategory(null)}
+                                      className="block text-[13px] text-ink-soft hover:text-terracotta-dark py-0.5 leading-snug"
                                     >
                                       {t(`${subCategory.nameKey}`)}
                                     </Link>
@@ -170,60 +188,13 @@ function Navbar() {
                               </ul>
                             )}
                           </div>
-                        ))}
-                      </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
               </div>
             )}
-
-            {/* Divider before the special (dietary / holiday) categories */}
-            {specialCategories.length > 0 && (
-              <span className="mx-2 self-center h-6 w-px bg-line" aria-hidden="true" />
-            )}
-
-            {/* Special categories — kept inline as highlighted quick-links */}
-            {specialCategories.map((category) => {
-              const SpecialIcon = SPECIAL_CATEGORY_ICONS[category.nameKey];
-              return (
-                <div
-                  key={category.id}
-                  className="relative group"
-                  onMouseEnter={() => setActiveCategory(category.id)}
-                  onMouseLeave={() => setActiveCategory(null)}
-                >
-                  <Link
-                    to={category.path}
-                    className="flex items-center font-medium text-sm px-3 py-2 rounded-md text-terracotta-dark transition-colors duration-200 hover:bg-terracotta-light whitespace-nowrap"
-                  >
-                    {SpecialIcon && <SpecialIcon className="w-4 h-4 mr-1.5 shrink-0" />}
-                    <span>{t(`${category.nameKey}`)}</span>
-                    {category.subCategories && category.subCategories.length > 0 && (
-                      <ChevronDown className="ml-1 w-4 h-4 transition-transform group-hover:rotate-180 duration-200" />
-                    )}
-                  </Link>
-
-                  {category.subCategories && category.subCategories.length > 0 && activeCategory === category.id && (
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-max z-50">
-                      <div className="bg-surface rounded-xl shadow-card p-4 border border-line">
-                        <div className="grid grid-cols-2 gap-1">
-                          {category.subCategories.map((subCategory: SubCategory) => (
-                            <Link
-                              key={subCategory.id}
-                              to={subCategory.path}
-                              className="px-4 py-3 text-ink-soft text-xs hover:text-terracotta-dark rounded-lg transition-colors duration-200 hover:bg-terracotta-light whitespace-nowrap"
-                            >
-                              {t(`${subCategory.nameKey}`)}
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
           </div>
 
           {/* Right Side Menu */}
@@ -312,6 +283,22 @@ function Navbar() {
               onClick={() => setIsOpen(false)}
             >
               {t('nav.allRecipes')}
+            </Link>
+            <Link
+              to="/what-can-i-cook"
+              className="flex items-center gap-2 py-2 px-4 text-ink-soft hover:bg-terracotta-light hover:text-terracotta-dark rounded-lg transition-colors duration-200"
+              onClick={() => setIsOpen(false)}
+            >
+              <ChefHat className="w-4 h-4 text-terracotta" />
+              {t('nav.whatCanICook')}
+            </Link>
+            <Link
+              to="/favorites"
+              className="flex items-center gap-2 py-2 px-4 text-ink-soft hover:bg-terracotta-light hover:text-terracotta-dark rounded-lg transition-colors duration-200"
+              onClick={() => setIsOpen(false)}
+            >
+              <Heart className="w-4 h-4 text-terracotta" />
+              {t('nav.favorites')}
             </Link>
             {categories.map((category) => {
               const SpecialIcon = SPECIAL_CATEGORY_ICONS[category.nameKey];

@@ -1,5 +1,6 @@
 
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { flushSync } from 'react-dom';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, ChefHat } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -10,6 +11,7 @@ import { IngredientGroup, InstructionGroup, RecipeImage } from '../interfaces/Re
 import { Category, SubCategory } from '../interfaces/Category';
 import { categoryApi } from '../api/category.api';
 import RecipeForm from '../components/RecipeForm';
+import UnsavedChangesPrompt from '../components/UnsavedChangesPrompt';
 import { AuthContext } from '../context/AuthContext';
 
 const EditRecipe = () => {
@@ -33,15 +35,20 @@ const EditRecipe = () => {
   const [isDirty, setIsDirty] = useState(false);
   const auth = useContext(AuthContext);
 
+  // Mark dirty when editable fields change — but only after the recipe has been
+  // hydrated, so loading the existing data doesn't count as a user edit.
+  const hydrated = useRef(false);
   useEffect(() => {
-    if (!isDirty) return;
-    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); };
-    window.addEventListener('beforeunload', handler);
-    return () => window.removeEventListener('beforeunload', handler);
-  }, [isDirty]);
+    if (!hydrated.current) return;
+    setIsDirty(true);
+  }, [images, ingredientGroups, instructionGroups, tips, selectedCategory, selectedSubCategory]);
 
-  // Mark dirty when editable fields change (skip on initial load)
-  useEffect(() => { if (recipe) setIsDirty(true); }, [images, ingredientGroups, instructionGroups, tips]);
+  // Allow dirty tracking once the initial load render has settled.
+  useEffect(() => {
+    if (!recipe) return;
+    const id = setTimeout(() => { hydrated.current = true; }, 0);
+    return () => clearTimeout(id);
+  }, [recipe]);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -180,6 +187,9 @@ const EditRecipe = () => {
         },
       });
       toast.success(t('editRecipe.updateSuccess'));
+      // Clear the dirty flag synchronously so the success navigation isn't
+      // intercepted by the unsaved-changes prompt.
+      flushSync(() => setIsDirty(false));
       navigate(`/recipe/${id}`);
     } catch (error: any) {
       console.error('Error updating recipe:', error);
@@ -209,6 +219,7 @@ const EditRecipe = () => {
 
   return (
     <div className="min-h-screen bg-paper">
+      <UnsavedChangesPrompt when={isDirty} />
       {/* Modern Header with Glass Effect */}
       <div className="sticky top-0 z-10 backdrop-blur-lg bg-surface border-b border-line shadow-soft">
         <div className="max-w-8xl mx-auto px-6 w-full py-6">
