@@ -20,6 +20,7 @@ export const recipeApi = {
     extractFromImage: (base64Image: string, categories?: any[]) => axios.post(`${API_BACKEND_URL}/recipes/extract-from-image`, { image: base64Image, categories }, { timeout: LONG_REQUEST_TIMEOUT }),
     getSubstitutions: (ingredient: string, recipeName: string, language: string) => axios.post(`${API_BACKEND_URL}/recipes/substitutions`, { ingredient, recipeName, language }, { timeout: LONG_REQUEST_TIMEOUT }),
     whatCanICook: (ingredients: string[], language: string) => axios.post(`${API_BACKEND_URL}/recipes/what-can-i-cook`, { ingredients, language }, { timeout: LONG_REQUEST_TIMEOUT }),
+    getIngredientNames: () => axios.get(`${API_BACKEND_URL}/recipes/ingredient-names`),
     getRandom: () => axios.get(`${API_BACKEND_URL}/recipes/random`),
     generate: (prompt: string, language: string, categories?: any[]) => axios.post(`${API_BACKEND_URL}/recipes/generate`, { prompt, language, categories }, { timeout: LONG_REQUEST_TIMEOUT }),
     ask: (recipeId: string, question: string, language: string, history: { role: string; content: string }[]) => axios.post(`${API_BACKEND_URL}/recipes/ask`, { recipeId, question, language, history }, { timeout: LONG_REQUEST_TIMEOUT }),

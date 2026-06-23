@@ -134,6 +134,13 @@ function CreateRecipeForm() {
 
       const { data } = await recipeApi.extractFromImage(base64, buildCategoryGuide());
 
+      // Reject images that aren't actually recipes.
+      const hasContent = data.name || data.ingredientGroups?.some((g: any) => g.ingredients?.length > 0);
+      if (data.isRecipe === false || !hasContent) {
+        toast.error(t('createRecipe.scan.notRecipe'), { id: toastId, duration: 6000 });
+        return;
+      }
+
       fillFormFromData(data);
 
       // Detect missing fields and alert the user

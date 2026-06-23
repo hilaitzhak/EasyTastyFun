@@ -167,7 +167,10 @@
     "missing": "Missing",
     "getIdeas": "Get ideas",
     "thinking": "Thinking...",
-    "ideasTitle": "Ideas for your ingredients"
+    "ideasTitle": "Ideas for your ingredients",
+    "limitHint": "Pick from suggestions or type an ingredient. Up to {{max}}.",
+    "maxReached": "You can add up to {{max}} ingredients.",
+    "invalidIngredient": "Please enter a valid ingredient name."
   },
   "errors": {
     "network": "No internet connection. Please check your connection and try again.",
@@ -309,6 +312,7 @@
       "success": "Recipe scanned! Review the fields and press Create.",
       "successWithMissing": "Recipe scanned! Missing fields (add manually): {{fields}}.",
       "error": "Could not read the recipe from this image. Please try a clearer photo.",
+      "notRecipe": "This image doesn't look like a recipe. Please upload a photo of a recipe.",
       "fields": {
         "name": "Recipe Name",
         "prepTime": "Prep Time",

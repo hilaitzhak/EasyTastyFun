@@ -198,6 +198,16 @@ export class RecipeController {
         }
     }
 
+    async getIngredientNames(_req: Request, res: Response): Promise<void> {
+        try {
+            const names = await this.recipeService.getAllIngredientNames();
+            res.status(200).json(names);
+        } catch (error) {
+            console.error('Error getting ingredient names:', error);
+            res.status(500).json({ message: 'Failed to get ingredients' });
+        }
+    }
+
     async leftoverIdeas(req: Request, res: Response): Promise<void> {
         try {
             const { ingredients, language } = req.body;

@@ -542,6 +542,7 @@ export class RecipeService {
       input_schema: {
         type: 'object' as const,
         properties: {
+          isRecipe: { type: 'boolean', description: 'true ONLY if the image actually shows a cooking/food recipe; false for anything else (random photos, screenshots, documents, etc.)' },
           name: { type: ['string', 'null'], description: 'Recipe name, in the original language' },
           prepTime: { type: ['integer', 'null'], description: 'Prep time in minutes if written, else null' },
           cookTime: { type: ['integer', 'null'], description: 'Cook time in minutes if written, else null' },
@@ -596,7 +597,7 @@ export class RecipeService {
             description: 'The id of the best-fitting subcategory under the chosen category, or null if none fit.',
           },
         },
-        required: ['name', 'prepTime', 'cookTime', 'servings', 'ingredientGroups', 'instructionGroups', 'tips', 'categoryId', 'subCategoryId'],
+        required: ['isRecipe', 'name', 'prepTime', 'cookTime', 'servings', 'ingredientGroups', 'instructionGroups', 'tips', 'categoryId', 'subCategoryId'],
       },
     };
 
@@ -615,6 +616,8 @@ export class RecipeService {
           {
             type: 'text',
             text: `Extract the recipe from this image and call the save_recipe tool with the result. The recipe may be written in Hebrew or English.
+
+FIRST, decide whether this image actually contains a cooking/food recipe. If it does NOT (e.g. it's a random photo, a screenshot, a document, a landscape, a person, etc.), set isRecipe to false, set name to null, and leave ingredientGroups and instructionGroups as empty arrays. Only set isRecipe to true when there is a genuine recipe to extract. Do NOT invent a recipe for a non-recipe image.
 
 CRITICAL LANGUAGE RULE: Write all text fields in the EXACT language used in the image. If the image is in Hebrew — write Hebrew characters. If the image is in English — write English. NEVER translate. NEVER switch languages.
 
@@ -888,15 +891,26 @@ ${categoryGuide}` : ''}`,
     const response = await client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 1024,
-      system: `You are a friendly, practical cooking assistant helping with one specific recipe. Answer concisely in ${lang}. Stay focused on cooking and this recipe. Here is the recipe:\n${this.recipeContext(recipe)}`,
+      system: `You are a friendly, practical cooking assistant for ONE specific recipe. Answer concisely in ${lang}.
+
+STRICT SCOPE: Only answer questions about this recipe or directly-related cooking topics (ingredients, substitutions, quantities/scaling, techniques, timing, storage, dietary adjustments, drink/side pairings for this dish). If the user asks about anything unrelated to this recipe or to cooking (general knowledge, coding, math, news, personal advice, other topics), politely DECLINE in ${lang} and remind them you can only help with this recipe. Do not answer off-topic questions even if asked repeatedly.
+
+Here is the recipe:\n${this.recipeContext(recipe)}`,
       messages,
     });
 
     return response.content[0].type === 'text' ? response.content[0].text : '';
   }
 
-  // Suggest drink pairings for a recipe.
+  // Suggest drink pairings for a recipe. Cached so repeat views don't re-hit Claude.
   async getPairing(recipeName: string, ingredients: string, language: string): Promise<any> {
+    const cacheKey = `pairing:${language}:${recipeName.trim().toLowerCase()}`;
+    const PAIRING_TTL = 60 * 60 * 24 * 30; // 30 days
+    try {
+      const cached = await this.redisService.get(cacheKey);
+      if (cached) return cached;
+    } catch { /* cache miss / redis down — fall through to Claude */ }
+
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     const lang = language === 'he' ? 'Hebrew' : 'English';
     const tool = {
@@ -929,7 +943,32 @@ ${categoryGuide}` : ''}`,
     });
     const toolUse = response.content.find((b) => b.type === 'tool_use');
     if (!toolUse || toolUse.type !== 'tool_use') throw new Error('No pairings');
-    return toolUse.input;
+    const result = toolUse.input;
+    try { await this.redisService.set(cacheKey, result, PAIRING_TTL); } catch { /* redis down — skip caching */ }
+    return result;
+  }
+
+  // Distinct ingredient names across all recipes (for the "What can I cook?" suggestions).
+  async getAllIngredientNames(): Promise<string[]> {
+    const cacheKey = 'all_ingredient_names';
+    try {
+      const cached = await this.redisService.get(cacheKey);
+      if (cached) return cached;
+    } catch { /* fall through */ }
+
+    const recipes = await Recipe.find({}, { ingredientGroups: 1 });
+    const set = new Set<string>();
+    recipes.forEach((r: any) =>
+      (r.ingredientGroups || []).forEach((g: any) =>
+        (g.ingredients || []).forEach((i: any) => {
+          const name = (i.name || '').trim();
+          if (name) set.add(name);
+        })
+      )
+    );
+    const list = Array.from(set).sort((a, b) => a.localeCompare(b));
+    try { await this.redisService.set(cacheKey, list); } catch { /* skip caching */ }
+    return list;
   }
 
   // "Leftover rescue" — free-form ideas for what to make with leftover ingredients.

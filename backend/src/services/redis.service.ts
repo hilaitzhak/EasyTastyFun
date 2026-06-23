@@ -18,10 +18,10 @@ export class RedisService {
         return JSON.parse(decompressed);
     }
 
-    async set(key: string, value: any) {
+    async set(key: string, value: any, ttlSeconds: number = this.CACHE_DURATION) {
         const jsonString = JSON.stringify(value);
         const compressed = zlib.gzipSync(jsonString).toString('base64'); // Compress JSON
-        await this.redis.set(key, compressed, 'EX', this.CACHE_DURATION);
+        await this.redis.set(key, compressed, 'EX', ttlSeconds);
     }
 
 

@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChefHat, Sparkles, X, Plus, AlertCircle, Recycle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n/i18n';
 import { recipeApi } from '../api/recipe.api';
+import toast from 'react-hot-toast';
 import RecipeCard from '../components/RecipeCard';
+
+const MAX_INGREDIENTS = 15;
+const MAX_LENGTH = 40;
 
 interface Match {
   recipe: any;
@@ -23,14 +27,52 @@ function WhatCanICook() {
   const [ideas, setIdeas] = useState<Idea[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [ideasLoading, setIdeasLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [focused, setFocused] = useState(false);
+
+  // Load known ingredient names from the catalog for autocomplete.
+  useEffect(() => {
+    recipeApi.getIngredientNames()
+      .then(({ data }) => setSuggestions(data || []))
+      .catch(() => setSuggestions([]));
+  }, []);
 
   const addIngredient = () => {
-    const value = input.trim();
-    if (value && !ingredients.includes(value)) {
+    const value = input.trim().slice(0, MAX_LENGTH);
+    if (!value) { setInput(''); return; }
+    if (ingredients.length >= MAX_INGREDIENTS) {
+      toast.error(t('whatCanICook.maxReached', { max: MAX_INGREDIENTS }));
+      return;
+    }
+    // Limit to letters/spaces/hyphens (Latin + Hebrew) — no numbers or symbols.
+    if (!/^[\p{L} '\-]+$/u.test(value)) {
+      toast.error(t('whatCanICook.invalidIngredient'));
+      return;
+    }
+    if (!ingredients.some((i) => i.toLowerCase() === value.toLowerCase())) {
       setIngredients((prev) => [...prev, value]);
     }
     setInput('');
   };
+
+  // Pick a value straight from the suggestion list (skips the text validation).
+  const addSuggestion = (value: string) => {
+    if (ingredients.length >= MAX_INGREDIENTS) {
+      toast.error(t('whatCanICook.maxReached', { max: MAX_INGREDIENTS }));
+      return;
+    }
+    if (!ingredients.some((i) => i.toLowerCase() === value.toLowerCase())) {
+      setIngredients((prev) => [...prev, value]);
+    }
+    setInput('');
+  };
+
+  const query = input.trim().toLowerCase();
+  const filteredSuggestions = query
+    ? suggestions
+        .filter((s) => s.toLowerCase().includes(query) && !ingredients.some((i) => i.toLowerCase() === s.toLowerCase()))
+        .slice(0, 8)
+    : [];
 
   const removeIngredient = (value: string) => {
     setIngredients((prev) => prev.filter((i) => i !== value));
@@ -92,29 +134,53 @@ function WhatCanICook() {
         <div className="bg-surface rounded-2xl border border-line shadow-card p-6">
           <label className="block text-sm font-medium text-ink-soft mb-3">{t('whatCanICook.inputLabel')}</label>
           <div className="flex gap-2">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={t('whatCanICook.inputPlaceholder')}
-              className="flex-1 px-4 py-2.5 rounded-xl border border-line focus:outline-none focus:ring-2 focus:ring-terracotta focus:border-transparent bg-paper"
-            />
+            <div className="relative flex-1">
+              <input
+                type="text"
+                maxLength={MAX_LENGTH}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setTimeout(() => setFocused(false), 120)}
+                disabled={ingredients.length >= MAX_INGREDIENTS}
+                placeholder={t('whatCanICook.inputPlaceholder')}
+                className="w-full px-4 py-2.5 rounded-xl border border-line focus:outline-none focus:ring-2 focus:ring-terracotta focus:border-transparent bg-paper disabled:opacity-60"
+              />
+              {focused && filteredSuggestions.length > 0 && (
+                <ul className="absolute z-20 top-full mt-1 w-full bg-surface border border-line rounded-xl shadow-card max-h-60 overflow-y-auto py-1">
+                  {filteredSuggestions.map((s) => (
+                    <li key={s}>
+                      <button
+                        type="button"
+                        onMouseDown={(e) => { e.preventDefault(); addSuggestion(s); }}
+                        className="w-full text-start px-4 py-2 text-sm text-ink-soft hover:bg-terracotta-light hover:text-terracotta-dark transition-colors"
+                      >
+                        {s}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
             <button
               type="button"
               onClick={addIngredient}
-              className="px-4 py-2.5 rounded-xl border border-line text-ink-soft hover:border-terracotta hover:text-terracotta transition-colors"
+              disabled={ingredients.length >= MAX_INGREDIENTS}
+              className="px-4 py-2.5 rounded-xl border border-line text-ink-soft hover:border-terracotta hover:text-terracotta transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Plus className="w-5 h-5" />
             </button>
           </div>
 
+          <p className="text-xs text-ink-muted mt-2">{t('whatCanICook.limitHint', { max: MAX_INGREDIENTS })}</p>
+
           {ingredients.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-4">
               {ingredients.map((ing) => (
-                <span key={ing} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-terracotta-light text-terracotta-dark text-sm font-medium">
-                  {ing}
-                  <button type="button" onClick={() => removeIngredient(ing)} className="hover:text-terracotta">
+                <span key={ing} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-terracotta-light text-terracotta-dark text-sm font-medium max-w-full">
+                  <span className="truncate max-w-[12rem]" title={ing}>{ing}</span>
+                  <button type="button" onClick={() => removeIngredient(ing)} className="hover:text-terracotta flex-shrink-0">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </span>
